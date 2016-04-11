@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="extrasViaWhatsApp">
+        <item>Modelo</item>
+        <item >Color</item>
+        <item >Numeracion</item>
+    </string-array>
+</resources>

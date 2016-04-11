@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<full-backup-content>
+    <!--
+
+    <include domain=["file" | "database" | "sharedpref" | "external" | "root"]
+    path="string" />
+    <exclude domain=["file" | "database" | "sharedpref" | "external" | "root"]
+    path="string" />
+
+    -->
+    <include domain="database" path="tufanomovil.db"/>
+</full-backup-content>
