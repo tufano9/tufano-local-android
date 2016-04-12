@@ -1,0 +1,215 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.tufano.tufanomovil">
+
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+
+    <application
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:supportsRtl="true"
+        android:fullBackupContent="@xml/backupsheme"
+        android:largeHeap="true"
+        android:theme="@style/AppTheme">
+
+        <activity
+            android:name=".MainActivity"
+            android:label="@string/app_name"
+            android:theme="@style/AppTheme.NoActionBar">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <action android:name="android.intent.action.VIEW" />
+
+                <!-- action.VIEW: Use this action in an intent with startActivity() when you have
+                some information that an activity can show to the user, such as a photo to view
+                in a gallery app, or an address to view in a map app.-->
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <activity
+            android:name=".Home"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:label="@string/app_name" >
+        </activity>
+
+         <!-- ACTIVITIES PRODUCTOS -->
+
+        <activity
+            android:name=".gestion.productos.GestionProductos"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:label="@string/app_name" >
+        </activity>
+
+        <activity
+            android:name=".gestion.productos.AgregarProducto"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:label="@string/app_name" >
+        </activity>
+
+        <activity
+            android:name=".gestion.productos.EditarProducto"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:label="@string/app_name" >
+        </activity>
+
+        <activity
+            android:name=".gestion.productos.EditarProductoDetalles"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:label="@string/app_name" >
+        </activity>
+
+        <!-- ACTIVITIES TALLAS -->
+
+        <activity
+            android:name=".gestion.talla.GestionTallas"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:label="@string/app_name" >
+        </activity>
+
+        <activity
+            android:name=".gestion.talla.AgregarTalla"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:label="@string/app_name" >
+        </activity>
+
+        <activity
+            android:name=".gestion.talla.EditarTalla"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:label="@string/app_name" >
+        </activity>
+
+        <!-- ACTIVITIES TIPOS -->
+
+        <activity
+            android:name=".gestion.tipo.GestionTipos"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:label="@string/app_name" >
+        </activity>
+
+        <activity
+            android:name=".gestion.tipo.AgregarTipo"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:label="@string/app_name" >
+        </activity>
+
+        <activity
+            android:name=".gestion.tipo.EditarTipo"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:label="@string/app_name" >
+        </activity>
+
+        <!-- ACTIVITIES COLORES -->
+
+        <activity
+            android:name=".gestion.colores.GestionColores"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:label="@string/app_name" >
+        </activity>
+
+        <activity
+            android:name=".gestion.colores.AgregarColor"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:label="@string/app_name" >
+        </activity>
+
+        <activity
+            android:name=".gestion.colores.EditarColor"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:label="@string/app_name" >
+        </activity>
+
+        <!-- ACTIVITIES CLIENTES -->
+
+        <activity
+            android:name=".gestion.clientes.GestionClientes"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:label="@string/app_name" >
+        </activity>
+
+        <activity
+            android:name=".gestion.clientes.AgregarCliente"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:label="@string/app_name" >
+        </activity>
+
+        <activity
+            android:name=".gestion.clientes.EditarCliente"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:label="@string/app_name" >
+        </activity>
+
+        <activity
+            android:name=".gestion.clientes.EditarClienteDetalles"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:label="@string/app_name" >
+        </activity>
+
+        <!-- ACTIVITIES PEDIDOS -->
+        <activity
+            android:name=".gestion.pedidos.Menu"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:label="@string/app_name" >
+        </activity>
+
+        <activity
+            android:name=".gestion.pedidos.ArmarPedido"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:label="@string/app_name" >
+        </activity>
+
+        <activity
+            android:name=".gestion.pedidos.AgregarProductoPedido"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:label="@string/app_name" >
+        </activity>
+
+        <activity
+            android:name=".gestion.pedidos.SeleccionarCliente"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:label="@string/app_name" >
+        </activity>
+
+        <activity
+            android:name=".gestion.pedidos.Consultar"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:label="@string/app_name" >
+        </activity>
+
+        <activity
+            android:name=".gestion.pedidos.DetallesPedido"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:label="@string/app_name" >
+        </activity>
+
+        <activity
+            android:name=".gestion.perfil.EditarPerfil"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:label="@string/app_name" >
+        </activity>
+
+        <activity
+            android:name=".global.FullScreenImage"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:label="@string/app_name" >
+        </activity>
+
+        <activity
+            android:name=".gestion.pedidos.EditarPedido"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:label="@string/app_name" >
+        </activity>
+
+        <activity
+            android:name=".gestion.pedidos.AgregarProductoPedidoEditar"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:label="@string/app_name" >
+        </activity>
+
+    </application>
+
+</manifest>
