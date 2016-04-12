@@ -36,7 +36,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // MODIFICACION DEL BRANCH MASTER HECHA POR GERSON
+        // MODIFICACION DEL BRANCH MASTER HECHA POR GERSON 1
 
         contexto = getApplicationContext();
 
