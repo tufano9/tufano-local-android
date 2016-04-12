@@ -35,9 +35,6 @@ public class MainActivity extends AppCompatActivity {
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        // OTRA MODIFICACION
-
         contexto = getApplicationContext();
 
         // Limpiar la BD
