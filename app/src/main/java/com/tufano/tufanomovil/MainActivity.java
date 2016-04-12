@@ -37,6 +37,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         // Y ESTA ES UNA MODIFICACION DEL BRANCH-MASTER HECHA POR GERSON!
+        //y tufano
 
         contexto = getApplicationContext();
 
