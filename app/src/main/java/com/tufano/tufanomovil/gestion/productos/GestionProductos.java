@@ -17,9 +17,9 @@ import com.tufano.tufanomovil.R;
  */
 public class GestionProductos extends AppCompatActivity
 {
-    private String usuario;
-    public static Activity fa;
-    private ImageView agregar, editar;
+    public static Activity  fa;
+    private       String    usuario;
+    private       ImageView agregar, editar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -68,7 +68,8 @@ public class GestionProductos extends AppCompatActivity
             public void onClick(View v)
             {
                 // Al ser clickeado, se abre una nueva activity
-                Intent c = new Intent(GestionProductos.this, EditarProducto.class);
+                //Intent c = new Intent(GestionProductos.this, EditarProducto.class);
+                Intent c = new Intent(GestionProductos.this, ConsultarProductos.class);
                 c.putExtra("usuario", usuario);
                 startActivity(c);
             }

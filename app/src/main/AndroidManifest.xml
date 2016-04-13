@@ -8,11 +8,11 @@
 
     <application
         android:allowBackup="true"
+        android:fullBackupContent="@xml/backupsheme"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
-        android:supportsRtl="true"
-        android:fullBackupContent="@xml/backupsheme"
         android:largeHeap="true"
+        android:supportsRtl="true"
         android:theme="@style/AppTheme">
 
         <activity
@@ -33,181 +33,187 @@
 
         <activity
             android:name=".Home"
-            android:theme="@style/AppTheme.NoActionBar"
-            android:label="@string/app_name" >
+            android:label="@string/app_name"
+            android:theme="@style/AppTheme.NoActionBar">
         </activity>
 
          <!-- ACTIVITIES PRODUCTOS -->
 
         <activity
             android:name=".gestion.productos.GestionProductos"
-            android:theme="@style/AppTheme.NoActionBar"
-            android:label="@string/app_name" >
+            android:label="@string/app_name"
+            android:theme="@style/AppTheme.NoActionBar">
+        </activity>
+
+        <activity
+            android:name=".gestion.productos.ConsultarProductos"
+            android:label="@string/app_name"
+            android:theme="@style/AppTheme.NoActionBar">
         </activity>
 
         <activity
             android:name=".gestion.productos.AgregarProducto"
-            android:theme="@style/AppTheme.NoActionBar"
-            android:label="@string/app_name" >
+            android:label="@string/app_name"
+            android:theme="@style/AppTheme.NoActionBar">
         </activity>
 
         <activity
             android:name=".gestion.productos.EditarProducto"
-            android:theme="@style/AppTheme.NoActionBar"
-            android:label="@string/app_name" >
+            android:label="@string/app_name"
+            android:theme="@style/AppTheme.NoActionBar">
         </activity>
 
         <activity
             android:name=".gestion.productos.EditarProductoDetalles"
-            android:theme="@style/AppTheme.NoActionBar"
-            android:label="@string/app_name" >
+            android:label="@string/app_name"
+            android:theme="@style/AppTheme.NoActionBar">
         </activity>
 
         <!-- ACTIVITIES TALLAS -->
 
         <activity
             android:name=".gestion.talla.GestionTallas"
-            android:theme="@style/AppTheme.NoActionBar"
-            android:label="@string/app_name" >
+            android:label="@string/app_name"
+            android:theme="@style/AppTheme.NoActionBar">
         </activity>
 
         <activity
             android:name=".gestion.talla.AgregarTalla"
-            android:theme="@style/AppTheme.NoActionBar"
-            android:label="@string/app_name" >
+            android:label="@string/app_name"
+            android:theme="@style/AppTheme.NoActionBar">
         </activity>
 
         <activity
             android:name=".gestion.talla.EditarTalla"
-            android:theme="@style/AppTheme.NoActionBar"
-            android:label="@string/app_name" >
+            android:label="@string/app_name"
+            android:theme="@style/AppTheme.NoActionBar">
         </activity>
 
         <!-- ACTIVITIES TIPOS -->
 
         <activity
             android:name=".gestion.tipo.GestionTipos"
-            android:theme="@style/AppTheme.NoActionBar"
-            android:label="@string/app_name" >
+            android:label="@string/app_name"
+            android:theme="@style/AppTheme.NoActionBar">
         </activity>
 
         <activity
             android:name=".gestion.tipo.AgregarTipo"
-            android:theme="@style/AppTheme.NoActionBar"
-            android:label="@string/app_name" >
+            android:label="@string/app_name"
+            android:theme="@style/AppTheme.NoActionBar">
         </activity>
 
         <activity
             android:name=".gestion.tipo.EditarTipo"
-            android:theme="@style/AppTheme.NoActionBar"
-            android:label="@string/app_name" >
+            android:label="@string/app_name"
+            android:theme="@style/AppTheme.NoActionBar">
         </activity>
 
         <!-- ACTIVITIES COLORES -->
 
         <activity
             android:name=".gestion.colores.GestionColores"
-            android:theme="@style/AppTheme.NoActionBar"
-            android:label="@string/app_name" >
+            android:label="@string/app_name"
+            android:theme="@style/AppTheme.NoActionBar">
         </activity>
 
         <activity
             android:name=".gestion.colores.AgregarColor"
-            android:theme="@style/AppTheme.NoActionBar"
-            android:label="@string/app_name" >
+            android:label="@string/app_name"
+            android:theme="@style/AppTheme.NoActionBar">
         </activity>
 
         <activity
             android:name=".gestion.colores.EditarColor"
-            android:theme="@style/AppTheme.NoActionBar"
-            android:label="@string/app_name" >
+            android:label="@string/app_name"
+            android:theme="@style/AppTheme.NoActionBar">
         </activity>
 
         <!-- ACTIVITIES CLIENTES -->
 
         <activity
             android:name=".gestion.clientes.GestionClientes"
-            android:theme="@style/AppTheme.NoActionBar"
-            android:label="@string/app_name" >
+            android:label="@string/app_name"
+            android:theme="@style/AppTheme.NoActionBar">
         </activity>
 
         <activity
             android:name=".gestion.clientes.AgregarCliente"
-            android:theme="@style/AppTheme.NoActionBar"
-            android:label="@string/app_name" >
+            android:label="@string/app_name"
+            android:theme="@style/AppTheme.NoActionBar">
         </activity>
 
         <activity
             android:name=".gestion.clientes.EditarCliente"
-            android:theme="@style/AppTheme.NoActionBar"
-            android:label="@string/app_name" >
+            android:label="@string/app_name"
+            android:theme="@style/AppTheme.NoActionBar">
         </activity>
 
         <activity
             android:name=".gestion.clientes.EditarClienteDetalles"
-            android:theme="@style/AppTheme.NoActionBar"
-            android:label="@string/app_name" >
+            android:label="@string/app_name"
+            android:theme="@style/AppTheme.NoActionBar">
         </activity>
 
         <!-- ACTIVITIES PEDIDOS -->
         <activity
             android:name=".gestion.pedidos.Menu"
-            android:theme="@style/AppTheme.NoActionBar"
-            android:label="@string/app_name" >
+            android:label="@string/app_name"
+            android:theme="@style/AppTheme.NoActionBar">
         </activity>
 
         <activity
             android:name=".gestion.pedidos.ArmarPedido"
-            android:theme="@style/AppTheme.NoActionBar"
-            android:label="@string/app_name" >
+            android:label="@string/app_name"
+            android:theme="@style/AppTheme.NoActionBar">
         </activity>
 
         <activity
             android:name=".gestion.pedidos.AgregarProductoPedido"
-            android:theme="@style/AppTheme.NoActionBar"
-            android:label="@string/app_name" >
+            android:label="@string/app_name"
+            android:theme="@style/AppTheme.NoActionBar">
         </activity>
 
         <activity
             android:name=".gestion.pedidos.SeleccionarCliente"
-            android:theme="@style/AppTheme.NoActionBar"
-            android:label="@string/app_name" >
+            android:label="@string/app_name"
+            android:theme="@style/AppTheme.NoActionBar">
         </activity>
 
         <activity
             android:name=".gestion.pedidos.Consultar"
-            android:theme="@style/AppTheme.NoActionBar"
-            android:label="@string/app_name" >
+            android:label="@string/app_name"
+            android:theme="@style/AppTheme.NoActionBar">
         </activity>
 
         <activity
             android:name=".gestion.pedidos.DetallesPedido"
-            android:theme="@style/AppTheme.NoActionBar"
-            android:label="@string/app_name" >
+            android:label="@string/app_name"
+            android:theme="@style/AppTheme.NoActionBar">
         </activity>
 
         <activity
             android:name=".gestion.perfil.EditarPerfil"
-            android:theme="@style/AppTheme.NoActionBar"
-            android:label="@string/app_name" >
+            android:label="@string/app_name"
+            android:theme="@style/AppTheme.NoActionBar">
         </activity>
 
         <activity
             android:name=".global.FullScreenImage"
-            android:theme="@style/AppTheme.NoActionBar"
-            android:label="@string/app_name" >
+            android:label="@string/app_name"
+            android:theme="@style/AppTheme.NoActionBar">
         </activity>
 
         <activity
             android:name=".gestion.pedidos.EditarPedido"
-            android:theme="@style/AppTheme.NoActionBar"
-            android:label="@string/app_name" >
+            android:label="@string/app_name"
+            android:theme="@style/AppTheme.NoActionBar">
         </activity>
 
         <activity
             android:name=".gestion.pedidos.AgregarProductoPedidoEditar"
-            android:theme="@style/AppTheme.NoActionBar"
-            android:label="@string/app_name" >
+            android:label="@string/app_name"
+            android:theme="@style/AppTheme.NoActionBar">
         </activity>
 
     </application>

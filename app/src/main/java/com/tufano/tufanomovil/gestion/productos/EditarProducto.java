@@ -58,12 +58,14 @@ import java.util.List;
  */
 public class EditarProducto extends AppCompatActivity
 {
+    public static Activity fa;
+    private final String  TAG               = "EditarProducto";
+    private final boolean DEBUG_MODE        = false;
+    private final int     MAX_TABLE_RECORDS = 5;
     private String usuario;
     private Context contexto;
-    private final String TAG = "EditarProducto";
     private ProgressDialog pDialog;
     private DBAdapter manager;
-    public static Activity fa;
     private Spinner tipo, talla, color;
     private AutoCompleteTextView modelo_autoComplete;
     private LinearLayout layout;
@@ -73,8 +75,6 @@ public class EditarProducto extends AppCompatActivity
     private TextView cabecera_1, cabecera_2, cabecera_3, cabecera_4, cabecera_5, cabecera_6;
     private String columna_ordenada, orden;
     private String tipo_filtrado, color_filtrado, talla_filtrado, modelo_filtrado;
-    private final boolean DEBUG_MODE = false;
-    private final int MAX_TABLE_RECORDS = 5;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -515,243 +515,6 @@ public class EditarProducto extends AppCompatActivity
     }
 
     /**
-     * Clase para la carga en 2do plano de los datos de la tabla (Solo 1era Ejecucion)
-     */
-    private class cargarDatos extends AsyncTask< String, String, String >
-    {
-        @Override
-        protected void onPreExecute()
-        {
-            pDialog = new ProgressDialog(EditarProducto.this);
-            pDialog.setTitle("Por favor espere...");
-            pDialog.setMessage("Cargando informacion...");
-            pDialog.setIndeterminate(true);
-            pDialog.setCancelable(false);
-            pDialog.show();
-        }
-
-        @Override
-        protected String doInBackground(String... params)
-        {
-            loadSpinnerData();
-            inicializarTabla(null, null, null, null, false);
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(String result)
-        {
-            pDialog.dismiss();
-        }
-    }
-
-    /**
-     * Clase para la carga en 2do plano de los datos de la tabla (Con Filtros)
-     */
-    private class reCargarDatos extends AsyncTask< String, String, String >
-    {
-        @Override
-        protected void onPreExecute()
-        {
-            pDialog = new ProgressDialog(EditarProducto.this);
-            pDialog.setTitle("Por favor espere...");
-            pDialog.setMessage("Cargando informacion...");
-            pDialog.setIndeterminate(true);
-            pDialog.setCancelable(false);
-            pDialog.show();
-        }
-
-        @Override
-        protected String doInBackground(String... params)
-        {
-            inicializarTabla(params[0], params[1], params[2], params[3], true);
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(String result)
-        {
-            pDialog.dismiss();
-        }
-
-    }
-
-    /**
-     * Clase para compartir Via WhatsApp en 2do plano
-     */
-    private class compartirViaWhatsApp extends AsyncTask< String, String, String >
-    {
-        @Override
-        protected void onPreExecute()
-        {
-            pDialog = new ProgressDialog(EditarProducto.this);
-            pDialog.setTitle("Por favor espere...");
-            pDialog.setMessage("Cargando imagen para compartirla...");
-            pDialog.setIndeterminate(true);
-            pDialog.setCancelable(false);
-            pDialog.show();
-        }
-
-        @Override
-        protected String doInBackground(final String... params)
-        {
-            final Intent sendIntent = new Intent();
-            sendIntent.setAction(Intent.ACTION_SEND);
-            //share directly to WhatsApp and bypass the system picker
-            sendIntent.setPackage("com.whatsapp");
-
-            // modelo_nombre, color_producto, numeracion_producto
-
-            final File archivo;
-
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.FROYO)
-            {
-                archivo = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "/TufanoMovilFiles/" + params[0] + Constantes.EXTENSION_IMG);
-            }
-            else
-            {
-                archivo = new File(Environment.getExternalStorageDirectory() + "/dcim/" + "TufanoMovilFiles/" + params[0] + Constantes.EXTENSION_IMG);
-            }
-
-            try
-            {
-                if (archivo.exists())
-                {
-                    Log.d(TAG, "Compartiendo imagen " + archivo.getAbsolutePath());
-                    ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-
-                    Bitmap bitmapImage = Funciones.decodeSampledBitmapFromResource(archivo, 2160, 1620);
-                    bitmapImage.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
-
-                    String path = MediaStore.Images.Media.insertImage(EditarProducto.this.contexto.getContentResolver(),
-                            bitmapImage, "Descripcion", null);
-
-                    final Uri imageUri2 = Uri.parse(path);
-
-                    final Thread hilo = new Thread()
-                    {
-                        @Override
-                        public void run()
-                        {
-                            synchronized (this)
-                            {
-                                runOnUiThread(new Runnable()
-                                {
-                                    @Override
-                                    public void run()
-                                    {
-                                        final String[] opciones = getResources().getStringArray(R.array.extrasViaWhatsApp);
-                                        final ArrayList<String> mSelectedItems = new ArrayList<>();  // Where we track the selected items
-                                        final ArrayList<String> datos = new ArrayList<>();  // Where we track the selected items
-
-                                        AlertDialog.Builder builder = new AlertDialog.Builder(EditarProducto.this);
-                                        builder.setTitle(R.string.dialog_compartir_whatsapp_extra)
-                                                // Specify the list array, the items to be selected by default (null for none),
-                                                // and the listener through which to receive callbacks when items are selected
-                                                .setMultiChoiceItems(R.array.extrasViaWhatsApp, null, new DialogInterface.OnMultiChoiceClickListener()
-                                                {
-                                                    @Override
-                                                    public void onClick(DialogInterface dialog, int which, boolean isChecked)
-                                                    {
-                                                        if (isChecked)
-                                                        {
-                                                            // If the user checked the item, add it to the selected items
-                                                            mSelectedItems.add(opciones[which]);
-
-                                                            switch (opciones[which])
-                                                            {
-                                                                case "Modelo":
-                                                                {
-                                                                    datos.add(params[0]);
-                                                                    Log.d(TAG, "Modelo agregado " + params[0]);
-                                                                }
-                                                                break;
-                                                                case "Color":
-                                                                {
-                                                                    datos.add(params[1]);
-                                                                    Log.d(TAG, "Color agregado " + params[1]);
-                                                                }
-                                                                break;
-                                                                case "Numeracion":
-                                                                {
-                                                                    datos.add(params[2]);
-                                                                    Log.d(TAG, "Numeracion agregada " + params[2]);
-                                                                }
-                                                                break;
-                                                            }
-
-                                                            Log.d(TAG, "Seleccionaste " + opciones[which]);
-                                                        }
-                                                        else if (mSelectedItems.contains(opciones[which]))
-                                                        {
-                                                            int pos = mSelectedItems.indexOf(opciones[which]);
-                                                            Log.d(TAG, "Eliminaste " + opciones[which] + ": " + datos.get(pos));
-                                                            mSelectedItems.remove(opciones[which]);
-                                                            datos.remove(pos);
-                                                        }
-                                                    }
-                                                })
-                                                .setPositiveButton("Compartir", new DialogInterface.OnClickListener()
-                                                {
-                                                    @Override
-                                                    public void onClick(DialogInterface dialog, int id)
-                                                    {
-                                                        if(!mSelectedItems.isEmpty())
-                                                        {
-                                                            String txt_whatsapp = generarTextoWhatsAppCompartir(datos, mSelectedItems);
-                                                            sendIntent.putExtra(Intent.EXTRA_TEXT, txt_whatsapp);
-                                                            sendIntent.setType("text/plain");
-                                                        }
-
-                                                        Log.d(TAG, "Enviando al whatsApp");
-                                                        dialog.cancel();
-
-                                                        sendIntent.putExtra(Intent.EXTRA_STREAM, imageUri2);
-                                                        sendIntent.setType("image/*");
-                                                        sendIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-
-                                                        Log.d(TAG, "Starting activity ");
-                                                        startActivity(sendIntent);
-                                                    }
-                                                })
-                                                .setNegativeButton("Cancelar", new DialogInterface.OnClickListener()
-                                                {
-                                                    @Override
-                                                    public void onClick(DialogInterface dialog, int id)
-                                                    {
-                                                        Log.d(TAG, "Operacion cancelada");
-                                                        dialog.cancel();
-                                                    }
-                                                });
-
-                                        builder.show();
-                                    }
-                                });
-                            }
-                        }
-                    };
-                    hilo.start();
-                }
-                else
-                {
-                    Toast.makeText(EditarProducto.this.contexto, "Ha ocurrido un error compartiendo la imagen.", Toast.LENGTH_LONG).show();
-                }
-            }
-            catch (android.content.ActivityNotFoundException ex)
-            {
-                Toast.makeText(EditarProducto.this.contexto, "Whatsapp no esta instalado.", Toast.LENGTH_LONG).show();
-            }
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(String result)
-        {
-            pDialog.dismiss();
-        }
-    }
-
-    /**
      * Genera el texto que se compartira con la imagen dentro del whatsapp.
      * @param datos Lista con los datos a compartir.
      * @param itemsSeleccionados Lista con los elementos que se van a compartir.
@@ -908,7 +671,7 @@ public class EditarProducto extends AppCompatActivity
 
                 if( cursor.getPosition() == MAX_TABLE_RECORDS)
                 {
-                    // Ya no cargo n la U.I el resto de la data, la almaceno para mostrarla luego.
+                    // Ya no cargo en la U.I el resto de la data, la almaceno para mostrarla luego.
                 }
 
                 filas.add(fila);
@@ -1358,6 +1121,37 @@ public class EditarProducto extends AppCompatActivity
         return nombre_tipo;
     }
 
+    @Override
+    public void onBackPressed() {
+        finish();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+        if (id == R.id.action_settings) {
+            //mostrarConfiguracion();
+            return true;
+        }
+        else if (id == R.id.profile_settings) {
+            //mostrarPerfil();
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
     /*
     class async_eliminarProductoBD extends AsyncTask< String, String, String >
     {
@@ -1467,37 +1261,207 @@ public class EditarProducto extends AppCompatActivity
     }
     */
 
-    @Override
-    public void onBackPressed()
+    /**
+     * Clase para la carga en 2do plano de los datos de la tabla (Solo 1era Ejecucion)
+     */
+    private class cargarDatos extends AsyncTask<String, String, String>
     {
-        finish();
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        if (id == R.id.action_settings)
-        {
-            //mostrarConfiguracion();
-            return true;
-        }
-        else if (id == R.id.profile_settings)
-        {
-            //mostrarPerfil();
-            return true;
+        @Override
+        protected void onPreExecute() {
+            pDialog = new ProgressDialog(EditarProducto.this);
+            pDialog.setTitle("Por favor espere...");
+            pDialog.setMessage("Cargando informacion...");
+            pDialog.setIndeterminate(true);
+            pDialog.setCancelable(false);
+            pDialog.show();
         }
 
-        return super.onOptionsItemSelected(item);
+        @Override
+        protected String doInBackground(String... params) {
+            loadSpinnerData();
+            inicializarTabla(null, null, null, null, false);
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+            pDialog.dismiss();
+        }
+    }
+
+    /**
+     * Clase para la carga en 2do plano de los datos de la tabla (Con Filtros)
+     */
+    private class reCargarDatos extends AsyncTask<String, String, String> {
+        @Override
+        protected void onPreExecute() {
+            pDialog = new ProgressDialog(EditarProducto.this);
+            pDialog.setTitle("Por favor espere...");
+            pDialog.setMessage("Cargando informacion...");
+            pDialog.setIndeterminate(true);
+            pDialog.setCancelable(false);
+            pDialog.show();
+        }
+
+        @Override
+        protected String doInBackground(String... params)
+        {
+            inicializarTabla(params[0], params[1], params[2], params[3], true);
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(String result)
+        {
+            pDialog.dismiss();
+        }
+
+    }
+
+    /**
+     * Clase para compartir Via WhatsApp en 2do plano
+     */
+    private class compartirViaWhatsApp extends AsyncTask<String, String, String> {
+        @Override
+        protected void onPreExecute() {
+            pDialog = new ProgressDialog(EditarProducto.this);
+            pDialog.setTitle("Por favor espere...");
+            pDialog.setMessage("Cargando imagen para compartirla...");
+            pDialog.setIndeterminate(true);
+            pDialog.setCancelable(false);
+            pDialog.show();
+        }
+
+        @Override
+        protected String doInBackground(final String... params) {
+            final Intent sendIntent = new Intent();
+            sendIntent.setAction(Intent.ACTION_SEND);
+            //share directly to WhatsApp and bypass the system picker
+            sendIntent.setPackage("com.whatsapp");
+
+            // modelo_nombre, color_producto, numeracion_producto
+
+            final File archivo;
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.FROYO) {
+                archivo = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "/TufanoMovilFiles/" + params[0] + Constantes.EXTENSION_IMG);
+            }
+            else {
+                archivo = new File(Environment.getExternalStorageDirectory() + "/dcim/" + "TufanoMovilFiles/" + params[0] + Constantes.EXTENSION_IMG);
+            }
+
+            try {
+                if (archivo.exists()) {
+                    Log.d(TAG, "Compartiendo imagen " + archivo.getAbsolutePath());
+                    ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+
+                    Bitmap bitmapImage = Funciones.decodeSampledBitmapFromResource(archivo, 2160, 1620);
+                    bitmapImage.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
+
+                    String path = MediaStore.Images.Media.insertImage(EditarProducto.this.contexto.getContentResolver(),
+                            bitmapImage, "Descripcion", null);
+
+                    final Uri imageUri2 = Uri.parse(path);
+
+                    final Thread hilo = new Thread() {
+                        @Override
+                        public void run() {
+                            synchronized (this) {
+                                runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        final String[]          opciones       = getResources().getStringArray(R.array.extrasViaWhatsApp);
+                                        final ArrayList<String> mSelectedItems = new ArrayList<>();  // Where we track the selected items
+                                        final ArrayList<String> datos          = new ArrayList<>();  // Where we track the selected items
+
+                                        AlertDialog.Builder builder = new AlertDialog.Builder(EditarProducto.this);
+                                        builder.setTitle(R.string.dialog_compartir_whatsapp_extra)
+                                                // Specify the list array, the items to be selected by default (null for none),
+                                                // and the listener through which to receive callbacks when items are selected
+                                                .setMultiChoiceItems(R.array.extrasViaWhatsApp, null, new DialogInterface.OnMultiChoiceClickListener() {
+                                                    @Override
+                                                    public void onClick(DialogInterface dialog, int which, boolean isChecked) {
+                                                        if (isChecked) {
+                                                            // If the user checked the item, add it to the selected items
+                                                            mSelectedItems.add(opciones[which]);
+
+                                                            switch (opciones[which]) {
+                                                                case "Modelo": {
+                                                                    datos.add(params[0]);
+                                                                    Log.d(TAG, "Modelo agregado " + params[0]);
+                                                                }
+                                                                break;
+                                                                case "Color": {
+                                                                    datos.add(params[1]);
+                                                                    Log.d(TAG, "Color agregado " + params[1]);
+                                                                }
+                                                                break;
+                                                                case "Numeracion": {
+                                                                    datos.add(params[2]);
+                                                                    Log.d(TAG, "Numeracion agregada " + params[2]);
+                                                                }
+                                                                break;
+                                                            }
+
+                                                            Log.d(TAG, "Seleccionaste " + opciones[which]);
+                                                        }
+                                                        else if (mSelectedItems.contains(opciones[which])) {
+                                                            int pos = mSelectedItems.indexOf(opciones[which]);
+                                                            Log.d(TAG, "Eliminaste " + opciones[which] + ": " + datos.get(pos));
+                                                            mSelectedItems.remove(opciones[which]);
+                                                            datos.remove(pos);
+                                                        }
+                                                    }
+                                                })
+                                                .setPositiveButton("Compartir", new DialogInterface.OnClickListener() {
+                                                    @Override
+                                                    public void onClick(DialogInterface dialog, int id) {
+                                                        if (!mSelectedItems.isEmpty()) {
+                                                            String txt_whatsapp = generarTextoWhatsAppCompartir(datos, mSelectedItems);
+                                                            sendIntent.putExtra(Intent.EXTRA_TEXT, txt_whatsapp);
+                                                            sendIntent.setType("text/plain");
+                                                        }
+
+                                                        Log.d(TAG, "Enviando al whatsApp");
+                                                        dialog.cancel();
+
+                                                        sendIntent.putExtra(Intent.EXTRA_STREAM, imageUri2);
+                                                        sendIntent.setType("image/*");
+                                                        sendIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+
+                                                        Log.d(TAG, "Starting activity ");
+                                                        startActivity(sendIntent);
+                                                    }
+                                                })
+                                                .setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
+                                                    @Override
+                                                    public void onClick(DialogInterface dialog, int id) {
+                                                        Log.d(TAG, "Operacion cancelada");
+                                                        dialog.cancel();
+                                                    }
+                                                });
+
+                                        builder.show();
+                                    }
+                                });
+                            }
+                        }
+                    };
+                    hilo.start();
+                }
+                else {
+                    Toast.makeText(EditarProducto.this.contexto, "Ha ocurrido un error compartiendo la imagen.", Toast.LENGTH_LONG).show();
+                }
+            }
+            catch (android.content.ActivityNotFoundException ex) {
+                Toast.makeText(EditarProducto.this.contexto, "Whatsapp no esta instalado.", Toast.LENGTH_LONG).show();
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+            pDialog.dismiss();
+        }
     }
 }
