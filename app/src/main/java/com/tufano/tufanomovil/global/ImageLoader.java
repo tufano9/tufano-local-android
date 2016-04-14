@@ -142,6 +142,11 @@ public class ImageLoader {
         return false;
     }
 
+    public void clearCache() {
+        memoryCache.clear();
+        fileCache.clear();
+    }
+
     //Task for the queue
     private class PhotoToLoad {
         public String    url;
@@ -166,7 +171,7 @@ public class ImageLoader {
                 if (imageViewReused(photoToLoad))
                     return;
 
-                Bitmap bmp = getBitmap(photoToLoad.url); // Error 1
+                Bitmap bmp = getBitmap(photoToLoad.url);
                 memoryCache.put(photoToLoad.url, bmp);
 
                 if (imageViewReused(photoToLoad))
@@ -200,10 +205,4 @@ public class ImageLoader {
                 photoToLoad.imageView.setImageResource(stub_id);
         }
     }
-
-    /*public void clearCache()
-    {
-        memoryCache.clear();
-        fileCache.clear();
-    }*/
 }

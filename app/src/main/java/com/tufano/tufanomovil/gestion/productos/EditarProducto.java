@@ -593,7 +593,7 @@ public class EditarProducto extends AppCompatActivity
         LinearLayout.LayoutParams parms = new LinearLayout.LayoutParams(edit_image_width, edit_image_height);
 
         // Llenando la tabla de forma iterativa
-        Cursor cursor = manager.cargarProductos_Filtrado_Ordenado(tipo_filtrado, talla_filtrado, color_filtrado, modelo_filtrado, columna_ordenada, orden);
+        Cursor cursor = manager.cargarProductos_Filtrado_Ordenado(tipo_filtrado, talla_filtrado, color_filtrado, modelo_filtrado, columna_ordenada, orden, 200, 0);
 
         if (cursor.getCount() > 0)
         {
@@ -1321,7 +1321,7 @@ public class EditarProducto extends AppCompatActivity
     /**
      * Clase para compartir Via WhatsApp en 2do plano
      */
-    private class compartirViaWhatsApp extends AsyncTask<String, String, String> {
+    public class compartirViaWhatsApp extends AsyncTask<String, String, String> {
         @Override
         protected void onPreExecute() {
             pDialog = new ProgressDialog(EditarProducto.this);

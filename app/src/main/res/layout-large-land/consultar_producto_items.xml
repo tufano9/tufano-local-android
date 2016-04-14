@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content">
+
+    <ImageView
+        android:id="@+id/imagen"
+        android:layout_width="130dp"
+        android:layout_height="100dp"
+        android:layout_gravity="start|center_vertical"
+        android:layout_margin="10dp"
+        android:background="@android:drawable/btn_star_big_on"
+        android:contentDescription="@string/imagesContentDescription"
+        android:scaleType="centerCrop"/>
+
+    <TextView
+        android:id="@+id/talla"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="start|center_vertical"
+        android:layout_margin="10dp"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:textSize="20sp"/>
+
+    <TextView
+        android:id="@+id/tipo"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="start|center_vertical"
+        android:layout_margin="10dp"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:textSize="20sp"/>
+
+    <TextView
+        android:id="@+id/modelo"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="start|center_vertical"
+        android:layout_margin="10dp"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:textSize="20sp"/>
+
+    <TextView
+        android:id="@+id/color"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="start|center_vertical"
+        android:layout_margin="10dp"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:textSize="20sp"/>
+
+    <TextView
+        android:id="@+id/precio"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="start|center_vertical"
+        android:layout_margin="10dp"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:textSize="20sp"/>
+
+    <TextView
+        android:id="@+id/numeracion"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="start|center_vertical"
+        android:layout_margin="10dp"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:textSize="20sp"/>
+
+    <ImageView
+        android:id="@+id/editar"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_gravity="start|center_vertical"
+        android:layout_margin="10dp"
+        android:background="@drawable/ic_edit"
+        android:contentDescription="@string/imagesContentDescription"
+        android:scaleType="centerCrop"/>
+
+    <ImageView
+        android:id="@+id/compartir"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_gravity="start|center_vertical"
+        android:layout_margin="10dp"
+        android:background="@drawable/icn_whatsapp"
+        android:contentDescription="@string/imagesContentDescription"
+        android:scaleType="centerCrop"/>
+</LinearLayout>

@@ -56,7 +56,8 @@ public class GestionProductos extends AppCompatActivity
             public void onClick(View v)
             {
                 // Al ser clickeado, se abre una nueva activity
-                Intent c = new Intent(GestionProductos.this, AgregarProducto.class);
+                //Intent c = new Intent(GestionProductos.this, AgregarProducto.class);
+                Intent c = new Intent(GestionProductos.this, ConsultarProductos.class);
                 c.putExtra("usuario", usuario);
                 startActivity(c);
             }
@@ -68,8 +69,7 @@ public class GestionProductos extends AppCompatActivity
             public void onClick(View v)
             {
                 // Al ser clickeado, se abre una nueva activity
-                //Intent c = new Intent(GestionProductos.this, EditarProducto.class);
-                Intent c = new Intent(GestionProductos.this, ConsultarProductos.class);
+                Intent c = new Intent(GestionProductos.this, EditarProducto.class);
                 c.putExtra("usuario", usuario);
                 startActivity(c);
             }

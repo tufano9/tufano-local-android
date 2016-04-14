@@ -52,16 +52,16 @@ import java.util.List;
  */
 public class AgregarProductoPedidoEditar extends AppCompatActivity
 {
+    private static final int                 IMG_WIDTH  = 130;
+    private static final int                 IMG_HEIGHT = 50;
+    private static final ImageView.ScaleType ESCALADO   = ImageView.ScaleType.CENTER_INSIDE;
+    private final        String              TAG        = "AgregarProductoPedido";
     private String usuario, id_pedido;
     private Context contexto;
-    private final String TAG = "AgregarProductoPedido";
     private ProgressDialog pDialog;
     private DBAdapter manager;
     private int productos_agregados;
     private ArrayList<ArrayList<String>> productos;
-    private static final int IMG_WIDTH = 130;
-    private static final int IMG_HEIGHT = 50;
-    private static final ImageView.ScaleType ESCALADO = ImageView.ScaleType.CENTER_INSIDE;
     private Spinner tipo, talla, color;
     private AutoCompleteTextView modelo_autoComplete;
     private LinearLayout layout;
@@ -569,62 +569,6 @@ public class AgregarProductoPedidoEditar extends AppCompatActivity
             Log.w(TAG, "No se pudo ocultar el Teclado");
     }
 
-    private class cargarDatos extends AsyncTask< String, String, String >
-    {
-        @Override
-        protected void onPreExecute()
-        {
-            pDialog = new ProgressDialog(AgregarProductoPedidoEditar.this);
-            pDialog.setTitle("Por favor espere...");
-            pDialog.setMessage("Cargando informacion...");
-            pDialog.setIndeterminate(true);
-            pDialog.setCancelable(false);
-            pDialog.show();
-        }
-
-        @Override
-        protected String doInBackground(String... params)
-        {
-            loadSpinnerData();
-            inicializarTabla(null, null, null, null, false);
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(String result)
-        {
-            pDialog.dismiss();
-        }
-    }
-
-    private class reCargarDatos extends AsyncTask< String, String, String >
-    {
-        @Override
-        protected void onPreExecute()
-        {
-            pDialog = new ProgressDialog(AgregarProductoPedidoEditar.this);
-            pDialog.setTitle("Por favor espere...");
-            pDialog.setMessage("Cargando informacion...");
-            pDialog.setIndeterminate(true);
-            pDialog.setCancelable(false);
-            pDialog.show();
-        }
-
-        @Override
-        protected String doInBackground(String... params)
-        {
-            inicializarTabla(params[0], params[1], params[2], params[3], true);
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(String result)
-        {
-            pDialog.dismiss();
-        }
-
-    }
-
     /**
      * Funcion principal para la inicializacion de la tabla
      * @param tipo_filtrado Tipo del producto
@@ -649,7 +593,7 @@ public class AgregarProductoPedidoEditar extends AppCompatActivity
 
         // Llenando la tabla de forma iterativa
         //Cursor cursor = manager.cargarProductos(tipo_filtrado, talla_filtrado, color_filtrado, modelo_filtrado);
-        Cursor cursor = manager.cargarProductos_Filtrado_Ordenado(tipo_filtrado, talla_filtrado, color_filtrado, modelo_filtrado, columna_ordenada, orden);
+        Cursor cursor = manager.cargarProductos_Filtrado_Ordenado(tipo_filtrado, talla_filtrado, color_filtrado, modelo_filtrado, columna_ordenada, orden, 200, 0);
 
         if (cursor.getCount() > 0)
         {
@@ -1074,6 +1018,54 @@ public class AgregarProductoPedidoEditar extends AppCompatActivity
         tipo.setVisibility(View.INVISIBLE);
         color.setVisibility(View.INVISIBLE);
         talla.setVisibility(View.INVISIBLE);
+    }
+
+    private class cargarDatos extends AsyncTask<String, String, String> {
+        @Override
+        protected void onPreExecute() {
+            pDialog = new ProgressDialog(AgregarProductoPedidoEditar.this);
+            pDialog.setTitle("Por favor espere...");
+            pDialog.setMessage("Cargando informacion...");
+            pDialog.setIndeterminate(true);
+            pDialog.setCancelable(false);
+            pDialog.show();
+        }
+
+        @Override
+        protected String doInBackground(String... params) {
+            loadSpinnerData();
+            inicializarTabla(null, null, null, null, false);
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+            pDialog.dismiss();
+        }
+    }
+
+    private class reCargarDatos extends AsyncTask<String, String, String> {
+        @Override
+        protected void onPreExecute() {
+            pDialog = new ProgressDialog(AgregarProductoPedidoEditar.this);
+            pDialog.setTitle("Por favor espere...");
+            pDialog.setMessage("Cargando informacion...");
+            pDialog.setIndeterminate(true);
+            pDialog.setCancelable(false);
+            pDialog.show();
+        }
+
+        @Override
+        protected String doInBackground(String... params) {
+            inicializarTabla(params[0], params[1], params[2], params[3], true);
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+            pDialog.dismiss();
+        }
+
     }
 
     class agregarProductoPedido extends AsyncTask< String, String, String >

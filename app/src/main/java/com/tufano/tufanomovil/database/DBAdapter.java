@@ -134,9 +134,9 @@ import static com.tufano.tufanomovil.database.tables.Usuarios.TABLA_USUARIO;
  */
 public class DBAdapter
 {
-    private final String TAG = "DBAdapter";
+    public static SQLiteDatabase db  = null;
+    private final String         TAG = "DBAdapter";
     private final DBHelper BD;
-    public static SQLiteDatabase db = null;
 
     /**
      * Constructor de la clase.
@@ -383,6 +383,95 @@ public class DBAdapter
         return db.query(TABLA_PRODUCTOS, columnas, null, null, null, null, null);
     }
 
+    public Cursor cargarProductos_Filtrado_Ordenado(String tipo, String talla, String color, String modelo, String columna_ordenada, String orden, int cant_mostrar, int empezando_desde) {
+        String where = null;
+        String orderby;
+        String join  = null;
+
+        final String columns = CN_ID_PRODUCTO + ", " + CN_TALLA_PRODUCTO + ", " + CN_TIPO_PRODUCTO + ", " + CN_MODELO_PRODUCTO + ", " + CN_COLOR_PRODUCTO + ", " + CN_PRECIO_PRODUCTO + ", " + CN_NUMERACION_PRODUCTO + ", " + CN_ESTATUS_PRODUCTO + ", " + CN_PARES_TALLAS_PRODUCTO;
+
+        /* Generando el ORDER BY */
+        switch (columna_ordenada) {
+            case "monto":
+                orderby = "CAST(" + columna_ordenada.toLowerCase() + " AS DECIMAL(15,2)) " + orden;
+                break;
+            case "color":
+                join = TABLA_COLORES + " b ON a." + CN_COLOR_PRODUCTO + " = b." + CN_ID_COLOR;
+                orderby = "b." + CN_NOMBRE_COLOR + " " + orden;
+                break;
+            default:
+                orderby = columna_ordenada.toLowerCase() + " " + orden;
+                break;
+        }
+
+        /* Generando el WHERE */
+
+        ArrayList<String> argumentos = new ArrayList<>();
+
+        if (tipo != null) {
+            where = CN_TIPO_PRODUCTO + "=?";
+            argumentos.add(tipo);
+        }
+        if (talla != null) {
+            argumentos.add(talla);
+
+            if (where != null)
+                where += " AND " + CN_TALLA_PRODUCTO + "=?";
+            else
+                where = CN_TALLA_PRODUCTO + "=?";
+        }
+        if (color != null) {
+            argumentos.add(color);
+
+            if (where != null)
+                where += " AND " + CN_COLOR_PRODUCTO + "=?";
+            else
+                where = CN_COLOR_PRODUCTO + "=?";
+        }
+        if (modelo != null) {
+            argumentos.add("%" + modelo + "%");
+
+            if (where != null)
+                where += " AND " + CN_MODELO_PRODUCTO + " LIKE ?";
+            else
+                where = CN_MODELO_PRODUCTO + " LIKE ?";
+        }
+
+        String[] args = argumentos.toArray(new String[argumentos.size()]);
+
+        if (join != null) {
+            if (where != null) {
+                String MY_QUERY = "SELECT " + columns + " FROM " + TABLA_PRODUCTOS + " a INNER JOIN " + join + " WHERE " + where + " ORDER BY " + orderby;
+                MY_QUERY += " LIMIT " + cant_mostrar + " OFFSET " + empezando_desde;
+                Log.i(TAG, "Query + join: " + MY_QUERY);
+                return db.rawQuery(MY_QUERY, args);
+            }
+            else {
+                String MY_QUERY = "SELECT " + columns + " FROM " + TABLA_PRODUCTOS + " a INNER JOIN " + join + " ORDER BY " + orderby;
+                MY_QUERY += " LIMIT " + cant_mostrar + " OFFSET " + empezando_desde;
+                Log.i(TAG, "Query + join: " + MY_QUERY);
+                return db.rawQuery(MY_QUERY, args);
+            }
+        }
+        else {
+            if (where != null) {
+                String MY_QUERY = "SELECT " + columns + " FROM " + TABLA_PRODUCTOS + " WHERE " + where + " ORDER BY " + orderby;
+                MY_QUERY += " LIMIT " + cant_mostrar + " OFFSET " + empezando_desde;
+                Log.i(TAG, "Query: " + MY_QUERY);
+                return db.rawQuery(MY_QUERY, args);
+            }
+            else {
+                String MY_QUERY = "SELECT " + columns + " FROM " + TABLA_PRODUCTOS + " ORDER BY " + orderby;
+                MY_QUERY += " LIMIT " + cant_mostrar + " OFFSET " + empezando_desde;
+                Log.i(TAG, "Query: " + MY_QUERY);
+                return db.rawQuery(MY_QUERY, args);
+            }
+        }
+
+        // CONCATENAR EL LIMIT ---> LIMIT 10 OFFSET 15 (Retorna 10 valores a partir del 16)
+        //return db.query(TABLA_PRODUCTOS, columnas, where, args, null, null, orderby);
+    }
+
     public Cursor cargarProductos_Filtrado_Ordenado(String tipo, String talla, String color, String modelo, String columna_ordenada, String orden)
     {
         String where = null;
@@ -475,6 +564,8 @@ public class DBAdapter
                 return db.rawQuery(MY_QUERY, args);
             }
         }
+
+        // CONCATENAR EL LIMIT ---> LIMIT 10 OFFSET 15 (Retorna 10 valores a partir del 16)
         //return db.query(TABLA_PRODUCTOS, columnas, where, args, null, null, orderby);
     }
 

@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/contenedor_base"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:context="com.tufano.tufanomovil.gestion.productos.ConsultarProductos"
+    tools:showIn="@layout/consultar_productos">
+
+    <LinearLayout
+        android:id="@+id/LinearLayout_MainActivity"
+        android:layout_width="0px"
+        android:layout_height="0px"
+        android:focusable="true"
+        android:focusableInTouchMode="true">
+
+        <requestFocus/>
+    </LinearLayout>
+
+    <AutoCompleteTextView
+        android:id="@+id/autoC_modelo"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginTop="10dp"
+        android:hint="@string/hint_autoCModelo"
+        android:singleLine="true"
+        />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginTop="10dp"
+        android:orientation="horizontal">
+
+        <Spinner
+            android:id="@+id/spTipo_editar_producto"
+            style="@android:style/Widget.Spinner"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/btn_size"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_weight="1"
+            />
+
+        <Spinner
+            android:id="@+id/spColor_editar_producto"
+            style="@android:style/Widget.Spinner"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/btn_size"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_weight="1"
+            />
+
+        <Spinner
+            android:id="@+id/spTalla_editar_producto"
+            style="@android:style/Widget.Spinner"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/btn_size"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_weight="1"
+            />
+    </LinearLayout>
+
+    <TableLayout
+        android:id="@+id/table_editar_productos"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:stretchColumns="*"
+        >
+
+        <TableRow
+            android:id="@+id/cabecera"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/table_header">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="@string/imagen"
+                android:textColor="@drawable/table_header_text"
+                android:textSize="18sp"/>
+
+            <TextView
+                android:id="@+id/cabecera_1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:drawableRight="@drawable/arrow_up"
+                android:gravity="center"
+                android:text="@string/talla"
+                android:textColor="@drawable/table_header_text"
+                android:textSize="18sp"/>
+
+            <TextView
+                android:id="@+id/cabecera_2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="@string/tipo"
+                android:textColor="@drawable/table_header_text"
+                android:textSize="18sp"/>
+
+            <TextView
+                android:id="@+id/cabecera_3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="@string/modelo"
+                android:textColor="@drawable/table_header_text"
+                android:textSize="18sp"/>
+
+            <TextView
+                android:id="@+id/cabecera_4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="@string/color"
+                android:textColor="@drawable/table_header_text"
+                android:textSize="18sp"/>
+
+            <TextView
+                android:id="@+id/cabecera_5"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="@string/precio"
+                android:textColor="@drawable/table_header_text"
+                android:textSize="18sp"/>
+
+            <TextView
+                android:id="@+id/cabecera_6"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="@string/numeracion"
+                android:textColor="@drawable/table_header_text"
+                android:textSize="18sp"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="@string/opciones"
+                android:textColor="@drawable/table_header_text"
+                android:textSize="18sp"/>
+        </TableRow>
+
+    </TableLayout>
+
+    <ListView
+        android:id="@+id/list"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
+    <ImageView
+        android:id="@+id/expanded_image"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:contentDescription="@string/description_zoom_touch_close"
+        android:visibility="invisible"/>
+
+</LinearLayout>
