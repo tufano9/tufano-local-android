@@ -112,6 +112,7 @@ public class Funciones
                 return i;
             }
         }
+        Log.i(TAG, "Caracter " + busqueda + " no encontrado en la cadena " + cadena + ".");
         return -1;
     }
 

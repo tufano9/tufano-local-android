@@ -28,16 +28,16 @@ import com.tufano.tufanomovil.global.Funciones;
  */
 public class AgregarTipo extends AppCompatActivity
 {
-    private Context contexto;
     private final String TAG = "AgregarTipo";
-    private DBAdapter manager;
+    private Context        contexto;
+    private DBAdapter      manager;
     private ProgressDialog pDialog;
-    private EditText tipo;
-    private boolean desdeProductos;
-    private String usuario;
-    private String idCreado;
-    private String idTallaCreado;
-    private String idColorCreado;
+    private EditText       tipo;
+    private boolean        desdeProductos;
+    private String         usuario;
+    private String         idCreado;
+    private String         idTallaCreado;
+    private String         idColorCreado;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -72,7 +72,7 @@ public class AgregarTipo extends AppCompatActivity
     private void createToolBar()
     {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        toolbar.setSubtitle(R.string.agregar_cliente_subtitulo);
+        toolbar.setSubtitle(R.string.agregar_tipo_subtitulo);
         setSupportActionBar(toolbar);
     }
 
@@ -233,6 +233,7 @@ public class AgregarTipo extends AppCompatActivity
 
                         // Redirige al menu de tipos
                         Intent c = new Intent(AgregarTipo.this, GestionTipos.class);
+                        c.putExtra("usuario", usuario);
                         startActivity(c);
                         GestionTipos.fa.finish();
                     }

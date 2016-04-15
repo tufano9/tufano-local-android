@@ -7,7 +7,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
-import android.graphics.Typeface;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
@@ -57,12 +56,12 @@ import java.util.List;
  */
 public class EditarProductoDetalles extends AppCompatActivity
 {
-    private String usuario;
-    private Context contexto;
     private final int PICK_IMAGE_REQUEST = 1;
     private final String TAG = "EditarProductoDetalles";
+    private String         usuario;
+    private Context        contexto;
     private ProgressDialog pDialog;
-    private DBAdapter manager;
+    private DBAdapter      manager;
     private Bitmap imagen_cargada = null;
     private String id_producto, talla_producto, tipo_producto, color_producto, modelo_producto;
     private String precio_producto, numeracion_producto, estatus_producto, paresxtalla;
@@ -463,6 +462,7 @@ public class EditarProductoDetalles extends AppCompatActivity
             componente.setBackgroundResource(android.R.drawable.edit_text);
             componente.setInputType(InputType.TYPE_CLASS_NUMBER);
             componente.setLayoutParams(params);
+            componente.setTextColor(Color.DKGRAY);
 
             if(i+1 <= diferencia)
                 componente.setNextFocusDownId(nextId);
@@ -470,8 +470,9 @@ public class EditarProductoDetalles extends AppCompatActivity
             titulo.setLayoutParams(params);
             titulo.setGravity(Gravity.CENTER);
             titulo.setTextSize(18f);
-            titulo.setTypeface(null, Typeface.BOLD);
+            //titulo.setTypeface(null, Typeface.BOLD);
             titulo.setText(currentValue);
+            titulo.setTextColor(Color.DKGRAY);
 
             final Thread hilo = new Thread() {
                 @Override
@@ -593,6 +594,130 @@ public class EditarProductoDetalles extends AppCompatActivity
                 return false;
         }
         return true;
+    }
+
+    /**
+     * Funcion utilizada para la recepcion de informacion al momento de cambiar la imagen.
+     * @param requestCode Codigo del request.
+     * @param resultCode Codigo resultante del request.
+     * @param data Data contenida.
+     */
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data)
+    {
+        super.onActivityResult(requestCode, resultCode, data);
+        Log.i(TAG, "Recibiendo imagen");
+
+        if (requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK && data != null && data.getData() != null)
+        {
+            Uri selectedImageUri = data.getData();
+
+            try
+            {
+                // Cargamos en memoria la imagen seleccionada por el usuario.
+                imagen_cargada = MediaStore.Images.Media.getBitmap(getContentResolver(), selectedImageUri);
+
+                // Buscamos la ruta de la imagen en cuestion.
+                //String selectedImagePath = getPath(selectedImageUri);
+
+                // Creamos una version minificada de la imagen.
+                //Bitmap preview = getPreview(selectedImagePath);
+
+                // Asignamos la imagen preview para que el usuario la visualice.
+                ImageView imageView = (ImageView) findViewById(R.id.seleccion_img_producto_editar);
+                imageView.setImageBitmap(imagen_cargada);
+
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN)
+                {
+                    imageView.setBackground(null);
+                }
+            }
+            catch (IOException e)
+            {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    @Override
+    public void onBackPressed()
+    {
+        finish();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu)
+    {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_agregar_productos, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item)
+    {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+        if (id == R.id.action_settings)
+        {
+            //mostrarConfiguracion();
+            return true;
+        }
+        else if (id == R.id.profile_settings)
+        {
+            //mostrarPerfil();
+            return true;
+        }
+        else if (id == R.id.tallas_settings)
+        {
+            mostrarGestionTallas();
+            return true;
+        }
+        else if (id == R.id.tipos_settings)
+        {
+            mostrarGestionTipos();
+            return true;
+        }
+        else if (id == R.id.colores_settings)
+        {
+            mostrarGestionColores();
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    /**
+     * Funcion encargada de mostrar el activity de gestion de tipos.
+     */
+    private void mostrarGestionTipos()
+    {
+        Intent c = new Intent(EditarProductoDetalles.this, GestionTipos.class);
+        c.putExtra("usuario", usuario);
+        startActivity(c);
+    }
+
+    /**
+     * Funcion encargada de mostrar el activity de gestion de tallas.
+     */
+    private void mostrarGestionTallas()
+    {
+        Intent c = new Intent(EditarProductoDetalles.this, GestionTallas.class);
+        c.putExtra("usuario", usuario);
+        startActivity(c);
+    }
+
+    /**
+     * Funcion encargada de mostrar el activity de gestion de colores.
+     */
+    private void mostrarGestionColores()
+    {
+        Intent c = new Intent(EditarProductoDetalles.this, GestionColores.class);
+        c.putExtra("usuario", usuario);
+        startActivity(c);
     }
 
     /**
@@ -847,127 +972,5 @@ public class EditarProductoDetalles extends AppCompatActivity
 
             return false;
         }
-    }
-
-    /**
-     * Funcion utilizada para la recepcion de informacion al momento de cambiar la imagen.
-     * @param requestCode Codigo del request.
-     * @param resultCode Codigo resultante del request.
-     * @param data Data contenida.
-     */
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data)
-    {
-        super.onActivityResult(requestCode, resultCode, data);
-        Log.i(TAG, "Recibiendo imagen");
-
-        if (requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK && data != null && data.getData() != null)
-        {
-            Uri selectedImageUri = data.getData();
-
-            try
-            {
-                // Cargamos en memoria la imagen seleccionada por el usuario.
-                imagen_cargada = MediaStore.Images.Media.getBitmap(getContentResolver(), selectedImageUri);
-
-                // Buscamos la ruta de la imagen en cuestion.
-                //String selectedImagePath = getPath(selectedImageUri);
-
-                // Creamos una version minificada de la imagen.
-                //Bitmap preview = getPreview(selectedImagePath);
-
-                // Asignamos la imagen preview para que el usuario la visualice.
-                ImageView imageView = (ImageView) findViewById(R.id.seleccion_img_producto_editar);
-                imageView.setImageBitmap(imagen_cargada);
-
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN)
-                {
-                    imageView.setBackground(null);
-                }
-            }
-            catch (IOException e)
-            {
-                e.printStackTrace();
-            }
-        }
-    }
-
-    @Override
-    public void onBackPressed()
-    {
-        finish();
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_agregar_productos, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        if (id == R.id.action_settings)
-        {
-            //mostrarConfiguracion();
-            return true;
-        }
-        else if (id == R.id.profile_settings)
-        {
-            //mostrarPerfil();
-            return true;
-        }
-        else if (id == R.id.tallas_settings)
-        {
-            mostrarGestionTallas();
-            return true;
-        }
-        else if (id == R.id.tipos_settings)
-        {
-            mostrarGestionTipos();
-            return true;
-        }
-        else if (id == R.id.colores_settings)
-        {
-            mostrarGestionColores();
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
-
-    /**
-     * Funcion encargada de mostrar el activity de gestion de tipos.
-     */
-    private void mostrarGestionTipos()
-    {
-        Intent c = new Intent(EditarProductoDetalles.this, GestionTipos.class);
-        c.putExtra("usuario",usuario);
-        startActivity(c);
-    }
-
-    /**
-     * Funcion encargada de mostrar el activity de gestion de tallas.
-     */
-    private void mostrarGestionTallas()
-    {
-        Intent c = new Intent(EditarProductoDetalles.this, GestionTallas.class);
-        c.putExtra("usuario",usuario);
-        startActivity(c);
-    }
-
-    /**
-     * Funcion encargada de mostrar el activity de gestion de colores.
-     */
-    private void mostrarGestionColores()
-    {
-        Intent c = new Intent(EditarProductoDetalles.this, GestionColores.class);
-        c.putExtra("usuario",usuario);
-        startActivity(c);
     }
 }

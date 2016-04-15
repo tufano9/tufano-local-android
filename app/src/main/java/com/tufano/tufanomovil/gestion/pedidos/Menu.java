@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
@@ -15,9 +16,9 @@ import com.tufano.tufanomovil.R;
  */
 public class Menu extends AppCompatActivity
 {
-    private String usuario;
     //private final String TAG = "Menu";
     public static Activity fa;
+    private       String   usuario;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -27,8 +28,20 @@ public class Menu extends AppCompatActivity
         fa = this;
 
         //Context contexto = getApplicationContext();
+
         getExtrasVar();
+        createToolBar();
         initImageViews();
+    }
+
+    /**
+     * Crea la barra superior con un subtitulo.
+     */
+    private void createToolBar()
+    {
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar.setSubtitle(R.string.gestion_pedido_subtitulo);
+        setSupportActionBar(toolbar);
     }
 
     /**

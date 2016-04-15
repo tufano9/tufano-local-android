@@ -1,4 +1,4 @@
-package com.tufano.tufanomovil.global;
+package com.tufano.tufanomovil.adapters;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -23,6 +23,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.tufano.tufanomovil.R;
+import com.tufano.tufanomovil.gestion.productos.EditarProductoDetalles;
+import com.tufano.tufanomovil.global.Constantes;
+import com.tufano.tufanomovil.global.Funciones;
+import com.tufano.tufanomovil.global.ImageLoader;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -37,26 +41,31 @@ public class productosAdapter extends BaseAdapter {
     private Context     contexto;
     private List<List<String>> productos = new ArrayList<>();
     private Activity ac;
+    private String   usuario;
 
-    public productosAdapter(Activity a, List<List<String>> datos)
+    public productosAdapter(Activity a, List<List<String>> datos, Context contexto, String usuario)
     {
-        for (int i = 0; i < datos.size(); i++) {
+        for (int i = 0; i < datos.size(); i++)
+        {
             List<String> p = new ArrayList<>();
-            p.add(datos.get(i).get(0)); // imagesData
+            p.add(datos.get(i).get(0)); // idProducto
             p.add(datos.get(i).get(1)); // tallasData
             p.add(datos.get(i).get(2)); // tiposData
             p.add(datos.get(i).get(3)); // modelosData
             p.add(datos.get(i).get(4)); // coloresData
             p.add(datos.get(i).get(5)); // precioData
             p.add(datos.get(i).get(6)); // numeracionData
-            p.add(datos.get(i).get(7)); // editarData
-            p.add(datos.get(i).get(8)); // compartirData
+            p.add(datos.get(i).get(7)); // id_color
+            p.add(datos.get(i).get(8)); // estatus_producto
+            p.add(datos.get(i).get(9)); // paresxtalla
 
             productos.add(p);
         }
 
         ac = a;
-        contexto = a.getApplicationContext();
+        //contexto = a.getApplicationContext();
+        this.contexto = contexto;
+        this.usuario = usuario;
         inflater = (LayoutInflater) a.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         imageLoader = new ImageLoader(contexto);
     }
@@ -95,40 +104,59 @@ public class productosAdapter extends BaseAdapter {
         ImageView editar     = (ImageView) vi.findViewById(R.id.editar); // Colocarle el listener
         ImageView compartir  = (ImageView) vi.findViewById(R.id.compartir); // Colocarle el listener
 
-        imageLoader.DisplayImage(productos.get(position).get(0), imagen);
-        talla.setText(productos.get(position).get(1));
-        tipo.setText(productos.get(position).get(2));
-        modelo.setText(productos.get(position).get(3));
-        color.setText(productos.get(position).get(4));
-        precio.setText(productos.get(position).get(5));
-        numeracion.setText(productos.get(position).get(6));
+        final String id_producto         = productos.get(position).get(0);
+        final String talla_producto      = productos.get(position).get(1);
+        final String tipo_producto       = productos.get(position).get(2);
+        final String modelo_producto     = productos.get(position).get(3);
+        final String color_producto      = productos.get(position).get(4);
+        final String precio_producto     = productos.get(position).get(5);
+        final String numeracion_producto = productos.get(position).get(6);
+        final String id_color            = productos.get(position).get(7);
+        final String estatus_producto    = productos.get(position).get(8);
+        final String paresxtalla         = productos.get(position).get(9);
+
+        imageLoader.DisplayImage(modelo_producto, imagen);
+        talla.setText(talla_producto);
+        tipo.setText(tipo_producto);
+        modelo.setText(modelo_producto);
+        color.setText(color_producto);
+        precio.setText(precio_producto);
+        numeracion.setText(numeracion_producto);
 
         imagen.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Toast.makeText(contexto, "Imagen presionada (Ampliar)", Toast.LENGTH_SHORT).show();
-                // productos.get(position).get(0)
             }
         });
 
         editar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(contexto, "Editar presionada", Toast.LENGTH_SHORT).show();
-                //productos.get(position).get(7)
+                Intent c = new Intent(ac, EditarProductoDetalles.class);
+                c.putExtra("usuario", usuario);
+                c.putExtra("id_producto", id_producto);
+                c.putExtra("talla_producto", talla_producto);
+                c.putExtra("tipo_producto", tipo_producto);
+                c.putExtra("modelo_producto", modelo_producto);
+                c.putExtra("color_producto", color_producto);
+                c.putExtra("id_color", id_color);
+                c.putExtra("precio_producto", precio_producto);
+                c.putExtra("numeracion_producto", numeracion_producto);
+                c.putExtra("estatus_producto", estatus_producto);
+                c.putExtra("paresxtalla", paresxtalla);
+                c.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                contexto.startActivity(c);
             }
         });
 
         compartir.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(contexto, "Compartir presionada", Toast.LENGTH_SHORT).show();
+                //Toast.makeText(contexto, "Compartir presionada", Toast.LENGTH_SHORT).show();
 
-                new compartirViaWhatsApp().execute(productos.get(position).get(0),
-                        productos.get(position).get(4), productos.get(position).get(6));
-
-                /*ConsultarProductos.shareButtonPressed(productos.get(position).get(0),
-                        productos.get(position).get(4), productos.get(position).get(6));*/
+                new compartirViaWhatsApp().execute(modelo_producto,
+                        color_producto, numeracion_producto);
             }
         });
         return vi;
@@ -246,6 +274,7 @@ public class productosAdapter extends BaseAdapter {
                                                         sendIntent.putExtra(Intent.EXTRA_STREAM, imageUri2);
                                                         sendIntent.setType("image/*");
                                                         sendIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                                                        sendIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
                                                         Log.d(TAG, "Starting activity ");
                                                         contexto.startActivity(sendIntent);
@@ -289,7 +318,8 @@ public class productosAdapter extends BaseAdapter {
          * @param itemsSeleccionados Lista con los elementos que se van a compartir.
          * @return Cadena de texto que se va a compartir via WhatsApp
          */
-        private String generarTextoWhatsAppCompartir(ArrayList<String> datos, ArrayList<String> itemsSeleccionados) {
+        private String generarTextoWhatsAppCompartir(ArrayList<String> datos, ArrayList<String> itemsSeleccionados)
+        {
             String texto = "";
 
             final String[] opciones   = contexto.getResources().getStringArray(R.array.extrasViaWhatsApp);
@@ -297,6 +327,7 @@ public class productosAdapter extends BaseAdapter {
 
             if (itemsSeleccionados.contains("Numeracion")) {
                 int pos   = itemsSeleccionados.indexOf("Numeracion");
+                Log.d(TAG, "POS: " + pos);
                 int start = Funciones.buscarCaracter(datos.get(pos), '(');
                 int end   = Funciones.buscarCaracter(datos.get(pos), ')');
                 datos.set(pos, datos.get(pos).substring(start + 1, end));

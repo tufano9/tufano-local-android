@@ -9,13 +9,11 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.Color;
-import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
-import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.InputType;
@@ -61,10 +59,11 @@ import java.util.List;
  */
 public class AgregarProducto extends AppCompatActivity
 {
-    private String usuario;
-    private Context contexto;
+    public static Activity fa;
     private final String TAG = "AgregarProducto";
     private final int PICK_IMAGE_REQUEST = 1;
+    private String  usuario;
+    private Context contexto;
     private Bitmap imagen_cargada = null;
     private ProgressDialog pDialog;
     private DBAdapter manager;
@@ -74,8 +73,6 @@ public class AgregarProducto extends AppCompatActivity
     private ArrayList<Integer> ids_tabla;
     private Button btn_agregar_producto, btn_agregar_tipo, btn_agregar_talla, btn_agregar_color,
     btn_editar_tipo, btn_editar_talla, btn_editar_color;
-    public static Activity fa;
-
     private String current_talla, current_tipo, current_color;
     private String idTipoSeleccionado;
     private String idTallaSeleccionada;
@@ -534,13 +531,15 @@ public class AgregarProducto extends AppCompatActivity
             componente.setBackgroundResource(android.R.drawable.edit_text);
             componente.setInputType(InputType.TYPE_CLASS_NUMBER);
             componente.setLayoutParams(params);
+            componente.setTextColor(Color.DKGRAY);
             if(i+1 <= diferencia)
                 componente.setNextFocusDownId(nextId);
             titulo.setLayoutParams(params);
             titulo.setGravity(Gravity.CENTER);
             titulo.setTextSize(18f);
-            titulo.setTypeface(null, Typeface.BOLD);
+            //titulo.setTypeface(null, Typeface.BOLD);
             titulo.setText(currentValue);
+            titulo.setTextColor(Color.DKGRAY);
 
             final Thread hilo = new Thread() {
                 @Override
@@ -754,104 +753,24 @@ public class AgregarProducto extends AppCompatActivity
         {
             Uri selectedImageUri = data.getData();
 
-            try
+            // Buscamos la ruta de la imagen en cuestion.
+            String selectedImagePath = selectedImageUri.getPath();
+
+            // Cargamos en memoria la imagen seleccionada por el usuario.
+            //imagen_cargada = MediaStore.Images.Media.getBitmap(getContentResolver(), selectedImageUri).compress(Bitmap.CompressFormat.JPEG, 80, imagen_cargada);
+
+            File file = new File(selectedImagePath);
+
+            // Creamos una version minificada de la imagen.
+            imagen_cargada = Funciones.decodeSampledBitmapFromResource(file, 432, 324);
+
+            // Asignamos la imagen preview para que el usuario la visualice.
+            ImageView imageView = (ImageView) findViewById(R.id.seleccion_img_producto);
+            imageView.setImageBitmap(imagen_cargada);
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN)
             {
-                // Cargamos en memoria la imagen seleccionada por el usuario.
-                imagen_cargada = MediaStore.Images.Media.getBitmap(getContentResolver(), selectedImageUri);
-
-                // Buscamos la ruta de la imagen en cuestion.
-                //String selectedImagePath = getPath(selectedImageUri);
-
-                // Creamos una version minificada de la imagen.
-                //Bitmap preview = getPreview(selectedImagePath);
-
-                // Asignamos la imagen preview para que el usuario la visualice.
-                ImageView imageView = (ImageView) findViewById(R.id.seleccion_img_producto);
-                imageView.setImageBitmap(imagen_cargada);
-
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN)
-                {
-                    imageView.setBackground(null);
-                }
-            }
-            catch (IOException e)
-            {
-                e.printStackTrace();
-            }
-        }
-    }
-
-    /**
-     * Clase para agregar un producto a la base de datos en segundo plano.
-     */
-    class async_crearProductoBD extends AsyncTask< String, String, String >
-    {
-        @Override
-        protected void onPreExecute()
-        {
-            pDialog = new ProgressDialog(AgregarProducto.this);
-            pDialog.setTitle("Por favor espere...");
-            pDialog.setMessage("Agregando el producto...");
-            pDialog.setIndeterminate(true);
-            pDialog.setCancelable(false);
-            pDialog.show();
-        }
-
-        @Override
-        protected String doInBackground(String... params)
-        {
-            /*
-            talla=params[0];
-            tipo=params[1];
-            precio=params[2];
-            color=params[3];
-            modelo=params[4];
-            numeracion=params[5];
-            */
-
-            try
-            {
-                //enviamos y recibimos y analizamos los datos en segundo plano.
-                if (crearProducto(params))
-                {
-                    return "ok"; //login valido
-                }
-                else
-                {
-                    Log.d(TAG, "err");
-                    return "err"; //login invalido
-                }
-            }
-
-            catch (RuntimeException e)
-            {
-                Log.d(TAG, "Error: " + e);
-                return "err2";
-            }
-        }
-
-        @Override
-        protected void onPostExecute(String result)
-        {
-            pDialog.dismiss();
-
-            if (result.equals("ok"))
-            {
-                // Muestra al usuario un mensaje de operacion exitosa
-                Toast.makeText(contexto, "Producto agregado exitosamente!!", Toast.LENGTH_LONG).show();
-
-                // Redirige a la pantalla de Home
-                Intent c = new Intent(AgregarProducto.this, GestionProductos.class);
-                c.putExtra("usuario", usuario);
-                startActivity(c);
-                GestionProductos.fa.finish();
-
-                // Prevent the user to go back to this activity
-                finish();
-            }
-            else
-            {
-                Toast.makeText(contexto, "Hubo un error agregando el producto..", Toast.LENGTH_LONG).show();
+                imageView.setBackground(null);
             }
         }
     }
@@ -1090,5 +1009,80 @@ public class AgregarProducto extends AppCompatActivity
         Intent c = new Intent(AgregarProducto.this, GestionColores.class);
         c.putExtra("usuario",usuario);
         startActivity(c);
+    }
+
+    /**
+     * Clase para agregar un producto a la base de datos en segundo plano.
+     */
+    class async_crearProductoBD extends AsyncTask<String, String, String>
+    {
+        @Override
+        protected void onPreExecute()
+        {
+            pDialog = new ProgressDialog(AgregarProducto.this);
+            pDialog.setTitle("Por favor espere...");
+            pDialog.setMessage("Agregando el producto...");
+            pDialog.setIndeterminate(true);
+            pDialog.setCancelable(false);
+            pDialog.show();
+        }
+
+        @Override
+        protected String doInBackground(String... params)
+        {
+            /*
+            talla=params[0];
+            tipo=params[1];
+            precio=params[2];
+            color=params[3];
+            modelo=params[4];
+            numeracion=params[5];
+            */
+
+            try
+            {
+                //enviamos y recibimos y analizamos los datos en segundo plano.
+                if (crearProducto(params))
+                {
+                    return "ok"; //login valido
+                }
+                else
+                {
+                    Log.d(TAG, "err");
+                    return "err"; //login invalido
+                }
+            }
+
+            catch (RuntimeException e)
+            {
+                Log.d(TAG, "Error: " + e);
+                return "err2";
+            }
+        }
+
+        @Override
+        protected void onPostExecute(String result)
+        {
+            pDialog.dismiss();
+
+            if (result.equals("ok"))
+            {
+                // Muestra al usuario un mensaje de operacion exitosa
+                Toast.makeText(contexto, "Producto agregado exitosamente!!", Toast.LENGTH_LONG).show();
+
+                // Redirige a la pantalla de Home
+                Intent c = new Intent(AgregarProducto.this, ConsultarProductos.class);
+                c.putExtra("usuario", usuario);
+                startActivity(c);
+                //GestionProductos.fa.finish();
+
+                // Prevent the user to go back to this activity
+                finish();
+            }
+            else
+            {
+                Toast.makeText(contexto, "Hubo un error agregando el producto..", Toast.LENGTH_LONG).show();
+            }
+        }
     }
 }

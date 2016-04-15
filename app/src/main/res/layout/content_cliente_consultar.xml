@@ -12,8 +12,8 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context="com.tufano.tufanomovil.gestion.productos.ConsultarProductos"
-    tools:showIn="@layout/activity_producto_consultar">
+    tools:context="com.tufano.tufanomovil.gestion.clientes.ConsultarCliente"
+    tools:showIn="@layout/activity_cliente_consultar">
 
     <LinearLayout
         android:id="@+id/LinearLayout_MainActivity"
@@ -26,53 +26,33 @@
     </LinearLayout>
 
     <AutoCompleteTextView
-        android:id="@+id/autoC_modelo"
+        android:id="@+id/autoC_razonSocial"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="60dp"
         android:layout_marginRight="60dp"
-        android:layout_marginTop="10dp"
-        android:hint="@string/hint_autoCModelo"
+        android:layout_marginTop="30dp"
+        android:hint="@string/hint_autoCRazonSocial"
         android:singleLine="true"
         />
 
     <LinearLayout
+        android:id="@+id/contenedor_spinners"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="30dp"
         android:layout_marginRight="30dp"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="30dp"
         android:orientation="horizontal">
 
         <Spinner
-            android:id="@+id/spTipo_editar_producto"
+            android:id="@+id/spEstado_editar_cliente"
             style="@android:style/Widget.Spinner"
-            android:layout_width="wrap_content"
-            android:layout_height="@dimen/btn_size"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
             android:layout_marginRight="10dp"
-            android:layout_weight="1"
-            />
-
-        <Spinner
-            android:id="@+id/spColor_editar_producto"
-            style="@android:style/Widget.Spinner"
-            android:layout_width="wrap_content"
-            android:layout_height="@dimen/btn_size"
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="10dp"
-            android:layout_weight="1"
-            />
-
-        <Spinner
-            android:id="@+id/spTalla_editar_producto"
-            style="@android:style/Widget.Spinner"
-            android:layout_width="wrap_content"
-            android:layout_height="@dimen/btn_size"
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="10dp"
-            android:layout_weight="1"
-            />
+            android:layout_weight="1"/>
     </LinearLayout>
 
     <LinearLayout
@@ -85,22 +65,13 @@
         android:orientation="horizontal">
 
         <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:text="@string/imagen"
-            android:textColor="@drawable/table_header_text"
-            android:textSize="18sp"/>
-
-        <TextView
             android:id="@+id/cabecera_1"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:drawableRight="@drawable/arrow_up"
             android:gravity="center"
-            android:text="@string/talla"
+            android:text="@string/cabecera_tabla_editar_cliente_0"
             android:textColor="@drawable/table_header_text"
             android:textSize="18sp"/>
 
@@ -110,7 +81,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:gravity="center"
-            android:text="@string/tipo"
+            android:text="@string/cabecera_tabla_editar_cliente_1"
             android:textColor="@drawable/table_header_text"
             android:textSize="18sp"/>
 
@@ -120,7 +91,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:gravity="center"
-            android:text="@string/modelo"
+            android:text="@string/cabecera_tabla_editar_cliente_2"
             android:textColor="@drawable/table_header_text"
             android:textSize="18sp"/>
 
@@ -130,7 +101,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:gravity="center"
-            android:text="@string/color"
+            android:text="@string/cabecera_tabla_editar_cliente_3"
             android:textColor="@drawable/table_header_text"
             android:textSize="18sp"/>
 
@@ -140,17 +111,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:gravity="center"
-            android:text="@string/precio"
-            android:textColor="@drawable/table_header_text"
-            android:textSize="18sp"/>
-
-        <TextView
-            android:id="@+id/cabecera_6"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:text="@string/numeracion"
+            android:text="@string/cabecera_tabla_editar_cliente_4"
             android:textColor="@drawable/table_header_text"
             android:textSize="18sp"/>
 
@@ -159,7 +120,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:gravity="center"
-            android:text="@string/opciones"
+            android:text="@string/cabecera_tabla_editar_cliente_5"
             android:textColor="@drawable/table_header_text"
             android:textSize="18sp"/>
 

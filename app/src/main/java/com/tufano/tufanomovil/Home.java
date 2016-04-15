@@ -11,23 +11,23 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.LinearLayout;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.tufano.tufanomovil.gestion.clientes.GestionClientes;
 import com.tufano.tufanomovil.gestion.pedidos.Menu;
 import com.tufano.tufanomovil.gestion.perfil.EditarPerfil;
-import com.tufano.tufanomovil.gestion.productos.GestionProductos;
+import com.tufano.tufanomovil.gestion.productos.ConsultarProductos;
 
 /**
  * Creado por Gerson el 11/01/2016.
  */
 public class Home extends AppCompatActivity
 {
-    private String usuario;
-    private Context contexto;
     public static Activity fa;
     private final String TAG = "HomeActivity";
+    private String  usuario;
+    private Context contexto;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -41,15 +41,15 @@ public class Home extends AppCompatActivity
 
         createToolBar();
         getExtrasVar();
-        initLinearLayouts();
+        initImageView();
     }
 
     /**
      * Inicializa los Linear Layout que contienen los menus para acceder a la aplicacion.
      */
-    private void initLinearLayouts()
+    private void initImageView()
     {
-        LinearLayout consulta = (LinearLayout) findViewById(R.id.layout_consulta);
+        ImageView consulta = (ImageView) findViewById(R.id.opc1);
         consulta.setOnClickListener(new View.OnClickListener()
         {
             @Override
@@ -59,7 +59,7 @@ public class Home extends AppCompatActivity
             }
         });
 
-        LinearLayout productos = (LinearLayout) findViewById(R.id.layout_productos);
+        ImageView productos = (ImageView) findViewById(R.id.opc2);
         productos.setOnClickListener(new View.OnClickListener()
         {
             @Override
@@ -69,7 +69,7 @@ public class Home extends AppCompatActivity
             }
         });
 
-        LinearLayout clientes = (LinearLayout) findViewById(R.id.layout_clientes);
+        ImageView clientes = (ImageView) findViewById(R.id.opc3);
         clientes.setOnClickListener(new View.OnClickListener()
         {
             @Override
@@ -79,7 +79,7 @@ public class Home extends AppCompatActivity
             }
         });
 
-        LinearLayout pedidos = (LinearLayout) findViewById(R.id.layout_pedidos);
+        ImageView pedidos = (ImageView) findViewById(R.id.opc4);
         pedidos.setOnClickListener(new View.OnClickListener()
         {
             @Override
@@ -89,7 +89,7 @@ public class Home extends AppCompatActivity
             }
         });
 
-        LinearLayout facturas = (LinearLayout) findViewById(R.id.layout_facturas);
+        ImageView facturas = (ImageView) findViewById(R.id.opc5);
         facturas.setOnClickListener(new View.OnClickListener()
         {
             @Override
@@ -99,7 +99,7 @@ public class Home extends AppCompatActivity
             }
         });
 
-        LinearLayout Cobranzas = (LinearLayout) findViewById(R.id.layout_cobranzas);
+        ImageView Cobranzas = (ImageView) findViewById(R.id.opc6);
         Cobranzas.setOnClickListener(new View.OnClickListener()
         {
             @Override
@@ -146,7 +146,7 @@ public class Home extends AppCompatActivity
     private void abrirGestionProductos()
     {
         Log.w(TAG, "Has presionado sobre Gestion de Productos");
-        Intent c = new Intent(Home.this, GestionProductos.class);
+        Intent c = new Intent(Home.this, ConsultarProductos.class);
         c.putExtra("usuario", usuario);
         startActivity(c);
     }

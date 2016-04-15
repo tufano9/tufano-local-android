@@ -1002,9 +1002,17 @@ public class DBAdapter
 
     public Cursor cargarClientesFiltrado(String estado, String razon_social, String columna_ordenada, String orden)
     {
-        String[] columnas = new String[]{ CN_ID_CLIENTE, CN_RAZON_SOCIAL_CLIENTE, CN_RIF_CLIENTE,
-                CN_ESTADO_CLIENTE, CN_TELEFONO_CLIENTE, CN_EMAIL_CLIENTE, CN_DIRECCION_CLIENTE,
-                CN_ESTATUS_CLIENTE };
+        String[] columnas = new String[]
+                {
+                        CN_ID_CLIENTE,
+                        CN_RAZON_SOCIAL_CLIENTE,
+                        CN_RIF_CLIENTE,
+                        CN_ESTADO_CLIENTE,
+                        CN_TELEFONO_CLIENTE,
+                        CN_EMAIL_CLIENTE,
+                        CN_DIRECCION_CLIENTE,
+                        CN_ESTATUS_CLIENTE
+                };
 
         String selection = null;
         ArrayList<String> argumentos = new ArrayList<>();
@@ -1028,6 +1036,45 @@ public class DBAdapter
         String[] args = argumentos.toArray(new String[argumentos.size()]);
 
         return db.query(TABLA_CLIENTES, columnas, selection, args, null, null, orderby);
+    }
+
+    public Cursor cargarClientesFiltrado(String estado, String razon_social, String columna_ordenada, String orden, int cant_mostrar, int empezando_desde)
+    {
+        String[] columnas = new String[]
+                {
+                        CN_ID_CLIENTE,
+                        CN_RAZON_SOCIAL_CLIENTE,
+                        CN_RIF_CLIENTE,
+                        CN_ESTADO_CLIENTE,
+                        CN_TELEFONO_CLIENTE,
+                        CN_EMAIL_CLIENTE,
+                        CN_DIRECCION_CLIENTE,
+                        CN_ESTATUS_CLIENTE
+                };
+
+        String            selection  = null;
+        ArrayList<String> argumentos = new ArrayList<>();
+        String            orderby    = columna_ordenada.toLowerCase() + " " + orden;
+        String            limit      = "LIMIT " + cant_mostrar + " OFFSET " + empezando_desde;
+
+        if (estado != null)
+        {
+            selection = CN_ESTADO_CLIENTE + " LIKE ?";
+            argumentos.add("%" + estado + "%");
+        }
+        if (razon_social != null)
+        {
+            argumentos.add("%" + razon_social + "%");
+
+            if (selection != null)
+                selection += " AND " + CN_RAZON_SOCIAL_CLIENTE + " LIKE ?";
+            else
+                selection = CN_RAZON_SOCIAL_CLIENTE + " LIKE ?";
+        }
+
+        String[] args = argumentos.toArray(new String[argumentos.size()]);
+
+        return db.query(TABLA_CLIENTES, columnas, selection, args, null, null, orderby, limit);
     }
 
     public Cursor cargarClientesNombre(String rs, String rif, String id_cliente)

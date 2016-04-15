@@ -42,12 +42,12 @@ import java.util.Locale;
  */
 public class Consultar extends AppCompatActivity
 {
+    public static Activity fa;
+    private final String TAG = "Consultar";
     private String usuario;
     private Context contexto;
-    private final String TAG = "Consultar";
     private ProgressDialog pDialog;
     private DBAdapter manager;
-    public static Activity fa;
     private Spinner clientes, estatus;
     private TextView cabecera_1, cabecera_2, cabecera_3, cabecera_4, cabecera_5, cabecera_6;
     private String columna_ordenada, orden;
@@ -91,7 +91,7 @@ public class Consultar extends AppCompatActivity
     private void createToolBar()
     {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        toolbar.setSubtitle(R.string.realizar_pedido_subtitulo);
+        toolbar.setSubtitle(R.string.consultar_pedido_subtitulo);
         setSupportActionBar(toolbar);
     }
 
@@ -274,42 +274,6 @@ public class Consultar extends AppCompatActivity
         for (int i = 0; i < filas.size(); i++)
         {
             tabla.removeView(filas.get(i));
-        }
-    }
-
-    /**
-     * Carga los datos de la tabla en 2do plano.
-     */
-    private class cargarDatos extends AsyncTask< String, String, String >
-    {
-        @Override
-        protected void onPreExecute()
-        {
-            pDialog = new ProgressDialog(Consultar.this);
-            pDialog.setTitle("Por favor espere...");
-            pDialog.setMessage("Cargando informacion...");
-            pDialog.setIndeterminate(true);
-            pDialog.setCancelable(false);
-            pDialog.show();
-        }
-
-        @Override
-        protected String doInBackground(String... params)
-        {
-            if(primerCargaTabla)
-            {
-                initSpinners();
-                loadSpinnerData();
-                primerCargaTabla = false;
-            }
-            inicializarTabla();
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(String result)
-        {
-            pDialog.dismiss();
         }
     }
 
@@ -715,6 +679,18 @@ public class Consultar extends AppCompatActivity
         }
     }
 
+    /**
+     * Funcion encargada de mostrar todos los elementos de la tabla.
+     *
+     * @param tabla Tabla a la cual se le ocultaran los elementos.
+     */
+    private void mostrarTodo(TableLayout tabla)
+    {
+        clientes.setVisibility(View.VISIBLE);
+        estatus.setVisibility(View.VISIBLE);
+        tabla.setVisibility(View.VISIBLE);
+    }
+
     /*
 
     private String obtenerNombreCliente(String id_cliente)
@@ -744,17 +720,6 @@ public class Consultar extends AppCompatActivity
     */
 
     /**
-     * Funcion encargada de mostrar todos los elementos de la tabla.
-     * @param tabla Tabla a la cual se le ocultaran los elementos.
-     */
-    private void mostrarTodo(TableLayout tabla)
-    {
-        clientes.setVisibility(View.VISIBLE);
-        estatus.setVisibility(View.VISIBLE);
-        tabla.setVisibility(View.VISIBLE);
-    }
-
-    /**
      * Funcion encargada de ocultar los elementos de la tabla.
      * @param tabla Tabla a la cual se le ocultaran los elementos.
      */
@@ -769,5 +734,41 @@ public class Consultar extends AppCompatActivity
     public void onBackPressed()
     {
         finish();
+    }
+
+    /**
+     * Carga los datos de la tabla en 2do plano.
+     */
+    private class cargarDatos extends AsyncTask<String, String, String>
+    {
+        @Override
+        protected void onPreExecute()
+        {
+            pDialog = new ProgressDialog(Consultar.this);
+            pDialog.setTitle("Por favor espere...");
+            pDialog.setMessage("Cargando informacion...");
+            pDialog.setIndeterminate(true);
+            pDialog.setCancelable(false);
+            pDialog.show();
+        }
+
+        @Override
+        protected String doInBackground(String... params)
+        {
+            if (primerCargaTabla)
+            {
+                initSpinners();
+                loadSpinnerData();
+                primerCargaTabla = false;
+            }
+            inicializarTabla();
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(String result)
+        {
+            pDialog.dismiss();
+        }
     }
 }

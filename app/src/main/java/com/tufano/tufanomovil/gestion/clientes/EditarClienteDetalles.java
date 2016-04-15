@@ -33,9 +33,9 @@ import com.tufano.tufanomovil.global.Funciones;
  */
 public class EditarClienteDetalles extends AppCompatActivity
 {
+    private final String TAG = "EditarClienteDetalles";
     private String usuario, id_cliente, rs, rif, estados, tlf, estatus, mail, dir;
     private Context contexto;
-    private final String TAG = "EditarClienteDetalles";
     private ProgressDialog pDialog;
     private DBAdapter manager;
     private Spinner sp_rif, sp_estado;
@@ -53,12 +53,12 @@ public class EditarClienteDetalles extends AppCompatActivity
 
         createToolBar();
         getExtrasVar();
-        noInitialFocus();
         initComponents();
         initButtons();
         initListeners();
         loadSpinnerData();
         cargarValoresPrevios();
+        noInitialFocus();
     }
 
     /**
@@ -198,6 +198,117 @@ public class EditarClienteDetalles extends AppCompatActivity
         new async_editarClienteBD().execute(rs, rif, estado, tlf, mail, dir, estatus);
     }
 
+    /**
+     * Valida los campos antes de editar el cliente.
+     *
+     * @return True si los campos son correctos, false en caso contrario.
+     */
+    private boolean camposValidados()
+    {
+        Log.i(TAG, "Validando campos");
+
+        if (razon_social.getText().toString().trim().isEmpty())
+        {
+            razon_social.setError("Introduzca una razon social!!");
+            return false;
+        }
+        else if (sp_rif.getSelectedItemPosition() == 0)
+        {
+            TextView errorText = (TextView) sp_rif.getSelectedView();
+            errorText.setError("");
+            errorText.setTextColor(Color.RED);//just to highlight that this is an error
+            errorText.setText(R.string.error_rif);//changes the selected item text to this
+            return false;
+        }
+        else if (rif1.getText().toString().trim().isEmpty())
+        {
+            rif1.setError("Introduzca un rif!!");
+            return false;
+        }
+        else if (rif2.getText().toString().trim().isEmpty())
+        {
+            rif2.setError("Introduzca un rif!!");
+            return false;
+        }
+        else if (sp_estado.getSelectedItemPosition() == 0)
+        {
+            TextView errorText = (TextView) sp_estado.getSelectedView();
+            errorText.setError("");
+            errorText.setTextColor(Color.RED);//just to highlight that this is an error
+            errorText.setText(R.string.error_estado);//changes the selected item text to this
+            return false;
+        }
+        else if (telefono.getText().toString().trim().isEmpty())
+        {
+            telefono.setError("Introduzca un telefono!!");
+            return false;
+        }
+        else if (email.getText().toString().trim().isEmpty())
+        {
+            email.setError("Introduzca un email!!");
+            return false;
+        }
+        else if (Funciones.isValidEmail(email.getText().toString()))
+        {
+            email.setError("Por favor, ingrese un email valido!!");
+            return false;
+        }
+        else if (direccion.getText().toString().trim().isEmpty())
+        {
+            direccion.setError("Introduzca una direccion!!");
+            return false;
+        }
+        else
+        {
+            razon_social.setError(null);
+            rif1.setError(null);
+            rif2.setError(null);
+            telefono.setError(null);
+            email.setError(null);
+            direccion.setError(null);
+            return true;
+        }
+    }
+
+    /**
+     * Carga la data por defecto en los spinners (Tipo de Rif y Estados).
+     */
+    private void loadSpinnerData()
+    {
+        Log.i(TAG, "loadSpinnerData");
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(contexto, R.array.rif_lista, R.layout.spinner_item);
+        adapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
+        sp_rif.setAdapter(adapter);
+
+        ArrayAdapter<CharSequence> adapter2 = ArrayAdapter.createFromResource(
+                contexto, R.array.estados_lista, R.layout.spinner_item);
+        adapter2.setDropDownViewResource(R.layout.spinner_dropdown_item);
+        sp_estado.setAdapter(adapter2);
+    }
+
+    /**
+     * Carga la data real actualmente utilizada por el cliente.
+     */
+    private void cargarValoresPrevios()
+    {
+        String tipo_rif = rif.substring(0, 1);
+
+        int pos = Funciones.buscarPosicionElemento(tipo_rif, sp_rif);
+        sp_rif.setSelection(pos);
+
+        pos = Funciones.buscarPosicionElemento(estados, sp_estado);
+        sp_estado.setSelection(pos);
+
+        String rif_1 = rif.substring(1, rif.length() - 2);
+        String rif_2 = rif.substring(rif.length() - 1);
+        razon_social.setText(rs);
+        rif1.setText(rif_1);
+        rif2.setText(rif_2);
+        telefono.setText(tlf);
+        email.setText(mail);
+        direccion.setText(dir);
+    }
+
     class async_editarClienteBD extends AsyncTask< String, String, String >
     {
         @Override
@@ -317,115 +428,5 @@ public class EditarClienteDetalles extends AppCompatActivity
             Log.d(TAG, "Existen "+cursor.getCount()+" clientes con esa razon social o rif..");
             return cursor.getCount() > 0;
         }
-    }
-
-    /**
-     * Valida los campos antes de editar el cliente.
-     * @return True si los campos son correctos, false en caso contrario.
-     */
-    private boolean camposValidados()
-    {
-        Log.i(TAG, "Validando campos");
-
-        if ( razon_social.getText().toString().trim().isEmpty() )
-        {
-            razon_social.setError("Introduzca una razon social!!");
-            return false;
-        }
-        else if( sp_rif.getSelectedItemPosition()==0 )
-        {
-            TextView errorText = (TextView) sp_rif.getSelectedView();
-            errorText.setError("");
-            errorText.setTextColor(Color.RED);//just to highlight that this is an error
-            errorText.setText(R.string.error_rif);//changes the selected item text to this
-            return false;
-        }
-        else if ( rif1.getText().toString().trim().isEmpty() )
-        {
-            rif1.setError("Introduzca un rif!!");
-            return false;
-        }
-        else if ( rif2.getText().toString().trim().isEmpty() )
-        {
-            rif2.setError("Introduzca un rif!!");
-            return false;
-        }
-        else if ( sp_estado.getSelectedItemPosition()==0 )
-        {
-            TextView errorText = (TextView) sp_estado.getSelectedView();
-            errorText.setError("");
-            errorText.setTextColor(Color.RED);//just to highlight that this is an error
-            errorText.setText(R.string.error_estado);//changes the selected item text to this
-            return false;
-        }
-        else if ( telefono.getText().toString().trim().isEmpty() )
-        {
-            telefono.setError("Introduzca un telefono!!");
-            return false;
-        }
-        else if ( email.getText().toString().trim().isEmpty() )
-        {
-            email.setError("Introduzca un email!!");
-            return false;
-        }
-        else if (Funciones.isValidEmail(email.getText().toString()))
-        {
-            email.setError("Por favor, ingrese un email valido!!");
-            return false;
-        }
-        else if ( direccion.getText().toString().trim().isEmpty() )
-        {
-            direccion.setError("Introduzca una direccion!!");
-            return false;
-        }
-        else
-        {
-            razon_social.setError(null);
-            rif1.setError(null);
-            rif2.setError(null);
-            telefono.setError(null);
-            email.setError(null);
-            direccion.setError(null);
-            return true;
-        }
-    }
-
-    /**
-     * Carga la data por defecto en los spinners (Tipo de Rif y Estados).
-     */
-    private void loadSpinnerData()
-    {
-        Log.i(TAG, "loadSpinnerData");
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource( contexto, R.array.rif_lista, R.layout.spinner_item);
-        adapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
-        sp_rif.setAdapter(adapter);
-
-        ArrayAdapter<CharSequence> adapter2 = ArrayAdapter.createFromResource(
-                contexto, R.array.estados_lista, R.layout.spinner_item);
-        adapter2.setDropDownViewResource(R.layout.spinner_dropdown_item);
-        sp_estado.setAdapter(adapter2);
-    }
-
-    /**
-     * Carga la data real actualmente utilizada por el cliente.
-     */
-    private void cargarValoresPrevios()
-    {
-        String tipo_rif = rif.substring(0, 1);
-
-        int pos = Funciones.buscarPosicionElemento(tipo_rif, sp_rif);
-        sp_rif.setSelection(pos);
-
-        pos = Funciones.buscarPosicionElemento(estados, sp_estado);
-        sp_estado.setSelection(pos);
-
-        String rif_1 = rif.substring(1, rif.length()-2);
-        String rif_2 = rif.substring(rif.length()-1);
-        razon_social.setText(rs);
-        rif1.setText(rif_1);
-        rif2.setText(rif_2);
-        telefono.setText(tlf);
-        email.setText(mail);
-        direccion.setText(dir);
     }
 }

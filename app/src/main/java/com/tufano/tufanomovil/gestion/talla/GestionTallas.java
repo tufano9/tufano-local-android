@@ -28,9 +28,10 @@ import com.tufano.tufanomovil.global.Funciones;
  */
 public class GestionTallas extends AppCompatActivity
 {
-    private Context contexto;
-    private DBAdapter manager;
-    public static Activity fa;
+    public static Activity  fa;
+    private       Context   contexto;
+    private       DBAdapter manager;
+    private       String    usuario;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -42,9 +43,19 @@ public class GestionTallas extends AppCompatActivity
         contexto = getApplicationContext();
         manager = new DBAdapter(contexto);
 
+        getExtrasVar();
         createToolBar();
         initComponents();
         inicializarTabla();
+    }
+
+    /**
+     * Obtiene las variables que fueron pasadas como parametro desde otro activity
+     */
+    private void getExtrasVar()
+    {
+        Bundle bundle = getIntent().getExtras();
+        usuario = bundle.getString("usuario");
     }
 
     /**
@@ -69,6 +80,7 @@ public class GestionTallas extends AppCompatActivity
             public void onClick(View view)
             {
                 Intent c = new Intent(GestionTallas.this, AgregarTalla.class);
+                c.putExtra("usuario", usuario);
                 startActivity(c);
             }
         });

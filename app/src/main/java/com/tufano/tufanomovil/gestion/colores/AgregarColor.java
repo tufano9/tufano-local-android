@@ -28,16 +28,16 @@ import com.tufano.tufanomovil.global.Funciones;
  */
 public class AgregarColor extends AppCompatActivity
 {
-    private Context contexto;
     private final String TAG = "AgregarColor";
-    private DBAdapter manager;
+    private Context        contexto;
+    private DBAdapter      manager;
     private ProgressDialog pDialog;
-    private EditText color;
-    private String usuario;
-    private boolean desdeProductos;
-    private String idCreado;
-    private String idTipoCreado;
-    private String idTallaCreado;
+    private EditText       color;
+    private String         usuario;
+    private boolean        desdeProductos;
+    private String         idCreado;
+    private String         idTipoCreado;
+    private String         idTallaCreado;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -239,6 +239,7 @@ public class AgregarColor extends AppCompatActivity
 
                         // Redirige
                         Intent c = new Intent(AgregarColor.this, GestionColores.class);
+                        c.putExtra("usuario", usuario);
                         startActivity(c);
                         GestionColores.fa.finish();
                     }

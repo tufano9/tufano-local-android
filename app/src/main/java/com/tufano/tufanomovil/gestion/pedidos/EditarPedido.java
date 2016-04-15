@@ -43,15 +43,15 @@ import java.util.List;
 
 public class EditarPedido extends AppCompatActivity
 {
+    private static final int                 IMG_WIDTH  = 130;
+    private static final int                 IMG_HEIGHT = 50;
+    private static final ImageView.ScaleType ESCALADO   = ImageView.ScaleType.CENTER_INSIDE;
+    public static Activity fa;
+    private final String TAG = "EditarPedido";
     private String usuario, id_pedido;
     private Context contexto;
-    private final String TAG = "EditarPedido";
     private ProgressDialog pDialog;
     private DBAdapter manager;
-    public static Activity fa;
-    private static final int IMG_WIDTH = 130;
-    private static final int IMG_HEIGHT = 50;
-    private static final ImageView.ScaleType ESCALADO = ImageView.ScaleType.CENTER_INSIDE;
     private boolean borre_producto;
 
     @Override
@@ -88,7 +88,7 @@ public class EditarPedido extends AppCompatActivity
     private void createToolBar()
     {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        toolbar.setSubtitle(R.string.realizar_pedido_subtitulo);
+        toolbar.setSubtitle(R.string.editar_pedido_subtitulo);
         setSupportActionBar(toolbar);
     }
 
@@ -202,6 +202,269 @@ public class EditarPedido extends AppCompatActivity
     private List<String> obtenerDatosVendedor(String usuario)
     {
         return manager.buscarUsuario_ID2(usuario);
+    }
+
+    /**
+     * Actualiza los datos del inferior de la aplicacion. (Resumen)
+     *
+     * @param precio_total       Precio total del pedido.
+     * @param cantidad_productos Cantidad de productos del pedido.
+     * @param cantidad_bultos    Cantidad de bultos del pedido.
+     * @param cantidad_pares     Cantidad de pares del pedido.
+     */
+    private void actualizarInformacionInferior(final Double precio_total, final int cantidad_productos, final int cantidad_bultos, final int cantidad_pares)
+    {
+        final Thread hilo = new Thread()
+        {
+            @Override
+            public void run()
+            {
+                synchronized (this)
+                {
+                    runOnUiThread(new Runnable()
+                    {
+                        @Override
+                        public void run()
+                        {
+                            TextView cantidadProductos = (TextView) findViewById(R.id.cantidadFinal);
+                            TextView precioFinal       = (TextView) findViewById(R.id.precioFinal);
+                            TextView cantidadBultos    = (TextView) findViewById(R.id.cantidad_bultos);
+                            TextView cantidadPares     = (TextView) findViewById(R.id.cantidad_pares);
+
+                            DecimalFormat priceFormat = new DecimalFormat("###,###.##");
+                            String        output      = priceFormat.format(precio_total);
+                            cantidadProductos.setText(String.valueOf(cantidad_productos));
+                            precioFinal.setText(output);
+                            cantidadBultos.setText(String.valueOf(cantidad_bultos));
+                            cantidadPares.setText(String.valueOf(cantidad_pares));
+                        }
+                    });
+
+                }
+            }
+        };
+        hilo.start();
+    }
+
+    /**
+     * Elimina un producto del pedido.
+     *
+     * @param nombre_producto Nombre del producto a eliminar.
+     */
+    private void eliminarProductoPedido(String nombre_producto)
+    {
+        int filas_afectadas = manager.eliminarProductoPedidoEditar(nombre_producto);
+
+        if (filas_afectadas > 0)
+        {
+            Toast.makeText(contexto, "¡Se ha eliminado correctamente el producto del pedido!", Toast.LENGTH_LONG).show();
+            Intent c = new Intent(EditarPedido.this, EditarPedido.class);
+            c.putExtra("usuario", usuario);
+            c.putExtra("id_pedido", id_pedido);
+            c.putExtra("borre_producto", true);
+            startActivity(c);
+            fa.finish();
+            finish();
+        }
+        else
+        {
+            Toast.makeText(contexto, "¡Ha ocurrido un error eliminando el producto del pedido!", Toast.LENGTH_LONG).show();
+        }
+    }
+
+    /**
+     * Genera el textview del subtotal
+     *
+     * @param subtotal Subtotal
+     * @param params   Parametros de la tabla
+     * @param contexto Contexto de la aplicacion
+     * @return TextView armado.
+     */
+    private TextView generarTextViewSubTotalTabla(String subtotal, TableRow.LayoutParams params, Context contexto)
+    {
+        final TextView sub_total = new TextView(contexto);
+        sub_total.setText(Funciones.formatoPrecio(subtotal));
+        sub_total.setTextColor(Color.DKGRAY);
+        sub_total.setGravity(Gravity.CENTER);
+        sub_total.setLayoutParams(params);
+        sub_total.setTextSize(16f);
+        return sub_total;
+    }
+
+    /**
+     * Genera el numberPicker de los bultos.
+     *
+     * @param sub_total          TextView de subtotal. (Para actualizarlo autom.)
+     * @param bultos             Numero de bultos.
+     * @param precio             Precio del producto.
+     * @param pares              Pares del producto.
+     * @param nombre_modelo      Nombre del modelo.
+     * @param cantidad_productos Cantidad de productos.
+     * @param params             Parametros de la tabla.
+     * @param contexto           Contexto de la aplicacion.
+     * @return NumberPicker armado.
+     */
+    private NumberPicker generarNumberPickerBultosTabla(final TextView sub_total, String bultos, final String precio, final String pares, final String nombre_modelo, final int cantidad_productos, TableRow.LayoutParams params, Context contexto)
+    {
+        final NumberPicker cantidad_bultos = new NumberPicker(contexto);
+        cantidad_bultos.setMinValue(1);
+        cantidad_bultos.setMaxValue(99);
+        cantidad_bultos.setValue(Integer.parseInt(bultos));
+        cantidad_bultos.setGravity(Gravity.CENTER_HORIZONTAL | Gravity.CENTER_VERTICAL);
+        cantidad_bultos.setLayoutParams(params);
+
+        cantidad_bultos.setOnValueChangedListener(new NumberPicker.OnValueChangeListener()
+        {
+
+            @Override
+            public void onValueChange(NumberPicker picker, int cantBultosViejos, int cantBultosNuevos)
+            {
+                String nuevo_subtotal = String.valueOf(Double.parseDouble(precio) * Integer.parseInt(pares) * cantBultosNuevos);
+
+                if (manager.actualizarBultosBDPedidosEditar(nombre_modelo, cantBultosNuevos, nuevo_subtotal) > 0)
+                {
+                    // Actualizar Cant.Bultos / Pares y Total Bs.F (Parte Inf)
+                    ArrayList<String> datosNuevos = manager.calcularTotalesNuevosPedidoEditar();
+
+                    // final Double precio_total, final int cantidad_productos, final int cantidad_bultos, final int cantidad_pares
+                    actualizarInformacionInferior(Double.parseDouble(datosNuevos.get(0)), cantidad_productos, Integer.parseInt(datosNuevos.get(1)), Integer.parseInt(datosNuevos.get(2)));
+                    sub_total.setText(Funciones.formatoPrecio(nuevo_subtotal));
+                }
+                else
+                {
+                    Log.i(TAG, "BD NO ACTUALIZADA ( NUMBER PICKER BULTOS )");
+                }
+            }
+        });
+
+        cantidad_bultos.setDescendantFocusability(NumberPicker.FOCUS_BLOCK_DESCENDANTS);
+
+        return cantidad_bultos;
+    }
+
+    private TextView generarTextViewPrecioTabla(String precio, TableRow.LayoutParams params, Context contexto)
+    {
+        TextView      precio_producto = new TextView(contexto);
+        DecimalFormat priceFormat     = new DecimalFormat("###,###.##");
+        String        output          = priceFormat.format(Double.parseDouble(precio));
+        precio_producto.setText(output);
+        precio_producto.setTextColor(Color.DKGRAY);
+        precio_producto.setGravity(Gravity.CENTER);
+        precio_producto.setLayoutParams(params);
+        precio_producto.setTextSize(16f);
+        return precio_producto;
+    }
+
+    private TextView generarTextViewParesTabla(String pares, TableRow.LayoutParams params, Context contexto)
+    {
+        TextView pares_producto = new TextView(contexto);
+        pares_producto.setText(pares);
+        pares_producto.setTextColor(Color.DKGRAY);
+        pares_producto.setGravity(Gravity.CENTER);
+        pares_producto.setLayoutParams(params);
+        pares_producto.setTextSize(16f);
+        return pares_producto;
+    }
+
+    private TextView generarTextViewNumeracionTabla(String numeracion, TableRow.LayoutParams params, Context contexto)
+    {
+        TextView numeracion_producto = new TextView(contexto);
+        numeracion_producto.setText(numeracion);
+        numeracion_producto.setTextColor(Color.DKGRAY);
+        numeracion_producto.setGravity(Gravity.CENTER);
+        numeracion_producto.setLayoutParams(params);
+        numeracion_producto.setTextSize(16f);
+        return numeracion_producto;
+    }
+
+    private TextView generarTextViewModeloTabla(String nombre_modelo, TableRow.LayoutParams params, Context contexto)
+    {
+        TextView modelo = new TextView(contexto);
+        modelo.setText(nombre_modelo);
+        modelo.setTextColor(Color.DKGRAY);
+        modelo.setGravity(Gravity.CENTER);
+        modelo.setLayoutParams(params);
+        modelo.setTextSize(16f);
+        return modelo;
+    }
+
+    private ImageView generarImageViewTabla(final String nombre_modelo, TableRow.LayoutParams params, Context contexto)
+    {
+        ImageView imagen = new ImageView(contexto);
+
+        final File file;
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.FROYO)
+        {
+            file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "/TufanoMovilFiles/" + nombre_modelo + Constantes.EXTENSION_IMG);
+        }
+        else
+        {
+            file = new File(Environment.getExternalStorageDirectory() + "/dcim/" + "TufanoMovilFiles/" + nombre_modelo + Constantes.EXTENSION_IMG);
+        }
+
+        if (file.exists())
+        {
+            imagen.setImageBitmap(Funciones.decodeSampledBitmapFromResource(file, IMG_WIDTH, IMG_HEIGHT));
+            imagen.setScaleType(ESCALADO);
+            imagen.setLayoutParams(params);
+            imagen.setPadding(2, 2, 2, 2);
+        }
+        else
+        {
+            Log.e(TAG, "La imagen no pudo ser localizada..");
+            Drawable drawable = ContextCompat.getDrawable(getApplicationContext(), R.drawable.img_notfound);
+            Bitmap   bitmap   = ((BitmapDrawable) drawable).getBitmap();
+            Drawable d        = new BitmapDrawable(getResources(), Bitmap.createScaledBitmap(bitmap, IMG_WIDTH, IMG_HEIGHT, true));
+            imagen.setImageDrawable(d);
+            imagen.setScaleType(ESCALADO);
+            imagen.setLayoutParams(params);
+            imagen.setPadding(2, 2, 2, 2);
+        }
+
+        imagen.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+                android.support.v7.app.AlertDialog.Builder dialog = new android.support.v7.app.AlertDialog.Builder(EditarPedido.this);
+
+                dialog.setTitle(R.string.confirmacion_eliminar_producto_pedido);
+                dialog.setMessage("Producto seleccionado: " + nombre_modelo);
+                dialog.setCancelable(false);
+                dialog.setPositiveButton("Si", new DialogInterface.OnClickListener()
+                {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which)
+                    {
+                        eliminarProductoPedido(nombre_modelo);
+                    }
+                });
+
+                dialog.setNegativeButton("No", new DialogInterface.OnClickListener()
+                {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which)
+                    {
+                        dialog.cancel();
+                    }
+                });
+
+                dialog.show();
+            }
+        });
+
+        return imagen;
+    }
+
+    /**
+     * Edita el pedido utilizando data de la tabla pedidos_editar
+     *
+     * @return True si la operacion fue exitosa, false en caso contrario.
+     */
+    private boolean editarPedido()
+    {
+        return manager.editarPedido(id_pedido) > 0;
     }
 
     class cargarDatos extends AsyncTask< String, String, String >
@@ -466,245 +729,6 @@ public class EditarPedido extends AppCompatActivity
         }
     }
 
-    /**
-     * Actualiza los datos del inferior de la aplicacion. (Resumen)
-     * @param precio_total Precio total del pedido.
-     * @param cantidad_productos Cantidad de productos del pedido.
-     * @param cantidad_bultos Cantidad de bultos del pedido.
-     * @param cantidad_pares Cantidad de pares del pedido.
-     */
-    private void actualizarInformacionInferior(final Double precio_total, final int cantidad_productos, final int cantidad_bultos, final int cantidad_pares)
-    {
-        final Thread hilo = new Thread()
-        {
-            @Override
-            public void run()
-            {
-                synchronized (this)
-                {
-                    runOnUiThread(new Runnable()
-                    {
-                        @Override
-                        public void run()
-                        {
-                            TextView cantidadProductos = (TextView) findViewById(R.id.cantidadFinal);
-                            TextView precioFinal = (TextView) findViewById(R.id.precioFinal);
-                            TextView cantidadBultos = (TextView) findViewById(R.id.cantidad_bultos);
-                            TextView cantidadPares = (TextView) findViewById(R.id.cantidad_pares);
-
-                            DecimalFormat priceFormat = new DecimalFormat("###,###.##");
-                            String output = priceFormat.format(precio_total);
-                            cantidadProductos.setText(String.valueOf(cantidad_productos));
-                            precioFinal.setText(output);
-                            cantidadBultos.setText(String.valueOf(cantidad_bultos));
-                            cantidadPares.setText(String.valueOf(cantidad_pares));
-                        }
-                    });
-
-                }
-            }
-        };
-        hilo.start();
-    }
-
-    /**
-     * Elimina un producto del pedido.
-     * @param nombre_producto Nombre del producto a eliminar.
-     */
-    private void eliminarProductoPedido(String nombre_producto)
-    {
-        int filas_afectadas = manager.eliminarProductoPedidoEditar(nombre_producto);
-
-        if(filas_afectadas>0)
-        {
-            Toast.makeText(contexto, "¡Se ha eliminado correctamente el producto del pedido!", Toast.LENGTH_LONG).show();
-            Intent c = new Intent(EditarPedido.this, EditarPedido.class);
-            c.putExtra("usuario", usuario);
-            c.putExtra("id_pedido", id_pedido);
-            c.putExtra("borre_producto", true);
-            startActivity(c);
-            fa.finish();
-            finish();
-        }
-        else
-        {
-            Toast.makeText(contexto, "¡Ha ocurrido un error eliminando el producto del pedido!", Toast.LENGTH_LONG).show();
-        }
-    }
-
-    /**
-     * Genera el textview del subtotal
-     * @param subtotal Subtotal
-     * @param params Parametros de la tabla
-     * @param contexto Contexto de la aplicacion
-     * @return TextView armado.
-     */
-    private TextView generarTextViewSubTotalTabla(String subtotal, TableRow.LayoutParams params, Context contexto)
-    {
-        final TextView sub_total = new TextView(contexto);
-        sub_total.setText(Funciones.formatoPrecio(subtotal));
-        sub_total.setTextColor(Color.DKGRAY);
-        sub_total.setGravity(Gravity.CENTER);
-        sub_total.setLayoutParams(params);
-        sub_total.setTextSize(16f);
-        return sub_total;
-    }
-
-    /**
-     * Genera el numberPicker de los bultos.
-     * @param sub_total TextView de subtotal. (Para actualizarlo autom.)
-     * @param bultos Numero de bultos.
-     * @param precio Precio del producto.
-     * @param pares Pares del producto.
-     * @param nombre_modelo Nombre del modelo.
-     * @param cantidad_productos Cantidad de productos.
-     * @param params Parametros de la tabla.
-     * @param contexto Contexto de la aplicacion.
-     * @return NumberPicker armado.
-     */
-    private NumberPicker generarNumberPickerBultosTabla(final TextView sub_total, String bultos, final String precio, final String pares, final String nombre_modelo, final int cantidad_productos, TableRow.LayoutParams params, Context contexto)
-    {
-        final NumberPicker cantidad_bultos = new NumberPicker(contexto);
-        cantidad_bultos.setMinValue(1);
-        cantidad_bultos.setMaxValue(99);
-        cantidad_bultos.setValue(Integer.parseInt(bultos));
-        cantidad_bultos.setGravity(Gravity.CENTER_HORIZONTAL | Gravity.CENTER_VERTICAL);
-        cantidad_bultos.setLayoutParams(params);
-
-        cantidad_bultos.setOnValueChangedListener(new NumberPicker.OnValueChangeListener() {
-
-            @Override
-            public void onValueChange(NumberPicker picker, int cantBultosViejos, int cantBultosNuevos) {
-                String nuevo_subtotal = String.valueOf(Double.parseDouble(precio) * Integer.parseInt(pares) * cantBultosNuevos);
-
-                if (manager.actualizarBultosBDPedidosEditar(nombre_modelo, cantBultosNuevos, nuevo_subtotal) > 0) {
-                    // Actualizar Cant.Bultos / Pares y Total Bs.F (Parte Inf)
-                    ArrayList<String> datosNuevos = manager.calcularTotalesNuevosPedidoEditar();
-
-                    // final Double precio_total, final int cantidad_productos, final int cantidad_bultos, final int cantidad_pares
-                    actualizarInformacionInferior(Double.parseDouble(datosNuevos.get(0)), cantidad_productos, Integer.parseInt(datosNuevos.get(1)), Integer.parseInt(datosNuevos.get(2)));
-                    sub_total.setText(Funciones.formatoPrecio(nuevo_subtotal));
-                } else {
-                    Log.i(TAG, "BD NO ACTUALIZADA ( NUMBER PICKER BULTOS )");
-                }
-            }
-        });
-
-        cantidad_bultos.setDescendantFocusability(NumberPicker.FOCUS_BLOCK_DESCENDANTS);
-
-        return cantidad_bultos;
-    }
-
-    private TextView generarTextViewPrecioTabla(String precio, TableRow.LayoutParams params, Context contexto)
-    {
-        TextView precio_producto = new TextView(contexto);
-        DecimalFormat priceFormat = new DecimalFormat("###,###.##");
-        String output = priceFormat.format(Double.parseDouble(precio));
-        precio_producto.setText(output);
-        precio_producto.setTextColor(Color.DKGRAY);
-        precio_producto.setGravity(Gravity.CENTER);
-        precio_producto.setLayoutParams(params);
-        precio_producto.setTextSize(16f);
-        return precio_producto;
-    }
-
-    private TextView generarTextViewParesTabla(String pares, TableRow.LayoutParams params, Context contexto)
-    {
-        TextView pares_producto = new TextView(contexto);
-        pares_producto.setText(pares);
-        pares_producto.setTextColor(Color.DKGRAY);
-        pares_producto.setGravity(Gravity.CENTER);
-        pares_producto.setLayoutParams(params);
-        pares_producto.setTextSize(16f);
-        return pares_producto;
-    }
-
-    private TextView generarTextViewNumeracionTabla(String numeracion, TableRow.LayoutParams params, Context contexto)
-    {
-        TextView numeracion_producto = new TextView(contexto);
-        numeracion_producto.setText(numeracion);
-        numeracion_producto.setTextColor(Color.DKGRAY);
-        numeracion_producto.setGravity(Gravity.CENTER);
-        numeracion_producto.setLayoutParams(params);
-        numeracion_producto.setTextSize(16f);
-        return numeracion_producto;
-    }
-
-    private TextView generarTextViewModeloTabla(String nombre_modelo, TableRow.LayoutParams params, Context contexto)
-    {
-        TextView modelo = new TextView(contexto);
-        modelo.setText(nombre_modelo);
-        modelo.setTextColor(Color.DKGRAY);
-        modelo.setGravity(Gravity.CENTER);
-        modelo.setLayoutParams(params);
-        modelo.setTextSize(16f);
-        return modelo;
-    }
-
-    private ImageView generarImageViewTabla(final String nombre_modelo, TableRow.LayoutParams params, Context contexto)
-    {
-        ImageView imagen = new ImageView(contexto);
-
-        final File file;
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.FROYO)
-        {
-            file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "/TufanoMovilFiles/" + nombre_modelo + Constantes.EXTENSION_IMG);
-        }
-        else
-        {
-            file = new File(Environment.getExternalStorageDirectory() + "/dcim/" + "TufanoMovilFiles/" + nombre_modelo + Constantes.EXTENSION_IMG);
-        }
-
-        if (file.exists())
-        {
-            imagen.setImageBitmap(Funciones.decodeSampledBitmapFromResource(file, IMG_WIDTH, IMG_HEIGHT));
-            imagen.setScaleType(ESCALADO);
-            imagen.setLayoutParams(params);
-            imagen.setPadding(2, 2, 2, 2);
-        }
-        else
-        {
-            Log.e(TAG, "La imagen no pudo ser localizada..");
-            Drawable drawable = ContextCompat.getDrawable(getApplicationContext(), R.drawable.img_notfound);
-            Bitmap bitmap = ((BitmapDrawable) drawable).getBitmap();
-            Drawable d = new BitmapDrawable(getResources(), Bitmap.createScaledBitmap(bitmap, IMG_WIDTH, IMG_HEIGHT, true));
-            imagen.setImageDrawable(d);
-            imagen.setScaleType(ESCALADO);
-            imagen.setLayoutParams(params);
-            imagen.setPadding(2, 2, 2, 2);
-        }
-
-        imagen.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v)
-            {
-                android.support.v7.app.AlertDialog.Builder dialog = new android.support.v7.app.AlertDialog.Builder(EditarPedido.this);
-
-                dialog.setTitle(R.string.confirmacion_eliminar_producto_pedido);
-                dialog.setMessage("Producto seleccionado: " + nombre_modelo);
-                dialog.setCancelable(false);
-                dialog.setPositiveButton("Si", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        eliminarProductoPedido(nombre_modelo);
-                    }
-                });
-
-                dialog.setNegativeButton("No", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.cancel();
-                    }
-                });
-
-                dialog.show();
-            }
-        });
-
-        return imagen;
-    }
-
     private class async_editarPedido extends AsyncTask< String, String, String >
     {
         @Override
@@ -802,14 +826,5 @@ public class EditarPedido extends AppCompatActivity
                 Toast.makeText(contexto, "Hubo un error editando el pedido..", Toast.LENGTH_LONG).show();
             }
         }
-    }
-
-    /**
-     * Edita el pedido utilizando data de la tabla pedidos_editar
-     * @return True si la operacion fue exitosa, false en caso contrario.
-     */
-    private boolean editarPedido()
-    {
-        return manager.editarPedido(id_pedido) > 0;
     }
 }

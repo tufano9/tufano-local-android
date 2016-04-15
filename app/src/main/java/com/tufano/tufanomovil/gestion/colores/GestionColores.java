@@ -28,11 +28,12 @@ import com.tufano.tufanomovil.global.Funciones;
  */
 public class GestionColores extends AppCompatActivity
 {
-    private Context contexto;
-    private final String TAG = "GestionColores";
-    private DBAdapter manager;
     //private ProgressDialog pDialog;
     public static Activity fa;
+    private final String TAG = "GestionColores";
+    private Context   contexto;
+    private DBAdapter manager;
+    private String    usuario;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -44,9 +45,19 @@ public class GestionColores extends AppCompatActivity
         contexto = getApplicationContext();
         manager = new DBAdapter(contexto);
 
+        getExtrasVar();
         createToolBar();
         initButtons();
         inicializarTabla();
+    }
+
+    /**
+     * Obtiene las variables que fueron pasadas como parametro desde otro activity
+     */
+    private void getExtrasVar()
+    {
+        Bundle bundle = getIntent().getExtras();
+        usuario = bundle.getString("usuario");
     }
 
     /**
@@ -71,6 +82,7 @@ public class GestionColores extends AppCompatActivity
             public void onClick(View view)
             {
                 Intent c = new Intent(GestionColores.this, AgregarColor.class);
+                c.putExtra("usuario", usuario);
                 startActivity(c);
             }
         });

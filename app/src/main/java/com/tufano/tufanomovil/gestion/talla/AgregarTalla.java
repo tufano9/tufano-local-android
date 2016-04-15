@@ -32,12 +32,12 @@ import com.tufano.tufanomovil.global.Funciones;
  */
 public class AgregarTalla extends AppCompatActivity
 {
-    private Context contexto;
     private final String TAG = "AgregarTalla";
-    private DBAdapter manager;
+    private Context        contexto;
+    private DBAdapter      manager;
     private ProgressDialog pDialog;
-    private EditText talla;
-    private NumberPicker lim_inf, lim_sup;
+    private EditText       talla;
+    private NumberPicker   lim_inf, lim_sup;
     private String usuario;
     private boolean desdeProductos;
     private String idCreado;
@@ -78,7 +78,7 @@ public class AgregarTalla extends AppCompatActivity
     private void createToolBar()
     {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        toolbar.setSubtitle(R.string.gestion_talla_subtitulo);
+        toolbar.setSubtitle(R.string.agregar_talla_subtitulo);
         setSupportActionBar(toolbar);
     }
 
@@ -299,7 +299,7 @@ public class AgregarTalla extends AppCompatActivity
 
                         // Redirige
                         Intent c = new Intent(AgregarTalla.this, GestionTallas.class);
-                        //c.putExtra("usuario",usuario);
+                        c.putExtra("usuario", usuario);
                         startActivity(c);
                         GestionTallas.fa.finish();
                     }

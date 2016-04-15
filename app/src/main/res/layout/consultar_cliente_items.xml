@@ -5,17 +5,8 @@
     android:layout_height="wrap_content"
     android:background="@drawable/border_listview">
 
-    <ImageView
-        android:id="@+id/imagen"
-        android:layout_width="60dp"
-        android:layout_height="40dp"
-        android:layout_gravity="start|center_vertical"
-        android:layout_margin="10dp"
-        android:contentDescription="@string/imagesContentDescription"
-        android:scaleType="centerCrop"/>
-
     <TextView
-        android:id="@+id/talla"
+        android:id="@+id/razon_social"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_gravity="start|center_vertical"
@@ -25,7 +16,7 @@
         android:textSize="20sp"/>
 
     <TextView
-        android:id="@+id/tipo"
+        android:id="@+id/rif"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_gravity="start|center_vertical"
@@ -35,7 +26,7 @@
         android:textSize="20sp"/>
 
     <TextView
-        android:id="@+id/modelo"
+        android:id="@+id/estado"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_gravity="start|center_vertical"
@@ -45,7 +36,7 @@
         android:textSize="20sp"/>
 
     <TextView
-        android:id="@+id/color"
+        android:id="@+id/telefono"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_gravity="start|center_vertical"
@@ -55,17 +46,7 @@
         android:textSize="20sp"/>
 
     <TextView
-        android:id="@+id/precio"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_gravity="start|center_vertical"
-        android:layout_margin="10dp"
-        android:layout_weight="1"
-        android:gravity="center"
-        android:textSize="20sp"/>
-
-    <TextView
-        android:id="@+id/numeracion"
+        android:id="@+id/email"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_gravity="start|center_vertical"
@@ -76,8 +57,8 @@
 
     <ImageView
         android:id="@+id/editar"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
         android:layout_gravity="start|center_vertical"
         android:layout_marginBottom="10dp"
         android:layout_marginRight="10dp"
@@ -86,15 +67,4 @@
         android:contentDescription="@string/imagesContentDescription"
         android:scaleType="centerCrop"/>
 
-    <ImageView
-        android:id="@+id/compartir"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:layout_gravity="start|center_vertical"
-        android:layout_marginBottom="10dp"
-        android:layout_marginRight="10dp"
-        android:layout_marginTop="10dp"
-        android:background="@drawable/icn_whatsapp"
-        android:contentDescription="@string/imagesContentDescription"
-        android:scaleType="centerCrop"/>
 </LinearLayout>
