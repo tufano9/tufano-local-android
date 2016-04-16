@@ -17,21 +17,20 @@
     <LinearLayout
         android:orientation="horizontal"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_weight="1"
+        android:layout_height="wrap_content"
         android:baselineAligned="false">
 
         <LinearLayout
             android:orientation="vertical"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:layout_weight="1"
             android:id="@+id/layout_consulta"
             android:layout_marginRight="10dp">
 
             <ImageView
-                android:layout_width="80dp"
-                android:layout_height="0dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:id="@+id/imageView2"
                 android:background="@drawable/icn_menu_consultas"
                 android:contentDescription="@string/imagesContentDescription"
@@ -52,15 +51,15 @@
         <LinearLayout
             android:orientation="vertical"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:layout_weight="1"
             android:layout_marginLeft="10dp"
             android:id="@+id/layout_productos"
             android:layout_marginRight="10dp">
 
             <ImageView
-                android:layout_width="80dp"
-                android:layout_height="0dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:id="@+id/imageView3"
                 android:background="@drawable/icn_menu_gestion_productos"
                 android:contentDescription="@string/imagesContentDescription"
@@ -80,15 +79,15 @@
         <LinearLayout
             android:orientation="vertical"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:layout_weight="1"
             android:layout_marginLeft="10dp"
             android:id="@+id/layout_clientes"
             >
 
             <ImageView
-                android:layout_width="80dp"
-                android:layout_height="0dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:id="@+id/imageView4"
                 android:background="@drawable/icn_menu_gestion_cliente"
                 android:contentDescription="@string/imagesContentDescription"
@@ -110,22 +109,21 @@
     <LinearLayout
         android:orientation="horizontal"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_weight="1"
+        android:layout_height="wrap_content"
         android:baselineAligned="false"
         >
 
         <LinearLayout
             android:orientation="vertical"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:layout_weight="1"
             android:id="@+id/layout_pedidos"
             android:layout_marginRight="10dp">
 
             <ImageView
-                android:layout_width="80dp"
-                android:layout_height="0dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:id="@+id/imageView5"
                 android:background="@drawable/icn_menu_gestion_pedidos"
                 android:contentDescription="@string/imagesContentDescription"
@@ -146,15 +144,15 @@
         <LinearLayout
             android:orientation="vertical"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:layout_weight="1"
             android:id="@+id/layout_facturas"
             android:layout_marginLeft="10dp"
             android:layout_marginRight="10dp">
 
             <ImageView
-                android:layout_width="80dp"
-                android:layout_height="0dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:id="@+id/imageView6"
                 android:background="@drawable/icn_menu_gestion_facturas"
                 android:contentDescription="@string/imagesContentDescription"
@@ -175,15 +173,15 @@
         <LinearLayout
             android:orientation="vertical"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:layout_weight="1"
             android:id="@+id/layout_cobranzas"
             android:layout_marginLeft="10dp"
             >
 
             <ImageView
-                android:layout_width="80dp"
-                android:layout_height="0dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:id="@+id/imageView7"
                 android:background="@drawable/icn_menu_gestion_cobranzas"
                 android:contentDescription="@string/imagesContentDescription"
