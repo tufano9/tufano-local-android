@@ -65,8 +65,7 @@
                 android:layout_height="@dimen/image_menu_size"
                 android:id="@+id/imageView3"
                 android:background="@drawable/icn_menu_gestion_productos"
-                android:contentDescription="@string/imagesContentDescription"
-                android:layout_gravity="center" />
+                android:contentDescription="@string/imagesContentDescription" />
 
             <TextView
                 android:layout_width="wrap_content"
