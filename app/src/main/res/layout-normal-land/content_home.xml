@@ -13,8 +13,6 @@
     tools:context="com.tufano.tufanomovil.Home"
     tools:showIn="@layout/activity_home">
 
-    <!--pantalla sin nombre en la barra-->
-
     <LinearLayout
         android:orientation="horizontal"
         android:layout_width="match_parent"
@@ -30,8 +28,8 @@
             android:layout_marginRight="10dp">
 
             <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
                 android:id="@+id/imageView2"
                 android:background="@drawable/icn_menu_consultas"
                 android:contentDescription="@string/imagesContentDescription"
@@ -60,8 +58,8 @@
             android:layout_marginRight="10dp">
 
             <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
                 android:id="@+id/imageView3"
                 android:background="@drawable/icn_menu_gestion_productos"
                 android:contentDescription="@string/imagesContentDescription"
@@ -89,8 +87,8 @@
             >
 
             <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
                 android:id="@+id/imageView4"
                 android:background="@drawable/icn_menu_gestion_cliente"
                 android:contentDescription="@string/imagesContentDescription"
@@ -126,8 +124,8 @@
             android:layout_marginRight="10dp">
 
             <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
                 android:id="@+id/imageView5"
                 android:background="@drawable/icn_menu_gestion_pedidos"
                 android:contentDescription="@string/imagesContentDescription"
@@ -155,8 +153,8 @@
             android:layout_marginRight="10dp">
 
             <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
                 android:id="@+id/imageView6"
                 android:background="@drawable/icn_menu_gestion_facturas"
                 android:contentDescription="@string/imagesContentDescription"
@@ -185,8 +183,8 @@
             >
 
             <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
                 android:id="@+id/imageView7"
                 android:background="@drawable/icn_menu_gestion_cobranzas"
                 android:contentDescription="@string/imagesContentDescription"
