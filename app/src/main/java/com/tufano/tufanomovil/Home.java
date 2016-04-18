@@ -14,7 +14,7 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-import com.tufano.tufanomovil.gestion.clientes.GestionClientes;
+import com.tufano.tufanomovil.gestion.clientes.ConsultarCliente;
 import com.tufano.tufanomovil.gestion.pedidos.Menu;
 import com.tufano.tufanomovil.gestion.perfil.EditarPerfil;
 import com.tufano.tufanomovil.gestion.productos.ConsultarProductos;
@@ -157,7 +157,7 @@ public class Home extends AppCompatActivity
     private void abrirGestionClientes()
     {
         Log.w(TAG, "Has presionado sobre Gestion de Clientes");
-        Intent c = new Intent(Home.this, GestionClientes.class);
+        Intent c = new Intent(Home.this, ConsultarCliente.class);
         c.putExtra("usuario",usuario);
         startActivity(c);
     }

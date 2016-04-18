@@ -73,7 +73,7 @@
             android:gravity="center"
             android:text="@string/cabecera_tabla_editar_cliente_0"
             android:textColor="@drawable/table_header_text"
-            android:textSize="18sp"/>
+            android:textSize="16sp"/>
 
         <TextView
             android:id="@+id/cabecera_2"
@@ -83,7 +83,7 @@
             android:gravity="center"
             android:text="@string/cabecera_tabla_editar_cliente_1"
             android:textColor="@drawable/table_header_text"
-            android:textSize="18sp"/>
+            android:textSize="16sp"/>
 
         <TextView
             android:id="@+id/cabecera_3"
@@ -93,7 +93,7 @@
             android:gravity="center"
             android:text="@string/cabecera_tabla_editar_cliente_2"
             android:textColor="@drawable/table_header_text"
-            android:textSize="18sp"/>
+            android:textSize="16sp"/>
 
         <TextView
             android:id="@+id/cabecera_4"
@@ -103,7 +103,7 @@
             android:gravity="center"
             android:text="@string/cabecera_tabla_editar_cliente_3"
             android:textColor="@drawable/table_header_text"
-            android:textSize="18sp"/>
+            android:textSize="16sp"/>
 
         <TextView
             android:id="@+id/cabecera_5"
@@ -113,7 +113,7 @@
             android:gravity="center"
             android:text="@string/cabecera_tabla_editar_cliente_4"
             android:textColor="@drawable/table_header_text"
-            android:textSize="18sp"/>
+            android:textSize="16sp"/>
 
         <TextView
             android:layout_width="match_parent"
@@ -122,16 +122,16 @@
             android:gravity="center"
             android:text="@string/cabecera_tabla_editar_cliente_5"
             android:textColor="@drawable/table_header_text"
-            android:textSize="18sp"/>
+            android:textSize="16sp"/>
 
     </LinearLayout>
 
     <ListView
         android:id="@+id/list"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_marginBottom="100dp"
         android:layout_marginLeft="30dp"
-        android:layout_marginRight="30dp"
-        />
+        android:layout_marginRight="30dp"/>
 
 </LinearLayout>

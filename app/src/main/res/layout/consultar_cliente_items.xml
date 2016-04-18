@@ -3,7 +3,8 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
-    android:background="@drawable/border_listview">
+    android:background="@drawable/border_listview"
+    >
 
     <TextView
         android:id="@+id/razon_social"
@@ -13,7 +14,8 @@
         android:layout_margin="10dp"
         android:layout_weight="1"
         android:gravity="center"
-        android:textSize="20sp"/>
+        android:textIsSelectable="false"
+        android:textSize="16sp"/>
 
     <TextView
         android:id="@+id/rif"
@@ -23,7 +25,8 @@
         android:layout_margin="10dp"
         android:layout_weight="1"
         android:gravity="center"
-        android:textSize="20sp"/>
+        android:textIsSelectable="false"
+        android:textSize="16sp"/>
 
     <TextView
         android:id="@+id/estado"
@@ -33,7 +36,8 @@
         android:layout_margin="10dp"
         android:layout_weight="1"
         android:gravity="center"
-        android:textSize="20sp"/>
+        android:textIsSelectable="false"
+        android:textSize="16sp"/>
 
     <TextView
         android:id="@+id/telefono"
@@ -43,7 +47,8 @@
         android:layout_margin="10dp"
         android:layout_weight="1"
         android:gravity="center"
-        android:textSize="20sp"/>
+        android:textIsSelectable="false"
+        android:textSize="16sp"/>
 
     <TextView
         android:id="@+id/email"
@@ -53,18 +58,28 @@
         android:layout_margin="10dp"
         android:layout_weight="1"
         android:gravity="center"
-        android:textSize="20sp"/>
+        android:textIsSelectable="false"
+        android:textSize="16sp"/>
 
-    <ImageView
-        android:id="@+id/editar"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:layout_gravity="start|center_vertical"
-        android:layout_marginBottom="10dp"
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
         android:layout_marginRight="10dp"
-        android:layout_marginTop="10dp"
-        android:background="@drawable/ic_edit"
-        android:contentDescription="@string/imagesContentDescription"
-        android:scaleType="centerCrop"/>
+        android:layout_weight="1"
+        android:gravity="center"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:id="@+id/editar"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_gravity="start|center_vertical"
+            android:layout_marginBottom="10dp"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/ic_edit"
+            android:contentDescription="@string/imagesContentDescription"
+            android:scaleType="centerCrop"/>
+    </LinearLayout>
 
 </LinearLayout>

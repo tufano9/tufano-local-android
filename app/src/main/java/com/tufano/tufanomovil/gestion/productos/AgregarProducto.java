@@ -1073,7 +1073,7 @@ public class AgregarProducto extends AppCompatActivity
                 Intent c = new Intent(AgregarProducto.this, ConsultarProductos.class);
                 c.putExtra("usuario", usuario);
                 startActivity(c);
-                //GestionProductos.fa.finish();
+                ConsultarProductos.fa.finish();
 
                 // Prevent the user to go back to this activity
                 finish();

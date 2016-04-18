@@ -392,12 +392,12 @@ public class AgregarCliente extends AppCompatActivity
                     else
                     {
                         // Redirige a la pantalla de Home
-                        Intent c = new Intent(AgregarCliente.this, GestionClientes.class);
+                        Intent c = new Intent(AgregarCliente.this, ConsultarCliente.class);
                         c.putExtra("usuario", usuario);
                         startActivity(c);
                         // Destruye el activity previo de clientes para crear uno nuevo, esto para
                         // evitar que se dupliquen..
-                        GestionClientes.fa.finish();
+                        ConsultarCliente.fa.finish();
                     }
 
                     // Prevent the user to go back to this activity

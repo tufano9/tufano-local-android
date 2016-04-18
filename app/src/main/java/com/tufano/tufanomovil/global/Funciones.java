@@ -173,7 +173,13 @@ public class Funciones
      */
     public static String formatoTelefono(String telefono)
     {
-        return telefono.substring(0,4) + "-" + telefono.substring(4, 7) + "." + telefono.substring(7);
+        if (telefono.length() != 11)
+        {
+            Log.i(TAG, "El telefono no cumple con el tamaño necesitado, no sera formateado");
+            return telefono;
+        }
+        else
+            return telefono.substring(0, 4) + "-" + telefono.substring(4, 7) + "." + telefono.substring(7);
     }
 
     /**
@@ -183,12 +189,20 @@ public class Funciones
      */
     public static String formatoRif(String rif)
     {
-        String newRif = rif.substring(0,1) + "-" + rif.substring(1);
-        if(newRif.length()==12)
-            newRif = newRif.substring(0,4) + "." + newRif.substring(4,7) + "." + newRif.substring(7);
-        else if(newRif.length()==11)
-            newRif = newRif.substring(0,3) + "." + newRif.substring(3,6) + "." + newRif.substring(6);
-        return newRif;
+        if (rif.length() < 11)
+        {
+            Log.i(TAG, "El rif no cumple con el tamaño necesitado, no sera formateado");
+            return rif;
+        }
+        else
+        {
+            String newRif = rif.substring(0, 1) + "-" + rif.substring(1);
+            if (newRif.length() == 12)
+                newRif = newRif.substring(0, 4) + "." + newRif.substring(4, 7) + "." + newRif.substring(7);
+            else if (newRif.length() == 11)
+                newRif = newRif.substring(0, 3) + "." + newRif.substring(3, 6) + "." + newRif.substring(6);
+            return newRif;
+        }
     }
 
     /**

@@ -787,7 +787,7 @@ public class EditarProductoDetalles extends AppCompatActivity
                 startActivity(c);
 
                 // Prevent the user to go back to this activity
-                EditarProducto.fa.finish();
+                ConsultarProductos.fa.finish();
                 finish();
             }
             else

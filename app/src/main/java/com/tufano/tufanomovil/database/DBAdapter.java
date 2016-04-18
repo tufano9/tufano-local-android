@@ -1055,7 +1055,7 @@ public class DBAdapter
         String            selection  = null;
         ArrayList<String> argumentos = new ArrayList<>();
         String            orderby    = columna_ordenada.toLowerCase() + " " + orden;
-        String            limit      = "LIMIT " + cant_mostrar + " OFFSET " + empezando_desde;
+        String            limit      = empezando_desde + ", " + cant_mostrar;
 
         if (estado != null)
         {

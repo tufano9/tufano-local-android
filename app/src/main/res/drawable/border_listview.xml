@@ -10,8 +10,10 @@
         </shape>
     </item>
     <item
+        android:bottom="1dp"
         android:left="1dp"
-        android:right="1dp">
+        android:right="1dp"
+        android:top="1dp">
         <shape android:shape="rectangle">
             <!-- Set the background color of your layout here -->
             <stroke

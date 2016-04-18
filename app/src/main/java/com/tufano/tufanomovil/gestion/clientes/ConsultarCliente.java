@@ -3,25 +3,29 @@ package com.tufano.tufanomovil.gestion.clientes;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
+import android.widget.BaseAdapter;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.Spinner;
-import android.widget.TableRow;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.tufano.tufanomovil.R;
 import com.tufano.tufanomovil.adapters.clientesAdapter;
@@ -35,7 +39,7 @@ import java.util.List;
 
 public class ConsultarCliente extends AppCompatActivity
 {
-    private static final int CANT_DATOS_MOSTRAR_INICIALMENTE = 5;
+    private static final int CANT_DATOS_MOSTRAR_INICIALMENTE = 7;
     private static final int CANT_DATOS_CARGAR               = 3;
     public static Activity fa;
     private final String TAG        = "ConsultarCliente";
@@ -73,7 +77,26 @@ public class ConsultarCliente extends AppCompatActivity
         initSpinners();
         initAutoCompleteTextView();
         initTextViewHeader();
+        initFloatingActionButton();
         new cargarDatos().execute();
+    }
+
+    /**
+     * Inicializa el FAB para agregar un producto..
+     */
+    private void initFloatingActionButton()
+    {
+        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        fab.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View view)
+            {
+                Intent c = new Intent(ConsultarCliente.this, AgregarCliente.class);
+                c.putExtra("usuario", usuario);
+                startActivity(c);
+            }
+        });
     }
 
     /**
@@ -249,7 +272,6 @@ public class ConsultarCliente extends AppCompatActivity
     {
         columna_ordenada = cabecera;
         this.orden = orden;
-        limpiarTabla();
         //estado razonsocial
         new reCargarDatos().execute(estado_filtrado, razon_social_filtrado);
     }
@@ -451,7 +473,7 @@ public class ConsultarCliente extends AppCompatActivity
     private void filtrarTabla()
     {
         String defaultValueEstado = this.estado.getItemAtPosition(0).toString();
-        limpiarTabla();
+
         if (!estado_filtrado.equals(defaultValueEstado) && !razon_social_filtrado.equals(""))
         {
             //Log.w(TAG, "Filtrando tabla por: Estado = " + estado_filtrado + " y Razon Social = " + razon_social_filtrado);
@@ -483,19 +505,6 @@ public class ConsultarCliente extends AppCompatActivity
                 contexto, R.array.estados_lista, R.layout.spinner_item);
         adapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
         estado.setAdapter(adapter);
-    }
-
-    /**
-     * Limpia toda la informacion existente en la tabla.
-     */
-    private void limpiarTabla()
-    {
-        // TODO METODO VACIO
-        /*final TableLayout tabla = (TableLayout) findViewById(R.id.table_editar_clientes);
-        for (int i = 0; i < filas.size(); i++)
-        {
-            tabla.removeView(filas.get(i));
-        }*/
     }
 
     /**
@@ -536,6 +545,7 @@ public class ConsultarCliente extends AppCompatActivity
                 this.razon_social_filtrado, columna_ordenada, orden);
         // Numero de registros que existen con dichos parametros de filtrado..
         limit = cursor2.getCount();
+        //Log.i(TAG, "Numero total de registros en la BD con dichos filtros: "+limit);
         cursor2.close();
 
         Cursor cursor = manager.cargarClientesFiltrado(this.estado_filtrado,
@@ -544,19 +554,15 @@ public class ConsultarCliente extends AppCompatActivity
 
         if (cursor.getCount() > 0)
         {
-            // TODO mostrarTodo(tabla);
-
             for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor.moveToNext())
             {
                 Log.i(TAG, "Agregando fila..");
-                final TableRow fila = new TableRow(contexto);
-
                 // Extrayendo datos de la base de datos
                 final String id_cliente = String.valueOf(cursor.getInt(0));
                 final String rs         = cursor.getString(1);
-                final String rifs       = cursor.getString(2);
+                final String rifs       = Funciones.formatoRif(cursor.getString(2));
                 final String estados    = cursor.getString(3);
-                final String tlf        = cursor.getString(4);
+                final String tlf        = Funciones.formatoTelefono(cursor.getString(4));
                 final String mail       = cursor.getString(5);
                 final String dir        = cursor.getString(6);
                 final String estatus    = cursor.getString(7);
@@ -567,6 +573,7 @@ public class ConsultarCliente extends AppCompatActivity
         }
         else
         {
+            Log.i(TAG, "No consegui nada en la BD..");
             if (!filtrado)
             {
                 final Thread hilo = new Thread()
@@ -581,7 +588,14 @@ public class ConsultarCliente extends AppCompatActivity
                                 @Override
                                 public void run()
                                 {
+                                    TextView mensaje = new TextView(contexto);
+                                    mensaje.setText(R.string.msj_cliente_vacio);
+                                    mensaje.setGravity(Gravity.CENTER);
+                                    mensaje.setTextSize(20f);
+                                    mensaje.setId(id_mensaje);
 
+                                    LinearLayout contenedor = (LinearLayout) findViewById(R.id.contenedor_base);
+                                    contenedor.addView(mensaje);
                                 }
                             });
                         }
@@ -603,7 +617,14 @@ public class ConsultarCliente extends AppCompatActivity
                                 @Override
                                 public void run()
                                 {
+                                    TextView mensaje = new TextView(contexto);
+                                    mensaje.setText(R.string.sin_resultados);
+                                    mensaje.setGravity(Gravity.CENTER);
+                                    mensaje.setTextSize(20f);
+                                    mensaje.setId(id_mensaje);
 
+                                    LinearLayout contenedor = (LinearLayout) findViewById(R.id.contenedor_base);
+                                    contenedor.addView(mensaje);
                                 }
                             });
                         }
@@ -634,15 +655,17 @@ public class ConsultarCliente extends AppCompatActivity
                                 @Override
                                 public boolean onLoadMore(int page, int totalItemsCount)
                                 {
-                                    String msj = "onLoadMore : page = " + page + ", totalItemsCount = " + totalItemsCount;
-                                    //Toast.makeText(getApplicationContext(), msj, Toast.LENGTH_SHORT).show();
+                                    String msj = "onLoadMore : page = " + page + "," +
+                                            " totalItemsCount = " + totalItemsCount;
                                     Log.i(TAG, msj);
 
                                     // Triggered only when new data needs to be appended to the list
-                                    // Add whatever code is needed to append new items to your AdapterView
-                                    // TODO customLoadMoreDataFromApi(totalItemsCount);
+                                    // Add whatever code is needed to append new items to your
+                                    // AdapterView
+                                    customLoadMoreDataFromApi(totalItemsCount);
 
-                                    return true; // ONLY if more data is actually being loaded; false otherwise.
+                                    // ONLY if more data is actually being loaded; false otherwise.
+                                    return true;
                                 }
                             });
                         }
@@ -651,6 +674,50 @@ public class ConsultarCliente extends AppCompatActivity
             }
         };
         hilo1.start();
+    }
+
+    // Append more data into the adapter
+    public void customLoadMoreDataFromApi(int totalItemsCount)
+    {
+        // This method probably sends out a network request and appends new data items to your adapter.
+        // Use the page value and add it as a parameter to your API request to retrieve paginated data.
+        // Deserialize API response and then construct new objects to append to the adapter
+
+        if (totalItemsCount >= limit)
+        {
+            Toast.makeText(getApplicationContext(), "No hay mas elementos que mostrar.",
+                    Toast.LENGTH_SHORT).show();
+        }
+        else
+        {
+            Cursor cursor = manager.cargarClientesFiltrado(this.estado_filtrado,
+                    this.razon_social_filtrado, columna_ordenada, orden,
+                    CANT_DATOS_CARGAR,
+                    totalItemsCount);
+
+            if (cursor.getCount() > 0)
+            {
+                for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor.moveToNext())
+                {
+                    Log.i(TAG, "Creando Data.. (Añadido)");
+                    // Extrayendo datos de la base de datos
+                    final String id_cliente = String.valueOf(cursor.getInt(0));
+                    final String rs         = cursor.getString(1);
+                    final String rifs       = Funciones.formatoRif(cursor.getString(2));
+                    final String estados    = cursor.getString(3);
+                    final String tlf        = Funciones.formatoTelefono(cursor.getString(4));
+                    final String mail       = cursor.getString(5);
+                    final String dir        = cursor.getString(6);
+                    final String estatus    = cursor.getString(7);
+
+                    Cliente c = new Cliente(id_cliente, rs, rifs, estados, tlf, mail, dir, estatus);
+                    adapter.add(c);
+                }
+            }
+            cursor.close();
+
+            ((BaseAdapter) list.getAdapter()).notifyDataSetChanged();
+        }
     }
 
     private void eliminarMensajeInformativo()

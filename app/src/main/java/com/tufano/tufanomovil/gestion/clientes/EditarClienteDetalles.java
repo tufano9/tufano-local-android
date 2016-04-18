@@ -375,10 +375,10 @@ public class EditarClienteDetalles extends AppCompatActivity
                     else
                     {
                         // Redirige a la pantalla de Home
-                        Intent c = new Intent(EditarClienteDetalles.this, EditarCliente.class);
+                        Intent c = new Intent(EditarClienteDetalles.this, ConsultarCliente.class);
                         c.putExtra("usuario", usuario);
                         startActivity(c);
-                        EditarCliente.fa.finish();
+                        ConsultarCliente.fa.finish();
                     }
 
                     // Prevent the user to go back to this activity
