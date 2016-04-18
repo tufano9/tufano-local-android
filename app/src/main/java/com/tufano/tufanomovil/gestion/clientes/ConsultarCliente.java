@@ -20,7 +20,6 @@ import android.widget.AutoCompleteTextView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.Spinner;
-import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
 
@@ -678,34 +677,6 @@ public class ConsultarCliente extends AppCompatActivity
             }
         };
         hilo.start();
-    }
-
-    /**
-     * Muestra todos los componentes de la tabla.
-     *
-     * @param tabla Tabla a la cual se le haran visibles los componentes (Razon social, Estado, Tabla)
-     */
-    private void mostrarTodo(TableLayout tabla)
-    {
-        tabla.setVisibility(View.VISIBLE);
-        AutoCompleteTextView rs     = (AutoCompleteTextView) findViewById(R.id.autoC_razonSocial);
-        LinearLayout         estado = (LinearLayout) findViewById(R.id.contenedor_spinners);
-        rs.setVisibility(View.VISIBLE);
-        estado.setVisibility(View.VISIBLE);
-    }
-
-    /**
-     * Oculta todos los componentes de la tabla.
-     *
-     * @param tabla Tabla a la cual se le haran invisibles los componentes (Razon social, Estado, Tabla)
-     */
-    private void ocultarTodo(TableLayout tabla)
-    {
-        tabla.setVisibility(View.INVISIBLE);
-        AutoCompleteTextView rs     = (AutoCompleteTextView) findViewById(R.id.autoC_razonSocial);
-        LinearLayout         estado = (LinearLayout) findViewById(R.id.contenedor_spinners);
-        rs.setVisibility(View.INVISIBLE);
-        estado.setVisibility(View.INVISIBLE);
     }
 
     private class cargarDatos extends AsyncTask<String, String, String>

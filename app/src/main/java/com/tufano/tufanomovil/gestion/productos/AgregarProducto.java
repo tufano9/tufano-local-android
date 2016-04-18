@@ -623,17 +623,16 @@ public class AgregarProducto extends AppCompatActivity
 
         // Recopilar todos los datos para agregar el producto..
         EditText et_modelo = (EditText) findViewById(R.id.modelo_producto);
-        Spinner et_color = (Spinner) findViewById(R.id.color_producto);
         EditText et_precio = (EditText) findViewById(R.id.precio_producto);
-        Spinner sp_tipo = (Spinner) findViewById(R.id.tipo_producto);
-        Spinner sp_talla = (Spinner) findViewById(R.id.talla_producto);
 
-        String tipo = sp_tipo.getSelectedItem().toString().trim(); // Obtengo por ej. "Torera"
-        String talla = sp_talla.getSelectedItem().toString().substring(0, 1).trim(); // Obtengo por ej. "P (18-25)"
-        String color = et_color.getSelectedItem().toString().trim();
+        String tipo = this.tipo.getSelectedItem().toString().trim(); // Obtengo por ej. "Torera"
+        String talla = this.talla.getSelectedItem().toString().substring(0, 1).trim(); // Obtengo por ej. "P (18-25)"
+        String color = this.sp_color.getSelectedItem().toString().trim();
         String precio = et_precio.getText().toString().trim();
         String modelo = et_modelo.getText().toString().trim();
-        String numeracion = sp_talla.getSelectedItem().toString().substring(2).trim();
+        String numeracion = this.talla.getSelectedItem().toString().substring(2).trim();
+        numeracion = numeracion.substring(0, numeracion.length());
+
         int idColor = obtenerIDColor();
         int idTipo = obtenerIDTipo();
         int idTalla = obtenerIDTalla();
