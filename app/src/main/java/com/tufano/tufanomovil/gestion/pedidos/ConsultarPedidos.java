@@ -5,11 +5,11 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
-import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -18,18 +18,22 @@ import android.view.Gravity;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
+import android.widget.BaseAdapter;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.tufano.tufanomovil.R;
+import com.tufano.tufanomovil.adapters.pedidosAdapter;
 import com.tufano.tufanomovil.database.DBAdapter;
+import com.tufano.tufanomovil.global.EndlessScrollListener;
 import com.tufano.tufanomovil.global.Funciones;
+import com.tufano.tufanomovil.objetos.Pedido;
 
-import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -40,10 +44,16 @@ import java.util.Locale;
 /**
  * Created by Usuario Tufano onn 01/02/2016.
  */
-public class Consultar extends AppCompatActivity
+public class ConsultarPedidos extends AppCompatActivity
 {
+    private static final int CANT_DATOS_MOSTRAR_INICIALMENTE = 5;
+    private static final int CANT_DATOS_CARGAR               = 3;
     public static Activity fa;
-    private final String TAG = "Consultar";
+    private final int    id_mensaje = Funciones.generateViewId();
+    private final String TAG        = "ConsultarPedidos";
+    private ListView       list;
+    private pedidosAdapter adapter;
+    private int            limit; // Numero total de elementos
     private String usuario;
     private Context contexto;
     private ProgressDialog pDialog;
@@ -69,11 +79,30 @@ public class Consultar extends AppCompatActivity
         getExtrasVar();
         createToolBar();
         initTextViewHeader();
+        initFloatingActionButton();
 
         columna_ordenada = "_id_pedido";
         orden = "ASC";
 
         new cargarDatos().execute();
+    }
+
+    /**
+     * Inicializa el FAB para agregar un producto..
+     */
+    private void initFloatingActionButton()
+    {
+        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        fab.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View view)
+            {
+                Intent c = new Intent(ConsultarPedidos.this, SeleccionarCliente.class);
+                c.putExtra("usuario", usuario);
+                startActivity(c);
+            }
+        });
     }
 
     /**
@@ -422,18 +451,23 @@ public class Consultar extends AppCompatActivity
     {
         Log.i(TAG, "Inicializando tabla.. Ordenando por: "+columna_ordenada+" de forma "+orden);
 
+        eliminarMensajeInformativo();
+
         final TableLayout tabla = (TableLayout) findViewById(R.id.table_consultar_pedidos);
         filas = new ArrayList<>();
+        final List<Pedido> datos = new ArrayList<>();
+        final Activity     a     = this;
 
-        TableRow.LayoutParams params = new TableRow.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.MATCH_PARENT, 1f);
+        Cursor cursor2 = manager.cargarPedidosOrdenadosPor(columna_ordenada, orden, cliente_filtrado, estatus_filtrado);
+        // Numero de registros que existen con dichos parametros de filtrado..
+        limit = cursor2.getCount();
+        cursor2.close();
 
-        Cursor cursor = manager.cargarPedidosOrdenadosPor(columna_ordenada, orden, cliente_filtrado, estatus_filtrado);
-
+        Cursor cursor = manager.cargarPedidosOrdenadosPor(columna_ordenada, orden,
+                cliente_filtrado, estatus_filtrado, CANT_DATOS_MOSTRAR_INICIALMENTE, 0);
 
         if (cursor.getCount() > 0)
         {
-            mostrarTodo(tabla);
-
             for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor.moveToNext())
             {
                 Log.i(TAG, "Agregando fila..");
@@ -451,24 +485,27 @@ public class Consultar extends AppCompatActivity
                 // CN_ID_PEDIDO, CN_RAZON_SOCIAL_CLIENTE_PEDIDO , CN_NOMBRE_VENDEDOR_PEDIDO ,
                 // CN_MONTO_PEDIDO, CN_FECHA_PEDIDO, CN_ESTATUS_PEDIDO, CN_OBSERVACIONES_PEDIDO
 
-                final TableRow fila = new TableRow(contexto);
-                final String id_pedido = String.valueOf(cursor.getInt(0));
-                final String razon_social = String.valueOf(cursor.getString(1));
+                //final TableRow fila = new TableRow(contexto);
+                final String id_pedido       = String.valueOf(cursor.getInt(0));
+                final String razon_social    = String.valueOf(cursor.getString(1));
                 final String nombre_vendedor = String.valueOf(cursor.getString(2));
-                final String monto_pedido = String.valueOf(cursor.getString(3));
-                final String fecha_pedido = new SimpleDateFormat("dd-MM-yyyy h:mm a", Locale.US).format(date);
-                final String estatus_pedido = convertirEstatus(String.valueOf(cursor.getString(5)));
-                //final String observaciones = String.valueOf(cursor.getString(6));
+                final String monto_pedido    = String.valueOf(cursor.getString(3));
+                final String fecha_pedido    = new SimpleDateFormat("dd-MM-yyyy h:mm a", Locale.US).format(date);
+                final String estatus_pedido  = convertirEstatus(String.valueOf(cursor.getString(5)));
+                final String observaciones   = String.valueOf(cursor.getString(6));
 
-                /* Pedido numero */
-                TextView pedido_num = new TextView(contexto);
+                Pedido pedido = new Pedido(id_pedido, razon_social, nombre_vendedor, monto_pedido,
+                        fecha_pedido, estatus_pedido, observaciones);
+
+                datos.add(pedido);
+
+                /*TextView pedido_num = new TextView(contexto);
                 pedido_num.setText(id_pedido);
                 pedido_num.setTextColor(Color.DKGRAY);
                 pedido_num.setGravity(Gravity.CENTER);
                 pedido_num.setLayoutParams(params);
                 pedido_num.setTextSize(16f);
 
-                /* Vendedor */
                 TextView vendedor = new TextView(contexto);
                 //String vendedor_nombre = obtenerNombreVendedor(nombre_vendedor);
                 vendedor.setText(nombre_vendedor);
@@ -477,7 +514,6 @@ public class Consultar extends AppCompatActivity
                 vendedor.setLayoutParams(params);
                 vendedor.setTextSize(16f);
 
-                /* Cliente */
                 TextView cliente = new TextView(contexto);
                 //String cliente_nombre = obtenerNombreCliente(razon_social);
                 cliente.setText(razon_social);
@@ -486,7 +522,6 @@ public class Consultar extends AppCompatActivity
                 cliente.setLayoutParams(params);
                 cliente.setTextSize(16f);
 
-                /* Fecha */
                 TextView fecha = new TextView(contexto);
                 fecha.setText(fecha_pedido);
                 fecha.setTextColor(Color.DKGRAY);
@@ -494,7 +529,6 @@ public class Consultar extends AppCompatActivity
                 fecha.setLayoutParams(params);
                 fecha.setTextSize(16f);
 
-                /* Monto */
                 TextView monto = new TextView(contexto);
                 DecimalFormat priceFormat = new DecimalFormat("###,###.##");
                 String output = priceFormat.format(Double.parseDouble(monto_pedido));
@@ -504,22 +538,21 @@ public class Consultar extends AppCompatActivity
                 monto.setLayoutParams(params);
                 monto.setTextSize(16f);
 
-                /* Estatus */
                 TextView estatus = new TextView(contexto);
                 estatus.setText(estatus_pedido);
                 estatus.setTextColor(Color.DKGRAY);
                 estatus.setGravity(Gravity.CENTER);
                 estatus.setLayoutParams(params);
-                estatus.setTextSize(16f);
+                estatus.setTextSize(16f);*/
 
                 /* Opciones */
-                Button editar = new Button(contexto);
+                /*Button editar = new Button(contexto);
                 editar.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v)
                     {
                         Log.i(TAG, "Editar presionado");
-                        Intent c = new Intent(Consultar.this, DetallesPedido.class);
+                        Intent c = new Intent(ConsultarPedidos.this, DetallesPedido.class);
                         c.putExtra("usuario", usuario);
                         c.putExtra("id_pedido", id_pedido);
                         startActivity(c);
@@ -570,7 +603,7 @@ public class Consultar extends AppCompatActivity
                         }
                     }
                 };
-                hilo1.start();
+                hilo1.start();*/
             }
         }
         else
@@ -656,7 +689,100 @@ public class Consultar extends AppCompatActivity
             }
         }
 
+        final Thread hilo1 = new Thread()
+        {
+            @Override
+            public void run()
+            {
+                synchronized (this)
+                {
+                    runOnUiThread(new Runnable()
+                    {
+                        @Override
+                        public void run()
+                        {
+                            adapter = new pedidosAdapter(a, datos, contexto, usuario);
+
+                            list.setAdapter(adapter);
+                            list.setOnScrollListener(new EndlessScrollListener()
+                            {
+                                @Override
+                                public boolean onLoadMore(int page, int totalItemsCount)
+                                {
+                                    String msj = "onLoadMore : page = " + page + "," +
+                                            " totalItemsCount = " + totalItemsCount;
+                                    Log.i(TAG, msj);
+
+                                    // Triggered only when new data needs to be appended to the list
+                                    // Add whatever code is needed to append new items to your
+                                    // AdapterView
+                                    customLoadMoreDataFromApi(totalItemsCount);
+
+                                    // ONLY if more data is actually being loaded; false otherwise.
+                                    return true;
+                                }
+                            });
+                        }
+                    });
+                }
+            }
+        };
+        hilo1.start();
+
         cursor.close();
+    }
+
+    // Append more data into the adapter
+    public void customLoadMoreDataFromApi(int totalItemsCount)
+    {
+        // This method probably sends out a network request and appends new data items to your adapter.
+        // Use the page value and add it as a parameter to your API request to retrieve paginated data.
+        // Deserialize API response and then construct new objects to append to the adapter
+
+        if (totalItemsCount >= limit)
+        {
+            Toast.makeText(getApplicationContext(), "No hay mas elementos que mostrar.",
+                    Toast.LENGTH_SHORT).show();
+        }
+        else
+        {
+            Cursor cursor = manager.cargarPedidosOrdenadosPor(columna_ordenada, orden,
+                    cliente_filtrado, estatus_filtrado, CANT_DATOS_CARGAR, totalItemsCount);
+
+            if (cursor.getCount() > 0)
+            {
+                for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor.moveToNext())
+                {
+                    Date date = null;
+                    try
+                    {
+                        date = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US).parse(String.valueOf(cursor.getString(4)));
+                    }
+                    catch (ParseException e)
+                    {
+                        e.printStackTrace();
+                    }
+
+                    Log.i(TAG, "Creando Data.. (Añadido)");
+                    // Extrayendo datos de la base de datos
+                    final String id_pedido       = String.valueOf(cursor.getInt(0));
+                    final String razon_social    = String.valueOf(cursor.getString(1));
+                    final String nombre_vendedor = String.valueOf(cursor.getString(2));
+                    final String monto_pedido    = String.valueOf(cursor.getString(3));
+                    final String fecha_pedido    = new SimpleDateFormat("dd-MM-yyyy h:mm a", Locale.US).format(date);
+                    final String estatus_pedido  = convertirEstatus(String.valueOf(cursor.getString(5)));
+                    final String observaciones   = String.valueOf(cursor.getString(6));
+
+                    Pedido pedido = new Pedido(id_pedido, razon_social, nombre_vendedor, monto_pedido,
+                            fecha_pedido, estatus_pedido, observaciones);
+
+                    adapter.add(pedido);
+                }
+            }
+            cursor.close();
+
+            ((BaseAdapter) list.getAdapter()).notifyDataSetChanged();
+        }
     }
 
     /**
@@ -679,16 +805,30 @@ public class Consultar extends AppCompatActivity
         }
     }
 
-    /**
-     * Funcion encargada de mostrar todos los elementos de la tabla.
-     *
-     * @param tabla Tabla a la cual se le ocultaran los elementos.
-     */
-    private void mostrarTodo(TableLayout tabla)
+    private void eliminarMensajeInformativo()
     {
-        clientes.setVisibility(View.VISIBLE);
-        estatus.setVisibility(View.VISIBLE);
-        tabla.setVisibility(View.VISIBLE);
+        final Thread hilo = new Thread()
+        {
+            @Override
+            public void run()
+            {
+                synchronized (this)
+                {
+                    runOnUiThread(new Runnable()
+                    {
+                        @Override
+                        public void run()
+                        {
+                            // Elimina el mensaje (De haberlo) que muestra que no se encontraron registros en la BD.
+                            TextView     mensaje    = (TextView) findViewById(id_mensaje);
+                            LinearLayout contenedor = (LinearLayout) findViewById(R.id.contenedor_base);
+                            contenedor.removeView(mensaje);
+                        }
+                    });
+                }
+            }
+        };
+        hilo.start();
     }
 
     /*
@@ -744,7 +884,7 @@ public class Consultar extends AppCompatActivity
         @Override
         protected void onPreExecute()
         {
-            pDialog = new ProgressDialog(Consultar.this);
+            pDialog = new ProgressDialog(ConsultarPedidos.this);
             pDialog.setTitle("Por favor espere...");
             pDialog.setMessage("Cargando informacion...");
             pDialog.setIndeterminate(true);

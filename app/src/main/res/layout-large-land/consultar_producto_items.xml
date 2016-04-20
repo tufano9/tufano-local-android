@@ -98,4 +98,13 @@
         android:background="@drawable/icn_whatsapp"
         android:contentDescription="@string/imagesContentDescription"
         android:scaleType="centerCrop"/>
+
+    <!--<ImageView
+        android:layout_width="800dp"
+        android:layout_height="600dp"
+        android:contentDescription="@string/imagesContentDescription"
+        android:id="@+id/photo_full"
+        android:visibility="gone"
+        android:layout_weight="1"
+        android:layout_gravity="center"/>-->
 </LinearLayout>

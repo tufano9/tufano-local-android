@@ -12,14 +12,28 @@ import java.util.ArrayList;
  */
 public class FuncionesTablas
 {
-    public static ArrayList idsCargados(DBAdapter manager)
+    public static ArrayList idsCargadosEdit(DBAdapter manager)
     {
         Cursor cursor = manager.cargarPedidosDetallesEditar();
         ArrayList<String> ids = new ArrayList<>();
 
         for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor.moveToNext())
         {
+            Log.w("idsCargadosEdit", "ID: " + cursor.getString(2));
             ids.add(cursor.getString(2));
+        }
+        return ids;
+    }
+
+    public static ArrayList idsCargados(DBAdapter manager)
+    {
+        Cursor            cursor = manager.cargarPedidoTemporal();
+        ArrayList<String> ids    = new ArrayList<>();
+
+        for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor.moveToNext())
+        {
+            Log.w("idsCargados", "ID: " + cursor.getString(1));
+            ids.add(cursor.getString(1));
         }
         return ids;
     }
@@ -28,6 +42,7 @@ public class FuncionesTablas
     {
         for (int i = 0; i < ids_productos_cargados.size(); i++)
         {
+            Log.w(TAG, "Comparando " + modelo_producto + " con " + ids_productos_cargados.get(i));
             if( ids_productos_cargados.get(i).equals(modelo_producto) )
             {
                 Log.w(TAG, "Ya esta agregado, no lo agrego..");

@@ -587,7 +587,7 @@ public class AgregarProductoPedidoEditar extends AppCompatActivity
 
         TableRow.LayoutParams params = new TableRow.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.MATCH_PARENT, 1f);
 
-        ArrayList ids_productos_cargados = FuncionesTablas.idsCargados(manager);
+        ArrayList ids_productos_cargados = FuncionesTablas.idsCargadosEdit(manager);
         productos_agregados = 0;
         productos = new ArrayList<>();
 

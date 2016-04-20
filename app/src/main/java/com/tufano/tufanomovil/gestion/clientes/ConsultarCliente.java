@@ -537,6 +537,7 @@ public class ConsultarCliente extends AppCompatActivity
         Log.i(TAG, "Filtrando por... Estado: " + this.estado_filtrado + ", RazonSocial: " + this.razon_social_filtrado);
 
         eliminarMensajeInformativo();
+
         list = (ListView) findViewById(R.id.list);
         final List<Cliente> datos = new ArrayList<>();
         final Activity      a     = this;

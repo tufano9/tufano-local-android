@@ -5,8 +5,10 @@ package com.tufano.tufanomovil.global;
  */
 public class Constantes
 {
-    public final static String ALGORITM = "Blowfish";
-    public final static String EXTENSION_IMG = ".jpg";
-    public final static int IMG_FULL_SIZE_WIDTH = 2160;
-    public final static int IMG_FULL_SIZE_HEIGHT = 1620;
+    public final static String ALGORITM                    = "Blowfish";
+    public final static String EXTENSION_IMG               = ".jpg";
+    public final static int    IMG_FULL_SIZE_WIDTH         = 2160;
+    public final static int    IMG_FULL_SIZE_HEIGHT        = 1620;
+    public final static int    IMG_FULL_SIZE_WIDTH_SCALED  = 1024;
+    public final static int    IMG_FULL_SIZE_HEIGHT_SCALED = 700;
 }

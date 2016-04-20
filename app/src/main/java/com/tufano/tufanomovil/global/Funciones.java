@@ -7,6 +7,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.support.v4.content.ContextCompat;
 import android.text.TextUtils;
 import android.util.Base64;
@@ -18,6 +19,9 @@ import android.widget.TextView;
 import com.tufano.tufanomovil.R;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.security.NoSuchAlgorithmException;
 import java.text.DecimalFormat;
@@ -34,12 +38,13 @@ import javax.crypto.spec.SecretKeySpec;
  */
 public class Funciones
 {
-    private static final String TAG = "Funciones";
+    private static final String        TAG              = "Funciones";
     private static final AtomicInteger sNextGeneratedId = new AtomicInteger(1);
 
     /**
      * Metodo para encriptar un texto.
-     * @param key El Key aleatoriamente generado con el cual se va a encriptar
+     *
+     * @param key       El Key aleatoriamente generado con el cual se va a encriptar
      * @param plainText El Texto a encriptar
      * @return El texto encriptado bajo un array de bytes.
      * @throws GeneralSecurityException
@@ -56,7 +61,8 @@ public class Funciones
 
     /**
      * Metodo para des-encriptar un texto.
-     * @param key El Key aleatoriamente generado con el cual se va a des-encriptar
+     *
+     * @param key           El Key aleatoriamente generado con el cual se va a des-encriptar
      * @param encryptedText El Texto a des-encriptar
      * @return El texto des-encriptado.
      * @throws GeneralSecurityException
@@ -76,7 +82,8 @@ public class Funciones
 
     /**
      * Busca la posicion de la cadena ingresada dentro del spinner dado.
-     * @param cadena Cadena a buscar.
+     *
+     * @param cadena  Cadena a buscar.
      * @param spinner Spinner donde se buscara la cadena
      * @return Posicion de la cadena dentro del spinner. Retorna -1 si no lo encontro.
      */
@@ -88,9 +95,9 @@ public class Funciones
         for (int i = 0; i < adap.getCount(); i++)
         {
             //Log.i(TAG, "Comparando con '"+adap.getItem(i).toString()+"'");
-            if(adap.getItem(i).toString().equals(cadena))
+            if (adap.getItem(i).toString().equals(cadena))
             {
-                Log.i(TAG, "Elemento "+cadena+" encontrado!!");
+                Log.i(TAG, "Elemento " + cadena + " encontrado!!");
                 return i;
             }
         }
@@ -99,7 +106,8 @@ public class Funciones
 
     /**
      * Metodo para buscar la posicion de un caracter dentro de una cadena.
-     * @param cadena Cadena en la cual se buscara el caracter dado.
+     *
+     * @param cadena   Cadena en la cual se buscara el caracter dado.
      * @param busqueda Caracter a buscar dentro de la cadena.
      * @return La posicion dentro de la cadena en la cual se ubica el caracter.
      */
@@ -124,14 +132,15 @@ public class Funciones
      */
     public static int generateViewId()
     {
-        for (;;) {
+        for (; ; )
+        {
             final int result = sNextGeneratedId.get();
             // aapt-generated IDs have the high byte nonzero; clamp to the range under that.
             int newValue = result + 1;
             if (newValue > 0x00FFFFFF) newValue = 1; // Roll over to 1, not 0.
             if (sNextGeneratedId.compareAndSet(result, newValue))
             {
-                Log.i(TAG, "Generated ID: "+result);
+                Log.i(TAG, "Generated ID: " + result);
                 return result;
             }
         }
@@ -139,6 +148,7 @@ public class Funciones
 
     /**
      * Verifica si el email es valido
+     *
      * @param target Email a validar.
      * @return True si el email es valido, false en caso contrario.
      */
@@ -149,6 +159,7 @@ public class Funciones
 
     /**
      * Metodo para convertir una cadena a su equivalente con palabras capitalizadas.
+     *
      * @param line La cadena a gestionar.
      * @return La cadena con las palabras capitalizadas.
      */
@@ -158,7 +169,7 @@ public class Funciones
 
         for (int i = 1; i < line.length(); i++)
         {
-            if( i>1 && String.valueOf(line.charAt(i-1)).equals(" ") )
+            if (i > 1 && String.valueOf(line.charAt(i - 1)).equals(" "))
                 res += Character.toUpperCase(line.charAt(i));
             else
                 res += Character.toLowerCase(line.charAt(i));
@@ -168,6 +179,7 @@ public class Funciones
 
     /**
      * Formatea una cadena que contiene un numero de telefono. Por Ej, 0212-500.1015.
+     *
      * @param telefono Numero de telefono a formatear.
      * @return Numero de telefono con el formato (Guion + Punto).
      */
@@ -184,6 +196,7 @@ public class Funciones
 
     /**
      * Formatea una cadena que contiene un rif. Por Ej, J-34.000.111.
+     *
      * @param rif Rif a formatear.
      * @return Rif con el formato (Guion + Puntos).
      */
@@ -207,6 +220,7 @@ public class Funciones
 
     /**
      * Formatea el precio ingresado con separadores (Comas y Puntos)
+     *
      * @param precio El precio que necesita ser formateado.
      * @return El precio con el formato propuesto.
      */
@@ -218,8 +232,9 @@ public class Funciones
 
     /**
      * Busca el drawable equivalente al valor int (R.drawable.00000) ingresado.
+     *
      * @param contexto Contexto de la aplicacion.
-     * @param image Valor entero del drawable.
+     * @param image    Valor entero del drawable.
      * @return Drawable obtenido a partir del Int ingresado.
      */
     public static Drawable intToDrawable(Context contexto, int image)
@@ -238,6 +253,7 @@ public class Funciones
 
     /**
      * Generador del key aleatorio para usarse en conjunto con el usuario.
+     *
      * @return El key generado.
      */
     public static String generateKey()
@@ -264,6 +280,7 @@ public class Funciones
 
     /**
      * Metodo para obtener el Drawable de Flecha Ascendente utilizado en las tablas.
+     *
      * @return El drawable de la imagen.
      */
     @SuppressWarnings("SameReturnValue")
@@ -276,6 +293,7 @@ public class Funciones
 
     /**
      * Metodo para obtener el Drawable de Flecha Descendente utilizado en las tablas.
+     *
      * @return El drawable de la imagen.
      */
     @SuppressWarnings("SameReturnValue")
@@ -288,9 +306,10 @@ public class Funciones
 
     /**
      * Metodo para setear los datos por defecto del login (Para efectos de DEBUG)
-     * @param username Nombre de usuario a utilizar.
-     * @param password Contraseña a utilizar.
-     * @param campo_usuario_login TextView a rellenar con el usuario.
+     *
+     * @param username               Nombre de usuario a utilizar.
+     * @param password               Contraseña a utilizar.
+     * @param campo_usuario_login    TextView a rellenar con el usuario.
      * @param campo_contrasena_login TextView a rellenar con la contraseña.
      */
     @SuppressWarnings("SameParameterValue")
@@ -302,8 +321,9 @@ public class Funciones
 
     /**
      * Crear un equivalente bajo en peso de la imagen.
-     * @param file Archivo donde se encuentra la imagen.
-     * @param reqWidth Ancho requerido.
+     *
+     * @param file      Archivo donde se encuentra la imagen.
+     * @param reqWidth  Ancho requerido.
      * @param reqHeight Alto requerido.
      * @return Imagen optimizada.
      */
@@ -324,22 +344,97 @@ public class Funciones
         //return BitmapFactory.decodeResource(res, resId, options);
     }
 
+    public static Bitmap decodeFile(File f, final int REQUIRED_SIZE)
+    {
+        try
+        {
+            Log.i(TAG, "Image Size: " + readableFileSize(f.length()));
+            //decode image size
+            BitmapFactory.Options o = new BitmapFactory.Options();
+            o.inJustDecodeBounds = true;
+            FileInputStream stream1 = new FileInputStream(f);
+            BitmapFactory.decodeStream(stream1, null, o);
+            stream1.close();
+
+            //Find the correct scale value. It should be the power of 2.
+            //final int REQUIRED_SIZE = 70; // Sera cuadrada, 70x70
+            int width_tmp = o.outWidth, height_tmp = o.outHeight;
+            int scale     = 1;
+
+            while (true)
+            {
+                if (width_tmp / 2 < REQUIRED_SIZE || height_tmp / 2 < REQUIRED_SIZE)
+                    break;
+                width_tmp /= 2;
+                height_tmp /= 2;
+                scale *= 2;
+            }
+
+            //decode with inSampleSize
+            BitmapFactory.Options o2 = new BitmapFactory.Options();
+            o2.inSampleSize = scale;
+            FileInputStream stream2 = new FileInputStream(f);
+            Bitmap          bitmap  = BitmapFactory.decodeStream(stream2, null, o2);
+            stream2.close();
+            Log.i(TAG, "Returning decoded image.. " + bitmap.getWidth() + " x " + bitmap.getHeight()
+                    + " New Size: " + readableFileSize(sizeOf(bitmap)));
+            return bitmap;
+        }
+        catch (FileNotFoundException ignored)
+        {
+        }
+        catch (IOException e)
+        {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    /**
+     * Formatea el tamaño de un archivo introducido a un formato legible y entendible por usuario.
+     *
+     * @param size Tamaño del archivo a formatear.
+     * @return Tamaño del archivo formateado con la unidad correspondiente, por ej 534.1 MB
+     */
+    public static String readableFileSize(long size)
+    {
+        if (size <= 0) return "0";
+        final String[] units       = new String[]{"B", "kB", "MB", "GB", "TB"};
+        int            digitGroups = (int) (Math.log10(size) / Math.log10(1024));
+        return new DecimalFormat("#,##0.#").format(size / Math.pow(1024, digitGroups)) + " " + units[digitGroups];
+    }
+
+    //@TargetApi(Build.VERSION_CODES.HONEYCOMB_MR1)
+    protected static int sizeOf(Bitmap data)
+    {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB_MR1)
+        {
+            return data.getRowBytes() * data.getHeight();
+        }
+        else
+        {
+            return data.getByteCount();
+        }
+    }
+
     private static int calculateInSampleSize(BitmapFactory.Options options, int reqWidth, int reqHeight)
     {
         // Raw height and width of image
-        final int height = options.outHeight;
-        final int width = options.outWidth;
-        int inSampleSize = 1;
+        final int height       = options.outHeight;
+        final int width        = options.outWidth;
+        int       inSampleSize = 1;
 
-        if (height > reqHeight || width > reqWidth) {
+        if (height > reqHeight || width > reqWidth)
+        {
 
             final int halfHeight = height / 2;
-            final int halfWidth = width / 2;
+            final int halfWidth  = width / 2;
 
             // Calculate the largest inSampleSize value that is a power of 2 and keeps both
             // height and width larger than the requested height and width.
             while ((halfHeight / inSampleSize) > reqHeight
-                    && (halfWidth / inSampleSize) > reqWidth) {
+                    && (halfWidth / inSampleSize) > reqWidth)
+            {
                 inSampleSize *= 2;
             }
         }
@@ -349,6 +444,7 @@ public class Funciones
 
     /**
      * Metodo utilizado para imprimir las tablas existentes en la BD.
+     *
      * @param db Base de Datos sqlite.
      */
     @SuppressWarnings("unused")
@@ -358,7 +454,7 @@ public class Funciones
 
         if (c.moveToFirst())
         {
-            while ( !c.isAfterLast() )
+            while (!c.isAfterLast())
             {
                 imprimirTabla(db, c.getString(0));
                 c.moveToNext();
@@ -370,21 +466,22 @@ public class Funciones
 
     /**
      * Imprime la tabla indicada.
-     * @param db Base de Datos sqlite.
+     *
+     * @param db        Base de Datos sqlite.
      * @param tableName Nombre de la tabla a imprimir.
      */
     private static void imprimirTabla(SQLiteDatabase db, String tableName)
     {
-        Log.d(TAG, "Imprimiento tabla: "+tableName);
+        Log.d(TAG, "Imprimiento tabla: " + tableName);
         String tableString = String.format("Table %s:\n", tableName);
-        Cursor allRows  = db.rawQuery("SELECT * FROM " + tableName, null);
+        Cursor allRows     = db.rawQuery("SELECT * FROM " + tableName, null);
 
-        if (allRows.moveToFirst() )
+        if (allRows.moveToFirst())
         {
             String[] columnNames = allRows.getColumnNames();
             do
             {
-                for (String name: columnNames)
+                for (String name : columnNames)
                 {
                     tableString += String.format("%s: %s\n", name,
                             allRows.getString(allRows.getColumnIndex(name)));

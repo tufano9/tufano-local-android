@@ -43,16 +43,16 @@ import java.util.List;
  */
 public class DetallesPedido extends AppCompatActivity
 {
-    private String usuario, id_pedido;
-    private Context contexto;
-    private final String TAG = "DetallesPedido";
-    private ProgressDialog pDialog;
-    private DBAdapter manager;
     //public static Activity fa;
-    private static final int IMG_WIDTH = 130;
-    private static final int IMG_HEIGHT = 50;
-    private static final ImageView.ScaleType ESCALADO = ImageView.ScaleType.CENTER_INSIDE;
-    private Button cancelar, aprobar, editar;
+    private static final int                 IMG_WIDTH  = 130;
+    private static final int                 IMG_HEIGHT = 50;
+    private static final ImageView.ScaleType ESCALADO   = ImageView.ScaleType.CENTER_INSIDE;
+    private final        String              TAG        = "DetallesPedido";
+    private String usuario, id_pedido;
+    private Context        contexto;
+    private ProgressDialog pDialog;
+    private DBAdapter      manager;
+    private Button         cancelar, aprobar, editar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -208,6 +208,25 @@ public class DetallesPedido extends AppCompatActivity
             datos_clientes.add(cursor.getString(7));
         }
         return datos_clientes;
+    }
+
+    /**
+     * Cancela el pedido
+     * @return True si el pedido fue cancelado exitosamente, false en caso contrario.
+     */
+    private boolean cancelarPedido()
+    {
+        return manager.cancelarPedido(id_pedido) > 0;
+    }
+
+    /**
+     * Aprueba el pedido
+     *
+     * @return True si el pedido fue aprobado exitosamente, false en caso contrario.
+     */
+    private boolean aprobarPedido()
+    {
+        return manager.aprobarPedido(id_pedido) > 0;
     }
 
     /**
@@ -674,11 +693,11 @@ public class DetallesPedido extends AppCompatActivity
                 Toast.makeText(contexto, "Pedido cancelado exitosamente!!", Toast.LENGTH_LONG).show();
 
                 // Redirige a la pantalla de Home
-                Intent c = new Intent(DetallesPedido.this, Consultar.class);
+                Intent c = new Intent(DetallesPedido.this, ConsultarPedidos.class);
                 c.putExtra("usuario",usuario);
                 startActivity(c);
 
-                Consultar.fa.finish();
+                ConsultarPedidos.fa.finish();
 
                 // Prevent the user to go back to this activity
                 finish();
@@ -742,11 +761,11 @@ public class DetallesPedido extends AppCompatActivity
                 Toast.makeText(contexto, "Pedido aprobado exitosamente!!", Toast.LENGTH_LONG).show();
 
                 // Redirige a la pantalla de Home
-                Intent c = new Intent(DetallesPedido.this, Consultar.class);
+                Intent c = new Intent(DetallesPedido.this, ConsultarPedidos.class);
                 c.putExtra("usuario",usuario);
                 startActivity(c);
 
-                Consultar.fa.finish();
+                ConsultarPedidos.fa.finish();
 
                 // Prevent the user to go back to this activity
                 finish();
@@ -756,23 +775,5 @@ public class DetallesPedido extends AppCompatActivity
                 Toast.makeText(contexto, "Hubo un error cancelando el pedido..", Toast.LENGTH_LONG).show();
             }
         }
-    }
-
-    /**
-     * Cancela el pedido
-     * @return True si el pedido fue cancelado exitosamente, false en caso contrario.
-     */
-    private boolean cancelarPedido()
-    {
-        return manager.cancelarPedido(id_pedido) > 0;
-    }
-
-    /**
-     * Aprueba el pedido
-     * @return True si el pedido fue aprobado exitosamente, false en caso contrario.
-     */
-    private boolean aprobarPedido()
-    {
-        return manager.aprobarPedido(id_pedido) > 0;
     }
 }

@@ -21,7 +21,8 @@ import java.util.WeakHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-public class ImageLoader {
+public class ImageLoader
+{
     final         int    stub_id = R.drawable.icn_loading_img;
     private final String TAG     = "ImageLoader";
     MemoryCache memoryCache = new MemoryCache();
@@ -29,35 +30,45 @@ public class ImageLoader {
     ExecutorService executorService;
     Handler handler = new Handler(); //handler to display images in UI thread
     private Map<ImageView, String> imageViews = Collections.synchronizedMap(new WeakHashMap<ImageView, String>());
+    private int reqWidth, reqHeight;
 
-    public ImageLoader(Context context) {
+    public ImageLoader(Context context)
+    {
         fileCache = new FileCache(context);
         executorService = Executors.newFixedThreadPool(5);
     }
 
-    public void DisplayImage(String url, ImageView imageView) {
+    public void DisplayImage(String url, ImageView imageView, int reqWidth, int reqHeight)
+    {
         imageViews.put(imageView, url);
         Bitmap bitmap = memoryCache.get(url);
+        this.reqWidth = reqWidth;
+        this.reqHeight = reqHeight;
 
-        if (bitmap != null) {
+        if (bitmap != null)
+        {
             Log.i(TAG, "Esta en caché..");
             imageView.setImageBitmap(bitmap);
         }
-        else {
+        else
+        {
             Log.i(TAG, "No esta en caché, descargando..");
             queuePhoto(url, imageView);
             imageView.setImageResource(stub_id);
         }
     }
 
-    private void queuePhoto(String url, ImageView imageView) {
+    private void queuePhoto(String url, ImageView imageView)
+    {
         PhotoToLoad p = new PhotoToLoad(url, imageView);
         executorService.submit(new PhotosLoader(p));
     }
 
     //decodes image and scales it to reduce memory consumption
-    private Bitmap decodeFile(File f) {
-        try {
+    private Bitmap decodeFile(File f)
+    {
+        try
+        {
             //decode image size
             BitmapFactory.Options o = new BitmapFactory.Options();
             o.inJustDecodeBounds = true;
@@ -70,7 +81,8 @@ public class ImageLoader {
             int       width_tmp     = o.outWidth, height_tmp = o.outHeight;
             int       scale         = 1;
 
-            while (true) {
+            while (true)
+            {
                 if (width_tmp / 2 < REQUIRED_SIZE || height_tmp / 2 < REQUIRED_SIZE)
                     break;
                 width_tmp /= 2;
@@ -86,45 +98,55 @@ public class ImageLoader {
             stream2.close();
             return bitmap;
         }
-        catch (FileNotFoundException ignored) {
+        catch (FileNotFoundException ignored)
+        {
         }
-        catch (IOException e) {
+        catch (IOException e)
+        {
             e.printStackTrace();
         }
         return null;
     }
 
-    private Bitmap getBitmap(String modelo) {
+    private Bitmap getBitmap(String modelo)
+    {
         File f = fileCache.getFile(modelo);
 
         //from cache
-        Bitmap b = decodeFile(f);
+        //Bitmap b = decodeFile(f);
+        Bitmap b = Funciones.decodeSampledBitmapFromResource(f, reqWidth, reqHeight);
 
-        if (b != null) {
+        if (b != null)
+        {
             Log.i(TAG, "getBitmap from cache");
             return b;
         }
 
         //from database
-        try {
+        try
+        {
             Log.i(TAG, "getBitmap from database (" + modelo + ")");
 
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.FROYO) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.FROYO)
+            {
                 f = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "/TufanoMovilFiles/" + modelo + Constantes.EXTENSION_IMG);
 
                 //Log.e(TAG, "Ruta: "+f.getAbsolutePath());
             }
-            else {
+            else
+            {
                 f = new File(Environment.getExternalStorageDirectory() + "/dcim/" + "TufanoMovilFiles/" + modelo + Constantes.EXTENSION_IMG);
             }
 
-            if (!f.exists()) {
+            if (!f.exists())
+            {
                 Log.e(TAG, "La imagen no pudo ser localizada..");
             }
 
-            return decodeFile(f);
+            return Funciones.decodeSampledBitmapFromResource(f, reqWidth, reqHeight);
         }
-        catch (Throwable ex) {
+        catch (Throwable ex)
+        {
             ex.printStackTrace();
             if (ex instanceof OutOfMemoryError)
                 memoryCache.clear();
@@ -132,42 +154,52 @@ public class ImageLoader {
         }
     }
 
-    boolean imageViewReused(PhotoToLoad photoToLoad) {
+    boolean imageViewReused(PhotoToLoad photoToLoad)
+    {
         String tag = imageViews.get(photoToLoad.imageView);
 
-        if (tag == null || !tag.equals(photoToLoad.url)) {
+        if (tag == null || !tag.equals(photoToLoad.url))
+        {
             Log.i(TAG, "imageViewReused");
             return true;
         }
         return false;
     }
 
-    public void clearCache() {
+    public void clearCache()
+    {
+        Log.i(TAG, "Clear Cache");
         memoryCache.clear();
         fileCache.clear();
     }
 
     //Task for the queue
-    private class PhotoToLoad {
+    private class PhotoToLoad
+    {
         public String    url;
         public ImageView imageView;
 
-        public PhotoToLoad(String u, ImageView i) {
+        public PhotoToLoad(String u, ImageView i)
+        {
             url = u;
             imageView = i;
         }
     }
 
-    class PhotosLoader implements Runnable {
+    class PhotosLoader implements Runnable
+    {
         PhotoToLoad photoToLoad;
 
-        PhotosLoader(PhotoToLoad photoToLoad) {
+        PhotosLoader(PhotoToLoad photoToLoad)
+        {
             this.photoToLoad = photoToLoad;
         }
 
         @Override
-        public void run() {
-            try {
+        public void run()
+        {
+            try
+            {
                 if (imageViewReused(photoToLoad))
                     return;
 
@@ -180,23 +212,27 @@ public class ImageLoader {
                 BitmapDisplayer bd = new BitmapDisplayer(bmp, photoToLoad);
                 handler.post(bd);
             }
-            catch (Throwable th) {
+            catch (Throwable th)
+            {
                 th.printStackTrace();
             }
         }
     }
 
     //Used to display bitmap in the UI thread
-    class BitmapDisplayer implements Runnable {
+    class BitmapDisplayer implements Runnable
+    {
         Bitmap      bitmap;
         PhotoToLoad photoToLoad;
 
-        public BitmapDisplayer(Bitmap b, PhotoToLoad p) {
+        public BitmapDisplayer(Bitmap b, PhotoToLoad p)
+        {
             bitmap = b;
             photoToLoad = p;
         }
 
-        public void run() {
+        public void run()
+        {
             if (imageViewReused(photoToLoad))
                 return;
             if (bitmap != null)

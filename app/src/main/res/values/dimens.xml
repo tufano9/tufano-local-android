@@ -8,4 +8,6 @@
     <dimen name="btn_normal_size">45dp</dimen>
     <dimen name="image_menu_size">210dp</dimen>
     <dimen name="image_menu_size_normal">110dp</dimen>
+    <dimen name="product_image_width">2160dp</dimen>
+    <dimen name="product_image_height">1620dp</dimen>
 </resources>

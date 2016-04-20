@@ -788,11 +788,11 @@ public class EditarPedido extends AppCompatActivity
                         Toast.makeText(contexto, "Pedido editado exitosamente!!", Toast.LENGTH_LONG).show();
 
                         // Redirige a la pantalla de Home
-                        Intent c = new Intent(EditarPedido.this, Consultar.class);
+                        Intent c = new Intent(EditarPedido.this, ConsultarPedidos.class);
                         c.putExtra("usuario",usuario);
                         startActivity(c);
 
-                        Consultar.fa.finish();
+                        ConsultarPedidos.fa.finish();
 
                         // Prevent the user to go back to this activity
                         finish();
@@ -808,11 +808,11 @@ public class EditarPedido extends AppCompatActivity
                         Toast.makeText(contexto, "Pedido editado exitosamente!!", Toast.LENGTH_LONG).show();
 
                         // Redirige a la pantalla de Home
-                        Intent c = new Intent(EditarPedido.this, Consultar.class);
+                        Intent c = new Intent(EditarPedido.this, ConsultarPedidos.class);
                         c.putExtra("usuario", usuario);
                         startActivity(c);
 
-                        Consultar.fa.finish();
+                        ConsultarPedidos.fa.finish();
 
                         // Prevent the user to go back to this activity
                         finish();

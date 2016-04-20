@@ -1182,6 +1182,39 @@ public class DBAdapter
         return db.query(TABLA_PEDIDOS, columnas, selection, args, null, null, orderby);
     }
 
+    public Cursor cargarPedidosOrdenadosPor(String columna_ordenada, String orden, String cliente_filtrado, String estatus_filtrado, int cant_mostrar, int empezando_desde)
+    {
+        String[]          columnas   = new String[]{CN_ID_PEDIDO, CN_RAZON_SOCIAL_CLIENTE_PEDIDO, CN_NOMBRE_VENDEDOR_PEDIDO, CN_MONTO_PEDIDO, CN_FECHA_PEDIDO, CN_ESTATUS_PEDIDO, CN_OBSERVACIONES_PEDIDO};
+        String            orderby;
+        String            selection  = null;
+        ArrayList<String> argumentos = new ArrayList<>();
+
+        if (cliente_filtrado != null)
+        {
+            selection = CN_RAZON_SOCIAL_CLIENTE_PEDIDO + "=?";
+            argumentos.add(cliente_filtrado);
+        }
+        if (estatus_filtrado != null)
+        {
+            argumentos.add(estatus_filtrado);
+
+            if (selection != null)
+                selection += " AND " + CN_ESTATUS_PEDIDO + "=?";
+            else
+                selection = CN_ESTATUS_PEDIDO + "=?";
+        }
+
+        if (columna_ordenada.equals("monto"))
+            orderby = "CAST(" + columna_ordenada.toLowerCase() + " AS DECIMAL(15,2)) " + orden;
+        else
+            orderby = columna_ordenada.toLowerCase() + " " + orden;
+
+        String[] args  = argumentos.toArray(new String[argumentos.size()]);
+        String   limit = empezando_desde + ", " + cant_mostrar;
+
+        return db.query(TABLA_PEDIDOS, columnas, selection, args, null, null, orderby, limit);
+    }
+
     /**
      * Metodo para agregar un pedido nuevo a la BD.
      * @param datos String array [5] con los valores del pedido en el siguiente orden: id_Cliente,
@@ -1392,6 +1425,7 @@ public class DBAdapter
 
         for (int i = 0; i < datos.size(); i++)
         {
+            Log.d("INSERTANDO PEDIDOS TEMP", "AGREGANDO EL ID " + String.valueOf(datos.get(i).get(0)) + " a la BD.");
             stmt.bindString(1, String.valueOf(datos.get(i).get(0)));
             stmt.bindString(2, String.valueOf(datos.get(i).get(1)));
             stmt.bindString(3, String.valueOf(datos.get(i).get(2)));

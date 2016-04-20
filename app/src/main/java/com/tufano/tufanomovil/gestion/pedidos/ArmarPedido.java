@@ -46,15 +46,15 @@ import java.util.List;
  */
 public class ArmarPedido extends AppCompatActivity
 {
+    private static final int                 IMG_WIDTH  = 130;
+    private static final int                 IMG_HEIGHT = 50;
+    private static final ImageView.ScaleType ESCALADO   = ImageView.ScaleType.CENTER_INSIDE;
+    public static Activity fa;
+    private final String TAG = "ArmarPedido";
     private String usuario, id_cliente;
     private Context contexto;
-    private final String TAG = "ArmarPedido";
     private ProgressDialog pDialog;
     private DBAdapter manager;
-    public static Activity fa;
-    private static final int IMG_WIDTH = 130;
-    private static final int IMG_HEIGHT = 50;
-    private static final ImageView.ScaleType ESCALADO = ImageView.ScaleType.CENTER_INSIDE;
     private TextView cabecera_1, cabecera_2, cabecera_3, cabecera_4, cabecera_5, cabecera_6, cabecera_7;
     private String columna_ordenada, orden;
     private ArrayList<View> filas;
@@ -432,37 +432,6 @@ public class ArmarPedido extends AppCompatActivity
                 startActivity(c);
             }
         });
-    }
-
-    /**
-     * Carga los datos de la tabla en segundo plano
-     */
-    private class cargarDatos extends AsyncTask< String, String, String >
-    {
-        @Override
-        protected void onPreExecute()
-        {
-            pDialog = new ProgressDialog(ArmarPedido.this);
-            pDialog.setTitle("Por favor espere...");
-            pDialog.setMessage("Cargando informacion...");
-            pDialog.setIndeterminate(true);
-            pDialog.setCancelable(false);
-            pDialog.show();
-        }
-
-        @Override
-        protected String doInBackground(String... params)
-        {
-            inicializarTabla();
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(String result)
-        {
-            pDialog.dismiss();
-        }
-
     }
 
     /**
@@ -955,6 +924,105 @@ public class ArmarPedido extends AppCompatActivity
     }
 
     /**
+     * Realiza el pedido al cliente indicado.
+     * @param id_cliente ID del cliente al que se le realizara el pedido.
+     * @return Id del pedido (de haberse realizado), -1 en caso contrario.
+     */
+    private long realizarPedido(String id_cliente)
+    {
+        // String array [5] con los valores del pedido en el siguiente orden: id_Cliente,
+        // id_vendedor , monto, estatus, observaciones
+        String monto         = obtenerMontoPedidoLocal();
+        String observaciones = "Prueba de una observacion..";
+
+        ArrayList<String> datos          = new ArrayList<>();
+        List<String>      datos_cliente  = obtenerDatosCliente(id_cliente);
+        List<String>      datos_vendedor = obtenerDatosVendedor(usuario);
+
+        for (int i = 0; i < datos_cliente.size() - 1; i++)
+        {
+            datos.add(datos_cliente.get(i));
+        }
+
+        for (int i = 0; i < datos_vendedor.size(); i++)
+        {
+            datos.add(datos_vendedor.get(i));
+        }
+
+        datos.add(monto);
+        datos.add("1");
+        datos.add(observaciones);
+        return manager.agregarPedido(datos);
+    }
+
+    /**
+     * Cancela el pedido temporal
+     *
+     * @return True si la operacion fue exitosa, False en caso contrario.
+     */
+    private boolean cancelarPedidoTemporal()
+    {
+        return manager.borrarPedidoTemporal() > 0;
+    }
+
+    /**
+     * Calcula el monto del pedido local.
+     *
+     * @return Monto del pedido local.
+     */
+    private String obtenerMontoPedidoLocal()
+    {
+        Cursor c      = manager.cargarPedidoTemporal();
+        double montos = 0.0;
+
+        for (c.moveToFirst(); !c.isAfterLast(); c.moveToNext())
+        {
+            montos += Double.parseDouble(c.getString(7));
+            //montos += Double.parseDouble(c.getString(4)) * Integer.parseInt(c.getString(5)) * Integer.parseInt(c.getString(6));
+        }
+        c.close();
+
+        return String.valueOf(montos);
+    }
+
+    @Override
+    public void onBackPressed()
+    {
+        finish();
+    }
+
+    /**
+     * Carga los datos de la tabla en segundo plano
+     */
+    private class cargarDatos extends AsyncTask<String, String, String>
+    {
+        @Override
+        protected void onPreExecute()
+        {
+            pDialog = new ProgressDialog(ArmarPedido.this);
+            pDialog.setTitle("Por favor espere...");
+            pDialog.setMessage("Cargando informacion...");
+            pDialog.setIndeterminate(true);
+            pDialog.setCancelable(false);
+            pDialog.show();
+        }
+
+        @Override
+        protected String doInBackground(String... params)
+        {
+            inicializarTabla();
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(String result)
+        {
+            pDialog.dismiss();
+        }
+
+    }
+
+    /**
      * Clase para cancelar en segundo plano un pedido temporal.
      */
     private class async_cancelarPedidoTemporal extends AsyncTask< String, String, String >
@@ -1004,11 +1072,11 @@ public class ArmarPedido extends AppCompatActivity
                 Toast.makeText(contexto, "Pedido cancelado exitosamente!!", Toast.LENGTH_LONG).show();
 
                 // Redirige a la pantalla de Home
-                Intent c = new Intent(ArmarPedido.this, Menu.class);
+                Intent c = new Intent(ArmarPedido.this, ConsultarPedidos.class);
                 c.putExtra("usuario",usuario);
                 startActivity(c);
 
-                Menu.fa.finish();
+                ConsultarPedidos.fa.finish();
 
                 // Prevent the user to go back to this activity
                 finish();
@@ -1063,11 +1131,11 @@ public class ArmarPedido extends AppCompatActivity
                 {
                     Toast.makeText(contexto, "¡El pedido fue realizado exitosamente!", Toast.LENGTH_LONG).show();
 
-                    Intent c = new Intent(ArmarPedido.this, Menu.class);
+                    Intent c = new Intent(ArmarPedido.this, ConsultarPedidos.class);
                     c.putExtra("usuario", usuario);
                     startActivity(c);
                     SeleccionarCliente.fa.finish();
-                    Menu.fa.finish();
+                    ConsultarPedidos.fa.finish();
                     finish();
                 }
                 else
@@ -1083,71 +1151,5 @@ public class ArmarPedido extends AppCompatActivity
 
             pDialog.dismiss();
         }
-    }
-
-    /**
-     * Realiza el pedido al cliente indicado.
-     * @param id_cliente ID del cliente al que se le realizara el pedido.
-     * @return Id del pedido (de haberse realizado), -1 en caso contrario.
-     */
-    private long realizarPedido(String id_cliente)
-    {
-        // String array [5] con los valores del pedido en el siguiente orden: id_Cliente,
-        // id_vendedor , monto, estatus, observaciones
-        String monto = obtenerMontoPedidoLocal();
-        String observaciones = "Prueba de una observacion..";
-
-        ArrayList<String> datos = new ArrayList<>();
-        List<String> datos_cliente = obtenerDatosCliente(id_cliente);
-        List<String> datos_vendedor = obtenerDatosVendedor(usuario);
-
-        for (int i = 0; i <datos_cliente.size()-1; i++)
-        {
-            datos.add(datos_cliente.get(i));
-        }
-
-        for (int i = 0; i <datos_vendedor.size(); i++)
-        {
-            datos.add(datos_vendedor.get(i));
-        }
-
-        datos.add(monto);
-        datos.add("1");
-        datos.add(observaciones);
-        return manager.agregarPedido(datos);
-    }
-
-    /**
-     * Cancela el pedido temporal
-     * @return True si la operacion fue exitosa, False en caso contrario.
-     */
-    private boolean cancelarPedidoTemporal()
-    {
-        return manager.borrarPedidoTemporal() > 0;
-    }
-
-    /**
-     * Calcula el monto del pedido local.
-     * @return Monto del pedido local.
-     */
-    private String obtenerMontoPedidoLocal()
-    {
-        Cursor c = manager.cargarPedidoTemporal();
-        double montos = 0.0;
-
-        for ( c.moveToFirst(); !c.isAfterLast(); c.moveToNext() )
-        {
-            montos += Double.parseDouble(c.getString(7));
-            //montos += Double.parseDouble(c.getString(4)) * Integer.parseInt(c.getString(5)) * Integer.parseInt(c.getString(6));
-        }
-        c.close();
-
-        return String.valueOf(montos);
-    }
-
-    @Override
-    public void onBackPressed()
-    {
-        finish();
     }
 }

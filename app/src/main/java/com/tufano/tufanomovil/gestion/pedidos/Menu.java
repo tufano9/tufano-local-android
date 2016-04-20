@@ -77,7 +77,7 @@ public class Menu extends AppCompatActivity
             @Override
             public void onClick(View v)
             {
-                Intent c = new Intent(Menu.this, Consultar.class);
+                Intent c = new Intent(Menu.this, ConsultarPedidos.class);
                 c.putExtra("usuario", usuario);
                 startActivity(c);
             }

@@ -57,16 +57,16 @@ public class AgregarProductoPedido extends AppCompatActivity
     private static final ImageView.ScaleType ESCALADO   = ImageView.ScaleType.CENTER_INSIDE;
     private final        String              TAG        = "AgregarProductoPedido";
     private String usuario, id_cliente;
-    private Context contexto;
-    private ProgressDialog pDialog;
-    private DBAdapter manager;
-    private int productos_agregados;
+    private Context                      contexto;
+    private ProgressDialog               pDialog;
+    private DBAdapter                    manager;
+    private int                          productos_agregados;
     private ArrayList<ArrayList<String>> productos;
-    private Spinner tipo, talla, color;
+    private Spinner                      tipo, talla, color;
     private AutoCompleteTextView modelo_autoComplete;
-    private LinearLayout layout;
+    private LinearLayout         layout;
     private boolean primerInicio1 = true, primerInicio2 = true, primerInicio3 = true;
-    private ArrayList<View> filas;
+    private ArrayList<View>    filas;
     private List<List<String>> contenedor_colores, contenedor_tipos, contenedor_tallas;
     private TextView cabecera_1, cabecera_2, cabecera_3, cabecera_4, cabecera_5, cabecera_6;
     private String columna_ordenada, orden;
@@ -107,7 +107,7 @@ public class AgregarProductoPedido extends AppCompatActivity
             @Override
             public void onClick(View v)
             {
-                if(productos_agregados>0)
+                if (productos_agregados > 0)
                 {
                     // Agregar producto
                     AlertDialog.Builder dialog = new AlertDialog.Builder(AgregarProductoPedido.this);
@@ -115,16 +115,20 @@ public class AgregarProductoPedido extends AppCompatActivity
                     dialog.setTitle(R.string.confirmacion);
                     dialog.setMessage(R.string.confirmacion_agregar_producto_pedido);
                     dialog.setCancelable(false);
-                    dialog.setPositiveButton("SI", new DialogInterface.OnClickListener() {
+                    dialog.setPositiveButton("SI", new DialogInterface.OnClickListener()
+                    {
                         @Override
-                        public void onClick(DialogInterface dialog, int which) {
+                        public void onClick(DialogInterface dialog, int which)
+                        {
                             new agregarProductoPedido().execute();
                         }
                     });
 
-                    dialog.setNegativeButton("NO", new DialogInterface.OnClickListener() {
+                    dialog.setNegativeButton("NO", new DialogInterface.OnClickListener()
+                    {
                         @Override
-                        public void onClick(DialogInterface dialog, int which) {
+                        public void onClick(DialogInterface dialog, int which)
+                        {
                             dialog.cancel();
                         }
                     });
@@ -180,10 +184,13 @@ public class AgregarProductoPedido extends AppCompatActivity
         modelo_autoComplete = (AutoCompleteTextView) findViewById(R.id.autoC_modelo);
         modelo_autoComplete.setAdapter(adapter);
         modelo_autoComplete.setThreshold(1);
-        modelo_autoComplete.setOnKeyListener(new View.OnKeyListener() {
+        modelo_autoComplete.setOnKeyListener(new View.OnKeyListener()
+        {
             @Override
-            public boolean onKey(View v, int keyCode, KeyEvent event) {
-                if (keyCode == 66) {
+            public boolean onKey(View v, int keyCode, KeyEvent event)
+            {
+                if (keyCode == 66)
+                {
                     layout.requestFocus();
                     gestionarFiltrado();
                     return true;
@@ -192,9 +199,11 @@ public class AgregarProductoPedido extends AppCompatActivity
             }
         });
 
-        modelo_autoComplete.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        modelo_autoComplete.setOnItemClickListener(new AdapterView.OnItemClickListener()
+        {
             @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id)
+            {
                 gestionarFiltrado();
             }
         });
@@ -210,9 +219,11 @@ public class AgregarProductoPedido extends AppCompatActivity
         talla = (Spinner) findViewById(R.id.spTalla_editar_producto);
         color = (Spinner) findViewById(R.id.spColor_editar_producto);
 
-        tipo.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        tipo.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener()
+        {
             @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id)
+            {
                 if (!primerInicio1)
                     gestionarFiltrado();
                 else
@@ -220,13 +231,16 @@ public class AgregarProductoPedido extends AppCompatActivity
             }
 
             @Override
-            public void onNothingSelected(AdapterView<?> parent) {
+            public void onNothingSelected(AdapterView<?> parent)
+            {
             }
         });
 
-        talla.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        talla.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener()
+        {
             @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id)
+            {
                 if (!primerInicio2)
                     gestionarFiltrado();
                 else
@@ -234,14 +248,17 @@ public class AgregarProductoPedido extends AppCompatActivity
             }
 
             @Override
-            public void onNothingSelected(AdapterView<?> parent) {
+            public void onNothingSelected(AdapterView<?> parent)
+            {
 
             }
         });
 
-        color.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        color.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener()
+        {
             @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id)
+            {
                 if (!primerInicio3)
                     gestionarFiltrado();
                 else
@@ -249,7 +266,8 @@ public class AgregarProductoPedido extends AppCompatActivity
             }
 
             @Override
-            public void onNothingSelected(AdapterView<?> parent) {
+            public void onNothingSelected(AdapterView<?> parent)
+            {
 
             }
         });
@@ -263,33 +281,41 @@ public class AgregarProductoPedido extends AppCompatActivity
     private void initTextViewHeader()
     {
         cabecera_1 = (TextView) findViewById(R.id.cabecera_1);
-        cabecera_1.setOnClickListener(new View.OnClickListener() {
+        cabecera_1.setOnClickListener(new View.OnClickListener()
+        {
             @Override
-            public void onClick(View v) {
+            public void onClick(View v)
+            {
                 cabeceraPresionada(cabecera_1, "talla");
             }
         });
 
         cabecera_2 = (TextView) findViewById(R.id.cabecera_2);
-        cabecera_2.setOnClickListener(new View.OnClickListener() {
+        cabecera_2.setOnClickListener(new View.OnClickListener()
+        {
             @Override
-            public void onClick(View v) {
+            public void onClick(View v)
+            {
                 cabeceraPresionada(cabecera_2, "tipo");
             }
         });
 
         cabecera_3 = (TextView) findViewById(R.id.cabecera_3);
-        cabecera_3.setOnClickListener(new View.OnClickListener() {
+        cabecera_3.setOnClickListener(new View.OnClickListener()
+        {
             @Override
-            public void onClick(View v) {
+            public void onClick(View v)
+            {
                 cabeceraPresionada(cabecera_3, "modelo");
             }
         });
 
         cabecera_4 = (TextView) findViewById(R.id.cabecera_4);
-        cabecera_4.setOnClickListener(new View.OnClickListener() {
+        cabecera_4.setOnClickListener(new View.OnClickListener()
+        {
             @Override
-            public void onClick(View v) {
+            public void onClick(View v)
+            {
                 cabeceraPresionada(cabecera_4, "color");
             }
         });
@@ -316,14 +342,13 @@ public class AgregarProductoPedido extends AppCompatActivity
     }
 
     /**
-     *
-     * @param cabecera TextView sobre la cual se le aplicara el CompoundDrawable resultante
+     * @param cabecera  TextView sobre la cual se le aplicara el CompoundDrawable resultante
      * @param columnaBD Nombre de la columna en Base de Datos sobre la cual se ordenara..
      */
     private void cabeceraPresionada(TextView cabecera, String columnaBD)
     {
-        Drawable[] cd = cabecera.getCompoundDrawables();
-        boolean lleno = false;
+        Drawable[] cd    = cabecera.getCompoundDrawables();
+        boolean    lleno = false;
 
         for (Drawable aCd : cd)
         {
@@ -334,7 +359,7 @@ public class AgregarProductoPedido extends AppCompatActivity
             }
         }
 
-        if(lleno)
+        if (lleno)
         {
             // Invertir orden.. (Si estaba ordenando en ASC, ahora lo ahora DESC
             invertirCompoundDrawable(cabecera, columnaBD);
@@ -358,6 +383,7 @@ public class AgregarProductoPedido extends AppCompatActivity
 
     /**
      * Metodo encargado de colocar el drawable sobre la cabecera.
+     *
      * @param cabecera Cabecera a la cual se le colocara el drawable.
      */
     private void colocarCompoundDrawable(TextView cabecera)
@@ -370,7 +396,8 @@ public class AgregarProductoPedido extends AppCompatActivity
 
     /**
      * Ordenar la tabla bajo los parametros indicados.
-     * @param cabecera Cabecera bajo la cual se ordenara.
+     *
+     * @param cabecera    Cabecera bajo la cual se ordenara.
      * @param orden_tabla Orden a utilizar (ASC o DESC)
      */
     private void ordenarTabla(String cabecera, String orden_tabla)
@@ -386,7 +413,8 @@ public class AgregarProductoPedido extends AppCompatActivity
      * Metodo utilizado cuando se presiona sobre una cabecera que esta actualmente presionada bajo
      * un cierto orden, dicho de otra forma, si se esta ordenando de forma ascendente un campo,
      * este metodo hara que se ordene de forma descendente.
-     * @param cabecera La cabecera presionada.
+     *
+     * @param cabecera  La cabecera presionada.
      * @param columnaBD La columna de la BD afectada.
      */
     private void invertirCompoundDrawable(TextView cabecera, String columnaBD)
@@ -395,12 +423,12 @@ public class AgregarProductoPedido extends AppCompatActivity
         Drawable[] d = cabecera.getCompoundDrawables();
 
         Drawable draw = ResourcesCompat.getDrawable(getResources(), R.drawable.arrow_up, null);
-        if(draw!=null)
+        if (draw != null)
         {
             Drawable.ConstantState upArrow = draw.getConstantState();
             //Log.d(TAG, "if: " + upArrow);
 
-            if( d[2].getConstantState().equals( upArrow ) )
+            if (d[2].getConstantState().equals(upArrow))
             {
                 Log.d(TAG, "Colocare DESC..");
                 int drawable = Funciones.getDescDrawable();
@@ -434,8 +462,9 @@ public class AgregarProductoPedido extends AppCompatActivity
 
     /**
      * Function to load the spinner data from SQLite database
-     * */
-    private void loadSpinnerData() {
+     */
+    private void loadSpinnerData()
+    {
         Log.w(TAG, "loadSpinnerData");
         contenedor_colores = manager.cargarListaColores();
         ArrayAdapter<String> dataAdapter = new ArrayAdapter<>(this, R.layout.spinner_item, contenedor_colores.get(1));
@@ -455,6 +484,7 @@ public class AgregarProductoPedido extends AppCompatActivity
 
     /**
      * Funcion encargada de obtener todos los modelos de la base de datos.
+     *
      * @return Lista de todos los modelos existentes en la base de datos.
      */
     private ArrayList<String> obtenerModelos()
@@ -477,24 +507,24 @@ public class AgregarProductoPedido extends AppCompatActivity
     {
         cerrarTeclado();
         String tipoFunction, tallaFunction, colorFunction, modeloFunction;
-        String defaultValueTipo = tipo.getItemAtPosition(0).toString();
+        String defaultValueTipo  = tipo.getItemAtPosition(0).toString();
         String defaultValueTalla = talla.getItemAtPosition(0).toString();
         String defaultValueColor = color.getItemAtPosition(0).toString();
 
         // Si el valor que esta seleccionado es el valor por defecto, no lo toma en cuenta para
         // el filtro.
 
-        if(tipo.getSelectedItem().toString().equals(defaultValueTipo))
+        if (tipo.getSelectedItem().toString().equals(defaultValueTipo))
         {
             tipoFunction = null;
         }
         else
         {
             int pos = tipo.getSelectedItemPosition();
-            tipoFunction = contenedor_tipos.get(0).get(pos-1);
+            tipoFunction = contenedor_tipos.get(0).get(pos - 1);
         }
 
-        if(talla.getSelectedItem().toString().equals(defaultValueTalla))
+        if (talla.getSelectedItem().toString().equals(defaultValueTalla))
         {
             tallaFunction = null;
         }
@@ -504,7 +534,7 @@ public class AgregarProductoPedido extends AppCompatActivity
             tallaFunction = contenedor_tallas.get(0).get(pos - 1);
         }
 
-        if(color.getSelectedItem().toString().equals(defaultValueColor))
+        if (color.getSelectedItem().toString().equals(defaultValueColor))
         {
             colorFunction = null;
         }
@@ -514,7 +544,7 @@ public class AgregarProductoPedido extends AppCompatActivity
             colorFunction = contenedor_colores.get(0).get(pos - 1);
         }
 
-        if(modelo_autoComplete.getText().toString().trim().equals(""))
+        if (modelo_autoComplete.getText().toString().trim().equals(""))
         {
             modeloFunction = null;
         }
@@ -564,7 +594,7 @@ public class AgregarProductoPedido extends AppCompatActivity
                         getSystemService(Context.INPUT_METHOD_SERVICE);
 
         if (getCurrentFocus() != null)
-            inputManager.hideSoftInputFromWindow( getCurrentFocus().getWindowToken(),
+            inputManager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(),
                     InputMethodManager.HIDE_NOT_ALWAYS);
         else
             Log.w(TAG, "No se pudo ocultar el Teclado");
@@ -572,16 +602,17 @@ public class AgregarProductoPedido extends AppCompatActivity
 
     /**
      * Funcion principal para la inicializacion de la tabla.
-     * @param tipo_filtrado ASC o DESC
-     * @param talla_filtrado Talla a filtrar (Puede ser null si se desea)
-     * @param color_filtrado Color a filtrar (Puede ser null si se desea)
+     *
+     * @param tipo_filtrado   ASC o DESC
+     * @param talla_filtrado  Talla a filtrar (Puede ser null si se desea)
+     * @param color_filtrado  Color a filtrar (Puede ser null si se desea)
      * @param modelo_filtrado Modelo a filtrar (Puede ser null si se desea)
-     * @param filtrando True si esta filtrando, false en caso contrario (en primera ejecucion)
+     * @param filtrando       True si esta filtrando, false en caso contrario (en primera ejecucion)
      */
     private void inicializarTabla(String tipo_filtrado, String talla_filtrado, String color_filtrado, String modelo_filtrado, boolean filtrando)
     {
-        Log.i(TAG, "Inicializando tabla.. Ordenando por: "+columna_ordenada+", orden: "+orden);
-        Log.i(TAG, "Filtrando por... Tipo: "+tipo_filtrado+", Talla: "+talla_filtrado+", Color: "+color_filtrado+", Modelo: "+modelo_filtrado);
+        Log.i(TAG, "Inicializando tabla.. Ordenando por: " + columna_ordenada + ", orden: " + orden);
+        Log.i(TAG, "Filtrando por... Tipo: " + tipo_filtrado + ", Talla: " + talla_filtrado + ", Color: " + color_filtrado + ", Modelo: " + modelo_filtrado);
 
         final TableLayout tabla = (TableLayout) findViewById(R.id.tabla_contenido);
         filas = new ArrayList<>();
@@ -599,27 +630,31 @@ public class AgregarProductoPedido extends AppCompatActivity
         if (cursor.getCount() > 0)
         {
             mostrarTodo(tabla);
-            int contador = 0 ;
+            int contador = 0;
 
             for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor.moveToNext())
             {
-                if( !FuncionesTablas.estaAgregado(String.valueOf(cursor.getInt(0)), ids_productos_cargados, TAG) && FuncionesTablas.productoHabilitado(cursor.getString(7), TAG) )
+                if (!FuncionesTablas.estaAgregado(String.valueOf(cursor.getInt(0)), ids_productos_cargados, TAG) && FuncionesTablas.productoHabilitado(cursor.getString(7), TAG))
                 {
                     Log.i(TAG, "Agregando fila..");
                     final TableRow fila = new TableRow(contexto);
 
-                    final String id_producto = String.valueOf(cursor.getInt(0));
-                    final String talla_producto = FuncionesTablas.obtenerNombreTalla(cursor.getString(1), manager);
-                    final String tipo_producto = FuncionesTablas.obtenerNombreTipo(cursor.getString(2), manager);
-                    final String modelo_producto = cursor.getString(3);
-                    final String id_color = cursor.getString(4);
-                    final String color_producto = FuncionesTablas.obtenerNombreColor(id_color, manager);
-                    final String precio_producto = cursor.getString(5);
+                    final String id_producto         = String.valueOf(cursor.getInt(0));
+                    final String talla_producto      = FuncionesTablas.obtenerNombreTalla(cursor.getString(1), manager);
+                    final String tipo_producto       = FuncionesTablas.obtenerNombreTipo(cursor.getString(2), manager);
+                    final String modelo_producto     = cursor.getString(3);
+                    final String id_color            = cursor.getString(4);
+                    final String color_producto      = FuncionesTablas.obtenerNombreColor(id_color, manager);
+                    final String precio_producto     = cursor.getString(5);
                     final String numeracion_producto = cursor.getString(6);
                     //final String estatus_producto = cursor.getString(7);
-                    final String paresxtalla = cursor.getString(8);
-                    final String pares_totales = FuncionesTablas.calcularPares(paresxtalla);
+                    final String paresxtalla    = cursor.getString(8);
+                    final String pares_totales  = FuncionesTablas.calcularPares(paresxtalla);
                     final String bultos_totales = "1"; // Bultos por defecto a agregar..
+
+                    /*Producto producto = new Producto(id_producto, talla_producto, tipo_producto, id_color,
+                            modelo_producto, precio_producto, numeracion_producto, estatus_producto,
+                            paresxtalla, contexto);*/
 
                     /* Imagen */
                     ImageView imagen = new ImageView(contexto);
@@ -628,11 +663,11 @@ public class AgregarProductoPedido extends AppCompatActivity
 
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.FROYO)
                     {
-                        file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "/TufanoMovilFiles/"+modelo_producto + Constantes.EXTENSION_IMG);
+                        file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "/TufanoMovilFiles/" + modelo_producto + Constantes.EXTENSION_IMG);
                     }
                     else
                     {
-                        file = new File(Environment.getExternalStorageDirectory() + "/dcim/" + "TufanoMovilFiles/"+modelo_producto + Constantes.EXTENSION_IMG);
+                        file = new File(Environment.getExternalStorageDirectory() + "/dcim/" + "TufanoMovilFiles/" + modelo_producto + Constantes.EXTENSION_IMG);
                     }
 
                     if (file.exists())
@@ -646,15 +681,15 @@ public class AgregarProductoPedido extends AppCompatActivity
                     {
                         Log.e(TAG, "La imagen no pudo ser localizada..");
                         Drawable drawable = ContextCompat.getDrawable(getApplicationContext(), R.drawable.img_notfound);
-                        Bitmap bitmap = ((BitmapDrawable) drawable).getBitmap();
-                        Drawable d = new BitmapDrawable(getResources(), Bitmap.createScaledBitmap(bitmap, IMG_WIDTH, IMG_HEIGHT, true));
+                        Bitmap   bitmap   = ((BitmapDrawable) drawable).getBitmap();
+                        Drawable d        = new BitmapDrawable(getResources(), Bitmap.createScaledBitmap(bitmap, IMG_WIDTH, IMG_HEIGHT, true));
                         imagen.setImageDrawable(d);
                         imagen.setScaleType(ESCALADO);
                         imagen.setLayoutParams(params);
                         imagen.setPadding(2, 2, 2, 2);
                     }
 
-                        /* Talla */
+                    /* Talla */
                     TextView talla = new TextView(contexto);
                     talla.setText(talla_producto);
                     talla.setTextColor(Color.DKGRAY);
@@ -662,7 +697,7 @@ public class AgregarProductoPedido extends AppCompatActivity
                     talla.setLayoutParams(params);
                     talla.setTextSize(16f);
 
-                        /* Tipo */
+                    /* Tipo */
                     TextView tipo = new TextView(contexto);
                     tipo.setText(tipo_producto);
                     tipo.setTextColor(Color.DKGRAY);
@@ -670,7 +705,7 @@ public class AgregarProductoPedido extends AppCompatActivity
                     tipo.setLayoutParams(params);
                     tipo.setTextSize(16f);
 
-                        /* Modelo */
+                    /* Modelo */
                     TextView modelo = new TextView(contexto);
                     modelo.setText(modelo_producto);
                     modelo.setTextColor(Color.DKGRAY);
@@ -678,7 +713,7 @@ public class AgregarProductoPedido extends AppCompatActivity
                     modelo.setLayoutParams(params);
                     modelo.setTextSize(16f);
 
-                        /* Color */
+                    /* Color */
                     TextView color = new TextView(contexto);
                     color.setText(color_producto);
                     color.setTextColor(Color.DKGRAY);
@@ -686,39 +721,42 @@ public class AgregarProductoPedido extends AppCompatActivity
                     color.setLayoutParams(params);
                     color.setTextSize(16f);
 
-                        /* Precio */
-                    TextView precio = new TextView(contexto);
+                    /* Precio */
+                    TextView      precio      = new TextView(contexto);
                     DecimalFormat priceFormat = new DecimalFormat("###,###.##");
-                    String output = priceFormat.format(Double.parseDouble(precio_producto));
+                    String        output      = priceFormat.format(Double.parseDouble(precio_producto));
                     precio.setText(output);
                     precio.setTextColor(Color.DKGRAY);
                     precio.setGravity(Gravity.CENTER);
                     precio.setLayoutParams(params);
                     precio.setTextSize(16f);
 
-                        /* Numeracion */
+                    /* Numeracion */
                     TextView numeracion = new TextView(contexto);
-                    numeracion.setText( numeracion_producto .replace("(", "") .replace(")", "") );
+                    numeracion.setText(numeracion_producto.replace("(", "").replace(")", ""));
                     numeracion.setTextColor(Color.DKGRAY);
                     numeracion.setGravity(Gravity.CENTER);
                     numeracion.setLayoutParams(params);
                     numeracion.setTextSize(16f);
 
-                        /* Opciones */
+                    /* Opciones */
                     final CheckBox cb_producto = new CheckBox(contexto);
                     cb_producto.setGravity(Gravity.CENTER);
 
-                    TableRow.LayoutParams params2 = new TableRow.LayoutParams( TableRow.LayoutParams.WRAP_CONTENT, TableRow.LayoutParams.MATCH_PARENT );
+                    TableRow.LayoutParams params2 = new TableRow.LayoutParams(TableRow.LayoutParams.WRAP_CONTENT, TableRow.LayoutParams.MATCH_PARENT);
                     params2.gravity = Gravity.CENTER;
                     cb_producto.setLayoutParams(params2);
 
-                    cb_producto.setOnClickListener(new View.OnClickListener() {
+                    cb_producto.setOnClickListener(new View.OnClickListener()
+                    {
                         @Override
-                        public void onClick(View v) {
-                            if (cb_producto.isChecked()) {
+                        public void onClick(View v)
+                        {
+                            if (cb_producto.isChecked())
+                            {
                                 productos_agregados++;
 
-                                String subtotal = FuncionesTablas.calcularSubtotal(Integer.parseInt(pares_totales), Integer.parseInt(bultos_totales), Double.parseDouble(precio_producto));
+                                String            subtotal = FuncionesTablas.calcularSubtotal(Integer.parseInt(pares_totales), Integer.parseInt(bultos_totales), Double.parseDouble(precio_producto));
                                 ArrayList<String> producto = new ArrayList<>();
                                 producto.add(id_producto);
                                 producto.add(talla_producto);
@@ -732,14 +770,29 @@ public class AgregarProductoPedido extends AppCompatActivity
                                 producto.add(color_producto);
                                 productos.add(producto);
                                 Log.d(TAG, "Producto agregado.. total: " + productos_agregados);
-                            } else {
+                            }
+                            else
+                            {
                                 productos_agregados--;
+                                String            subtotal = FuncionesTablas.calcularSubtotal(Integer.parseInt(pares_totales), Integer.parseInt(bultos_totales), Double.parseDouble(precio_producto));
+                                ArrayList<String> producto = new ArrayList<>();
+                                producto.add(id_producto);
+                                producto.add(talla_producto);
+                                producto.add(numeracion_producto.replace(")", ""));
+                                producto.add(pares_totales); // Pares
+                                producto.add(bultos_totales); // Bultos por defecto
+                                producto.add(precio_producto);
+                                producto.add(subtotal);
+                                producto.add(tipo_producto);
+                                producto.add(modelo_producto);
+                                producto.add(color_producto);
+                                productos.remove(producto);
                                 Log.d(TAG, "Producto eliminado.. total: " + productos_agregados);
                             }
                         }
                     });
 
-                    TableRow.LayoutParams layout = new TableRow.LayoutParams(0,TableRow.LayoutParams.MATCH_PARENT);
+                    TableRow.LayoutParams layout = new TableRow.LayoutParams(0, TableRow.LayoutParams.MATCH_PARENT);
                     imagen.setLayoutParams(layout);
                     talla.setLayoutParams(layout);
                     tipo.setLayoutParams(layout);
@@ -748,7 +801,6 @@ public class AgregarProductoPedido extends AppCompatActivity
                     precio.setLayoutParams(layout);
                     numeracion.setLayoutParams(layout);
                     //cb_producto.setLayoutParams(layout);
-
 
 
                     LinearLayout opciones = new LinearLayout(contexto);
@@ -786,11 +838,15 @@ public class AgregarProductoPedido extends AppCompatActivity
 
                     filas.add(fila);
 
-                    final Thread hilo1 = new Thread() {
+                    final Thread hilo1 = new Thread()
+                    {
                         @Override
-                        public void run() {
-                            synchronized (this) {
-                                runOnUiThread(new Runnable() {
+                        public void run()
+                        {
+                            synchronized (this)
+                            {
+                                runOnUiThread(new Runnable()
+                                {
                                     @Override
                                     public void run()
                                     {
@@ -808,9 +864,9 @@ public class AgregarProductoPedido extends AppCompatActivity
                 }
             }
 
-            if( contador == cursor.getCount())
+            if (contador == cursor.getCount())
             {
-                if(!filtrando)
+                if (!filtrando)
                 {
                     Log.w(TAG, "VACIO!!!");
                     final Thread hilo = new Thread()
@@ -827,8 +883,8 @@ public class AgregarProductoPedido extends AppCompatActivity
                                     {
                                         ocultarTodo(tabla);
 
-                                        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.MATCH_PARENT, 1f);
-                                        TextView mensaje = new TextView(contexto);
+                                        LinearLayout.LayoutParams params  = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.MATCH_PARENT, 1f);
+                                        TextView                  mensaje = new TextView(contexto);
                                         mensaje.setText(R.string.msj_producto_nodisponible);
                                         mensaje.setGravity(Gravity.CENTER);
                                         mensaje.setTextSize(20f);
@@ -870,11 +926,15 @@ public class AgregarProductoPedido extends AppCompatActivity
 
                     filas.add(fila);
 
-                    final Thread hilo1 = new Thread() {
+                    final Thread hilo1 = new Thread()
+                    {
                         @Override
-                        public void run() {
-                            synchronized (this) {
-                                runOnUiThread(new Runnable() {
+                        public void run()
+                        {
+                            synchronized (this)
+                            {
+                                runOnUiThread(new Runnable()
+                                {
                                     @Override
                                     public void run()
                                     {
@@ -890,7 +950,7 @@ public class AgregarProductoPedido extends AppCompatActivity
         }
         else
         {
-            if(!filtrando)
+            if (!filtrando)
             {
                 final Thread hilo = new Thread()
                 {
@@ -906,8 +966,8 @@ public class AgregarProductoPedido extends AppCompatActivity
                                 {
                                     ocultarTodo(tabla);
 
-                                    LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.MATCH_PARENT, 1f);
-                                    TextView mensaje = new TextView(contexto);
+                                    LinearLayout.LayoutParams params  = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.MATCH_PARENT, 1f);
+                                    TextView                  mensaje = new TextView(contexto);
                                     mensaje.setText(R.string.msj_producto_nodisponible);
                                     //mensaje.setText(R.string.msj_producto_vacio);
                                     mensaje.setGravity(Gravity.CENTER);
@@ -951,11 +1011,15 @@ public class AgregarProductoPedido extends AppCompatActivity
 
                 filas.add(fila);
 
-                final Thread hilo1 = new Thread() {
+                final Thread hilo1 = new Thread()
+                {
                     @Override
-                    public void run() {
-                        synchronized (this) {
-                            runOnUiThread(new Runnable() {
+                    public void run()
+                    {
+                        synchronized (this)
+                        {
+                            runOnUiThread(new Runnable()
+                            {
                                 @Override
                                 public void run()
                                 {
@@ -974,20 +1038,21 @@ public class AgregarProductoPedido extends AppCompatActivity
 
     /**
      * Muestra todos los componentes de la tabla.
+     *
      * @param tabla Tabla a la cual se le haran visibles los componentes
      */
     private void mostrarTodo(TableLayout tabla)
     {
         tabla.setVisibility(View.VISIBLE);
-        final TableLayout cabecera = (TableLayout) findViewById(R.id.table_agregar_productos_pedido);
-        Button btn_agregar = (Button) findViewById(R.id.btn_agregar_productos_pedido);
+        final TableLayout cabecera    = (TableLayout) findViewById(R.id.table_agregar_productos_pedido);
+        Button            btn_agregar = (Button) findViewById(R.id.btn_agregar_productos_pedido);
         btn_agregar.setVisibility(View.VISIBLE);
         cabecera.setVisibility(View.VISIBLE);
 
         AutoCompleteTextView model = (AutoCompleteTextView) findViewById(R.id.autoC_modelo);
-        Spinner tipo = (Spinner) findViewById(R.id.spTipo_editar_producto);
-        Spinner color = (Spinner) findViewById(R.id.spColor_editar_producto);
-        Spinner talla = (Spinner) findViewById(R.id.spTalla_editar_producto);
+        Spinner              tipo  = (Spinner) findViewById(R.id.spTipo_editar_producto);
+        Spinner              color = (Spinner) findViewById(R.id.spColor_editar_producto);
+        Spinner              talla = (Spinner) findViewById(R.id.spTalla_editar_producto);
 
         model.setVisibility(View.VISIBLE);
         tabla.setVisibility(View.VISIBLE);
@@ -999,6 +1064,7 @@ public class AgregarProductoPedido extends AppCompatActivity
 
     /**
      * Oculta todos los componentes de la tabla.
+     *
      * @param tabla Tabla a la cual se le haran invisibles los componentes
      */
     private void ocultarTodo(TableLayout tabla)
@@ -1010,9 +1076,9 @@ public class AgregarProductoPedido extends AppCompatActivity
         cabecera.setVisibility(View.INVISIBLE);
 
         AutoCompleteTextView model = (AutoCompleteTextView) findViewById(R.id.autoC_modelo);
-        Spinner tipo = (Spinner) findViewById(R.id.spTipo_editar_producto);
-        Spinner color = (Spinner) findViewById(R.id.spColor_editar_producto);
-        Spinner talla = (Spinner) findViewById(R.id.spTalla_editar_producto);
+        Spinner              tipo  = (Spinner) findViewById(R.id.spTipo_editar_producto);
+        Spinner              color = (Spinner) findViewById(R.id.spColor_editar_producto);
+        Spinner              talla = (Spinner) findViewById(R.id.spTalla_editar_producto);
 
         model.setVisibility(View.INVISIBLE);
         tabla.setVisibility(View.INVISIBLE);
@@ -1021,9 +1087,11 @@ public class AgregarProductoPedido extends AppCompatActivity
         talla.setVisibility(View.INVISIBLE);
     }
 
-    private class cargarDatos extends AsyncTask<String, String, String> {
+    private class cargarDatos extends AsyncTask<String, String, String>
+    {
         @Override
-        protected void onPreExecute() {
+        protected void onPreExecute()
+        {
             pDialog = new ProgressDialog(AgregarProductoPedido.this);
             pDialog.setTitle("Por favor espere...");
             pDialog.setMessage("Cargando informacion...");
@@ -1033,14 +1101,16 @@ public class AgregarProductoPedido extends AppCompatActivity
         }
 
         @Override
-        protected String doInBackground(String... params) {
+        protected String doInBackground(String... params)
+        {
             loadSpinnerData();
             inicializarTabla(null, null, null, null, false);
             return null;
         }
 
         @Override
-        protected void onPostExecute(String result) {
+        protected void onPostExecute(String result)
+        {
             pDialog.dismiss();
         }
     }
@@ -1049,9 +1119,11 @@ public class AgregarProductoPedido extends AppCompatActivity
      * Clase utilizada al momento de realizar un cambio en la tabla, como por ejemplo filtrados,
      * orden de resultados, etc
      */
-    private class reCargarDatos extends AsyncTask<String, String, String> {
+    private class reCargarDatos extends AsyncTask<String, String, String>
+    {
         @Override
-        protected void onPreExecute() {
+        protected void onPreExecute()
+        {
             pDialog = new ProgressDialog(AgregarProductoPedido.this);
             pDialog.setTitle("Por favor espere...");
             pDialog.setMessage("Cargando informacion...");
@@ -1061,13 +1133,15 @@ public class AgregarProductoPedido extends AppCompatActivity
         }
 
         @Override
-        protected String doInBackground(String... params) {
+        protected String doInBackground(String... params)
+        {
             inicializarTabla(params[0], params[1], params[2], params[3], true);
             return null;
         }
 
         @Override
-        protected void onPostExecute(String result) {
+        protected void onPostExecute(String result)
+        {
             pDialog.dismiss();
         }
 
@@ -1076,7 +1150,7 @@ public class AgregarProductoPedido extends AppCompatActivity
     /**
      * Agrega un producto al pedido en segundo plano.
      */
-    class agregarProductoPedido extends AsyncTask< String, String, String >
+    class agregarProductoPedido extends AsyncTask<String, String, String>
     {
         @Override
         protected void onPreExecute()

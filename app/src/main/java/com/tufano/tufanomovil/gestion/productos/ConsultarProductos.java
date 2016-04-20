@@ -666,7 +666,6 @@ public class ConsultarProductos extends AppCompatActivity
             }
             else
             {
-
                 final Thread hilo = new Thread()
                 {
                     @Override
