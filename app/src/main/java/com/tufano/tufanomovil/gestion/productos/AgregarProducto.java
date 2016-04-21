@@ -8,12 +8,14 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.InputType;
@@ -79,6 +81,34 @@ public class AgregarProducto extends AppCompatActivity
     private String idTallaSeleccionada;
     private String idColorSeleccionado;
     private Switch destacado_seleccionado;
+
+    private static Bitmap resize(Bitmap image, int maxWidth, int maxHeight)
+    {
+        if (maxHeight > 0 && maxWidth > 0)
+        {
+            int   width       = image.getWidth();
+            int   height      = image.getHeight();
+            float ratioBitmap = (float) width / (float) height;
+            float ratioMax    = (float) maxWidth / (float) maxHeight;
+
+            int finalWidth  = maxWidth;
+            int finalHeight = maxHeight;
+            if (ratioMax > 1)
+            {
+                finalWidth = (int) ((float) maxHeight * ratioBitmap);
+            }
+            else
+            {
+                finalHeight = (int) ((float) maxWidth / ratioBitmap);
+            }
+            image = Bitmap.createScaledBitmap(image, finalWidth, finalHeight, true);
+            return image;
+        }
+        else
+        {
+            return image;
+        }
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -794,51 +824,87 @@ public class AgregarProducto extends AppCompatActivity
         if (requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK && data != null && data.getData() != null)
         {
             Log.i(TAG, "Selecting..");
-            Uri selectedImageUri = data.getData();
+            final Uri selectedImageUri = data.getData();
 
             // Buscamos la ruta de la imagen en cuestion.
             String selectedImagePath = selectedImageUri.getPath();
+            Bitmap decoded           = null;
 
             // Cargamos en memoria la imagen seleccionada por el usuario.
-            //imagen_cargada = MediaStore.Images.Media.getBitmap(getContentResolver(), selectedImageUri).compress(Bitmap.CompressFormat.JPEG, 80, imagen_cargada);
+            try
+            {
+                ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+                imagen_cargada = MediaStore.Images.Media.getBitmap(getContentResolver(), selectedImageUri);
+                imagen_cargada.compress(Bitmap.CompressFormat.JPEG, 80, bytes);
+                byte[] bitmapdata = bytes.toByteArray();
+                imagen_cargada = BitmapFactory.decodeByteArray(bitmapdata, 0, bitmapdata.length);
+                imagen_cargada = resize(imagen_cargada, 2048, 2048);
+
+                /*ByteArrayOutputStream out = new ByteArrayOutputStream();
+                imagen_cargada.compress(Bitmap.CompressFormat.JPEG, 80, out);
+                decoded = BitmapFactory.decodeStream(new ByteArrayInputStream(out.toByteArray()));*/
+                //imagen_cargada.compress(Bitmap.CompressFormat.JPEG, 80, bytes);
+            }
+            catch (IOException e)
+            {
+                Log.e(TAG, "error " + e);
+                e.printStackTrace();
+            }
 
             File file = new File(selectedImagePath);
 
             // Creamos una version minificada de la imagen.
-            imagen_cargada = Funciones.decodeSampledBitmapFromResource(file, 2160, 1620);
-            final Bitmap img_preview = Funciones.decodeSampledBitmapFromResource(file, 432, 324);
+            //imagen_cargada = Funciones.decodeSampledBitmapFromResource(file, 1944, 1458);
+            //imagen_cargada = Funciones.decodeFile(file, 1500);
+            Bitmap img_preview = Funciones.decodeSampledBitmapFromResource(file, 432, 324);
+            //Bitmap bitmap = BitmapFactory.decodeFile(file.getAbsolutePath());
 
-            final Thread hilo1 = new Thread()
+            // Asignamos la imagen preview para que el usuario la visualice.
+            ImageView imageView = (ImageView) findViewById(R.id.seleccion_img_producto);
+            Log.i(TAG, "Asignando..");
+            imageView.setImageBitmap(imagen_cargada);
+            imageView.invalidate();
+            Log.i(TAG, "Asignado..");
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN)
             {
-                @Override
-                public void run()
-                {
-                    synchronized (this)
-                    {
-                        runOnUiThread(new Runnable()
-                        {
-                            @Override
-                            public void run()
-                            {
-                                // Asignamos la imagen preview para que el usuario la visualice.
-                                ImageView imageView = (ImageView) findViewById(R.id.seleccion_img_producto);
-                                imageView.setImageBitmap(img_preview);
+                Log.i(TAG, "NullBackground..");
+                imageView.setBackground(null);
+                imageView.invalidate();
+            }
 
-                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN)
-                                {
-                                    imageView.setBackground(null);
-                                }
-                            }
-                        });
-                    }
-                }
-            };
-            hilo1.start();
+            /*Bitmap bitmap;
+            try
+            {
+                bitmap = BitmapFactory.decodeStream(getContentResolver().openInputStream(selectedImageUri));
+                imageView.setImageBitmap(bitmap);
+            }
+            catch (FileNotFoundException e)
+            {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }*/
         }
         else
         {
             Log.i(TAG, "null");
         }
+    }
+
+    private Bitmap loadImage(String imgPath)
+    {
+        BitmapFactory.Options options;
+        try
+        {
+            options = new BitmapFactory.Options();
+            options.inSampleSize = 2;
+            return BitmapFactory.decodeFile(imgPath, options);
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     /**
@@ -1011,6 +1077,7 @@ public class AgregarProducto extends AppCompatActivity
         // This bundle will be passed to onCreate if the process is
         // killed and restarted.
         Log.d(TAG, "onSaveInstanceState");
+        Log.d(TAG, "imagen_cargada " + imagen_cargada);
         savedInstanceState.putParcelable("image", imagen_cargada);
         String[] cantidadxpar = new String[ids_tabla.size()];
 
@@ -1033,6 +1100,7 @@ public class AgregarProducto extends AppCompatActivity
         // Restore UI state from the savedInstanceState.
         // This bundle has also been passed to onCreate.
         imagen_cargada = savedInstanceState.getParcelable("image");
+        Log.d(TAG, "imagen_cargada " + imagen_cargada);
         //String[] cantidadxpar = savedInstanceState.getStringArray("cantidadxpar");
         //ArrayList<Integer> ids = savedInstanceState.getIntegerArrayList("ids");
 

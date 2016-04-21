@@ -154,7 +154,7 @@ public class ConsultarProductos extends AppCompatActivity
     private void createToolBar()
     {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        toolbar.setSubtitle(R.string.editar_producto_subtitulo);
+        toolbar.setSubtitle(R.string.consultar_producto_subtitulo);
         setSupportActionBar(toolbar);
     }
 

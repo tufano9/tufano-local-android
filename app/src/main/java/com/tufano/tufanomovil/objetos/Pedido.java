@@ -1,12 +1,10 @@
 package com.tufano.tufanomovil.objetos;
 
-import java.util.ArrayList;
-
 public class Pedido
 {
     private String id_pedido, razon_social, nombre_vendedor, monto_pedido, fecha_pedido,
             estatus_pedido, observaciones;
-    private ArrayList<Producto> productos;
+    //private ArrayList<Producto> productos;
 
     public Pedido(String id_pedido, String razon_social, String nombre_vendedor, String monto_pedido,
                   String fecha_pedido, String estatus_pedido, String observaciones)

@@ -265,5 +265,6 @@
     <string name="rb_new">Mostrar destacados</string>
     <string name="rb_old">Mostrar Otros</string>
     <string name="rb_all">Mostrar Todos</string>
+    <string name="consultar_producto_subtitulo">Consultar Productos</string>
 
 </resources>
