@@ -625,7 +625,7 @@ public class AgregarProductoPedido extends AppCompatActivity
 
         // Llenando la tabla de forma iterativa
         //Cursor cursor = manager.cargarProductos(tipo_filtrado, talla_filtrado, color_filtrado, modelo_filtrado);
-        Cursor cursor = manager.cargarProductos_Filtrado_Ordenado(tipo_filtrado, talla_filtrado, color_filtrado, modelo_filtrado, columna_ordenada, orden, 200, 0);
+        Cursor cursor = manager.cargarProductos_Filtrado_Ordenado(tipo_filtrado, talla_filtrado, color_filtrado, modelo_filtrado, columna_ordenada, orden, 200, 0, "2");
 
         if (cursor.getCount() > 0)
         {

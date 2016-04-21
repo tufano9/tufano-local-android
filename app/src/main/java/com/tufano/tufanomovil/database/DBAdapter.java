@@ -101,6 +101,7 @@ import static com.tufano.tufanomovil.database.tables.PedidosTemporales.CN_SUBTOT
 import static com.tufano.tufanomovil.database.tables.PedidosTemporales.CN_TALLA_PEDIDOS_TEMPORALES;
 import static com.tufano.tufanomovil.database.tables.PedidosTemporales.TABLA_PEDIDOS_TEMPORALES;
 import static com.tufano.tufanomovil.database.tables.Productos.CN_COLOR_PRODUCTO;
+import static com.tufano.tufanomovil.database.tables.Productos.CN_DESTACADO_PRODUCTO;
 import static com.tufano.tufanomovil.database.tables.Productos.CN_ESTATUS_PRODUCTO;
 import static com.tufano.tufanomovil.database.tables.Productos.CN_ID_PRODUCTO;
 import static com.tufano.tufanomovil.database.tables.Productos.CN_MODELO_PRODUCTO;
@@ -140,6 +141,7 @@ public class DBAdapter
 
     /**
      * Constructor de la clase.
+     *
      * @param context Contexto de la aplicacion.
      */
     public DBAdapter(Context context)
@@ -200,7 +202,7 @@ public class DBAdapter
 
     /**
      * get datetime
-     * */
+     */
     private String getDateTime()
     {
         SimpleDateFormat dateFormat = new SimpleDateFormat(
@@ -214,23 +216,23 @@ public class DBAdapter
     private Cursor cargarCursorUsuario()
     {
         String[] columnas = new String[]{CN_ID_USUARIO, CN_NOMBRE_USUARIO, CN_NOMBRE, CN_APELLIDO, CN_CEDULA, CN_TELEFONO, CN_EMAIL, CN_PASSWORD};
-        return db.query(TABLA_USUARIO,columnas,null,null,null,null,null);
+        return db.query(TABLA_USUARIO, columnas, null, null, null, null, null);
     }
 
     public Cursor buscarUsuario(String nombre_usuario)
     {
         String[] columnas = new String[]{CN_ID_USUARIO, CN_NOMBRE_USUARIO, CN_NOMBRE, CN_APELLIDO, CN_CEDULA, CN_TELEFONO, CN_EMAIL, CN_PASSWORD, CN_PASSWORD, CN_ESTADO, CN_KEY};
-        String[] args = { nombre_usuario };
-        return db.query(TABLA_USUARIO,columnas,CN_NOMBRE_USUARIO+"=?",args,null,null,null);
+        String[] args     = {nombre_usuario};
+        return db.query(TABLA_USUARIO, columnas, CN_NOMBRE_USUARIO + "=?", args, null, null, null);
     }
 
     public List<String> buscarUsuario_ID(String id_usuario)
     {
         List<String> contenedor = new ArrayList<>();
 
-        String[] columnas = new String[]{ CN_NOMBRE_USUARIO, CN_NOMBRE, CN_APELLIDO, CN_CEDULA, CN_TELEFONO, CN_EMAIL, CN_ESTADO, CN_PASSWORD, CN_KEY};
-        String[] args = { id_usuario };
-        Cursor cursor = db.query(TABLA_USUARIO, columnas, CN_ID_USUARIO + "=?", args, null, null, null);
+        String[] columnas = new String[]{CN_NOMBRE_USUARIO, CN_NOMBRE, CN_APELLIDO, CN_CEDULA, CN_TELEFONO, CN_EMAIL, CN_ESTADO, CN_PASSWORD, CN_KEY};
+        String[] args     = {id_usuario};
+        Cursor   cursor   = db.query(TABLA_USUARIO, columnas, CN_ID_USUARIO + "=?", args, null, null, null);
 
         if (cursor.moveToFirst())
         {
@@ -250,9 +252,9 @@ public class DBAdapter
     {
         List<String> contenedor = new ArrayList<>();
 
-        String[] columnas = new String[]{ CN_CEDULA, CN_NOMBRE, CN_APELLIDO, CN_EMAIL, CN_TELEFONO, CN_ESTADO};
-        String[] args = { id_usuario };
-        Cursor cursor = db.query(TABLA_USUARIO, columnas, CN_ID_USUARIO + "=?", args, null, null, null);
+        String[] columnas = new String[]{CN_CEDULA, CN_NOMBRE, CN_APELLIDO, CN_EMAIL, CN_TELEFONO, CN_ESTADO};
+        String[] args     = {id_usuario};
+        Cursor   cursor   = db.query(TABLA_USUARIO, columnas, CN_ID_USUARIO + "=?", args, null, null, null);
 
         if (cursor.moveToFirst())
         {
@@ -271,42 +273,43 @@ public class DBAdapter
      * Funcion encargada de conseguir los usuarios con una cedula igual a la indicada pero con un
      * id distinto, es decir, para saber si hay otro usuario aparte del que se esta indicando,
      * que posea la cedula.
-     * @param cedula Cedula del usuario que se debe buscar.
+     *
+     * @param cedula     Cedula del usuario que se debe buscar.
      * @param id_usuario Id del cliente que se obviara para la busqueda
      * @return Cursor con los datos resultantes de la consulta a la BD.
      */
     public Cursor buscarUsuarioCedula_ID(String cedula, String id_usuario)
     {
         String[] columnas = new String[]{CN_ID_USUARIO};
-        String[] args = { cedula, id_usuario };
+        String[] args     = {cedula, id_usuario};
         return db.query(TABLA_USUARIO, columnas, CN_CEDULA + "=? AND " + CN_ID_USUARIO + " !=?", args, null, null, null);
     }
 
     @SuppressWarnings("unused")
     public void insertar_usuario(String nombre_usuario, String cedula, String nombre, String apellido, String telefono, String email, String pass, String estado, String key)
     {
-        Cursor c = cargarCursorUsuario();
+        Cursor            c         = cargarCursorUsuario();
         ArrayList<String> usernames = new ArrayList<>(); // nombre_usuario
 
-        for(c.moveToFirst(); !c.isAfterLast(); c.moveToNext())
+        for (c.moveToFirst(); !c.isAfterLast(); c.moveToNext())
             usernames.add(c.getString(1)); // nombre_usuario
         String[] ids = usernames.toArray(new String[usernames.size()]);
 
         //nullColumnHack = indicar que parametros seran opcionales (CN_Phone es opcional) de lo contrario se pone null
-        if(existe_dato(ids, nombre_usuario))
+        if (existe_dato(ids, nombre_usuario))
         {
             ContentValues valores = new ContentValues();
-            valores.put(CN_NOMBRE_USUARIO,nombre_usuario);
-            valores.put(CN_CEDULA,cedula);
-            valores.put(CN_NOMBRE,nombre);
-            valores.put(CN_APELLIDO,apellido);
-            valores.put(CN_TELEFONO,telefono);
-            valores.put(CN_EMAIL,email);
-            valores.put(CN_PASSWORD,pass);
-            valores.put(CN_ESTADO,estado);
-            valores.put(CN_KEY,key);
+            valores.put(CN_NOMBRE_USUARIO, nombre_usuario);
+            valores.put(CN_CEDULA, cedula);
+            valores.put(CN_NOMBRE, nombre);
+            valores.put(CN_APELLIDO, apellido);
+            valores.put(CN_TELEFONO, telefono);
+            valores.put(CN_EMAIL, email);
+            valores.put(CN_PASSWORD, pass);
+            valores.put(CN_ESTADO, estado);
+            valores.put(CN_KEY, key);
 
-            if (db.insert(TABLA_USUARIO, null, valores)==-1)
+            if (db.insert(TABLA_USUARIO, null, valores) == -1)
                 Log.e(TAG, "Ha ocurrido un error insertando el registro..");
             else
                 Log.e(TAG, "Registro agregado exitosamente..");
@@ -321,16 +324,16 @@ public class DBAdapter
     {
         ContentValues valores_nuevos = new ContentValues();
 
-        valores_nuevos.put(CN_NOMBRE, dato.get(0) );
-        valores_nuevos.put(CN_APELLIDO, dato.get(1) );
-        valores_nuevos.put(CN_EMAIL, dato.get(2) );
-        valores_nuevos.put(CN_TELEFONO, dato.get(3) );
-        valores_nuevos.put(CN_CEDULA, dato.get(4) );
+        valores_nuevos.put(CN_NOMBRE, dato.get(0));
+        valores_nuevos.put(CN_APELLIDO, dato.get(1));
+        valores_nuevos.put(CN_EMAIL, dato.get(2));
+        valores_nuevos.put(CN_TELEFONO, dato.get(3));
+        valores_nuevos.put(CN_CEDULA, dato.get(4));
         valores_nuevos.put(CN_ESTADO, dato.get(6));
 
-        if(cambiarPass)
+        if (cambiarPass)
         {
-            String key = getUserKey(id_usuario);
+            String key               = getUserKey(id_usuario);
             String encryptedPassword = null;
 
             try
@@ -341,7 +344,7 @@ public class DBAdapter
             {
                 e.printStackTrace();
             }
-            valores_nuevos.put(CN_PASSWORD, encryptedPassword );
+            valores_nuevos.put(CN_PASSWORD, encryptedPassword);
         }
 
         return db.update(TABLA_USUARIO, valores_nuevos, CN_ID_USUARIO + "=?", new String[]{id_usuario});
@@ -349,10 +352,10 @@ public class DBAdapter
 
     public String getUserKey(String id)
     {
-        String[] columnas = new String[]{ CN_KEY };
-        String[] args = { id };
-        String key = null;
-        Cursor cursor = db.query(TABLA_USUARIO,columnas,CN_ID_USUARIO+"=?",args,null,null,null);
+        String[] columnas = new String[]{CN_KEY};
+        String[] args     = {id};
+        String   key      = null;
+        Cursor   cursor   = db.query(TABLA_USUARIO, columnas, CN_ID_USUARIO + "=?", args, null, null, null);
         if (cursor.moveToFirst())
         {
             key = cursor.getString(0);
@@ -363,10 +366,10 @@ public class DBAdapter
 
     public String obtenerPassword(String id)
     {
-        String[] columnas = new String[]{ CN_PASSWORD };
-        String[] args = { id };
-        String password = null;
-        Cursor cursor = db.query(TABLA_USUARIO, columnas, CN_ID_USUARIO + "=?", args, null, null, null);
+        String[] columnas = new String[]{CN_PASSWORD};
+        String[] args     = {id};
+        String   password = null;
+        Cursor   cursor   = db.query(TABLA_USUARIO, columnas, CN_ID_USUARIO + "=?", args, null, null, null);
         if (cursor.moveToFirst())
         {
             password = cursor.getString(0);
@@ -383,102 +386,16 @@ public class DBAdapter
         return db.query(TABLA_PRODUCTOS, columnas, null, null, null, null, null);
     }
 
-    public Cursor cargarProductos_Filtrado_Ordenado(String tipo, String talla, String color, String modelo, String columna_ordenada, String orden, int cant_mostrar, int empezando_desde) {
+    public Cursor cargarProductos_Filtrado_Ordenado(String tipo, String talla, String color,
+                                                    String modelo, String columna_ordenada,
+                                                    String orden, int cant_mostrar,
+                                                    int empezando_desde, String destacado_filtrado)
+    {
         String where = null;
         String orderby;
         String join  = null;
 
         final String columns = CN_ID_PRODUCTO + ", " + CN_TALLA_PRODUCTO + ", " + CN_TIPO_PRODUCTO + ", " + CN_MODELO_PRODUCTO + ", " + CN_COLOR_PRODUCTO + ", " + CN_PRECIO_PRODUCTO + ", " + CN_NUMERACION_PRODUCTO + ", " + CN_ESTATUS_PRODUCTO + ", " + CN_PARES_TALLAS_PRODUCTO;
-
-        /* Generando el ORDER BY */
-        switch (columna_ordenada) {
-            case "monto":
-                orderby = "CAST(" + columna_ordenada.toLowerCase() + " AS DECIMAL(15,2)) " + orden;
-                break;
-            case "color":
-                join = TABLA_COLORES + " b ON a." + CN_COLOR_PRODUCTO + " = b." + CN_ID_COLOR;
-                orderby = "b." + CN_NOMBRE_COLOR + " " + orden;
-                break;
-            default:
-                orderby = columna_ordenada.toLowerCase() + " " + orden;
-                break;
-        }
-
-        /* Generando el WHERE */
-
-        ArrayList<String> argumentos = new ArrayList<>();
-
-        if (tipo != null) {
-            where = CN_TIPO_PRODUCTO + "=?";
-            argumentos.add(tipo);
-        }
-        if (talla != null) {
-            argumentos.add(talla);
-
-            if (where != null)
-                where += " AND " + CN_TALLA_PRODUCTO + "=?";
-            else
-                where = CN_TALLA_PRODUCTO + "=?";
-        }
-        if (color != null) {
-            argumentos.add(color);
-
-            if (where != null)
-                where += " AND " + CN_COLOR_PRODUCTO + "=?";
-            else
-                where = CN_COLOR_PRODUCTO + "=?";
-        }
-        if (modelo != null) {
-            argumentos.add("%" + modelo + "%");
-
-            if (where != null)
-                where += " AND " + CN_MODELO_PRODUCTO + " LIKE ?";
-            else
-                where = CN_MODELO_PRODUCTO + " LIKE ?";
-        }
-
-        String[] args = argumentos.toArray(new String[argumentos.size()]);
-
-        if (join != null) {
-            if (where != null) {
-                String MY_QUERY = "SELECT " + columns + " FROM " + TABLA_PRODUCTOS + " a INNER JOIN " + join + " WHERE " + where + " ORDER BY " + orderby;
-                MY_QUERY += " LIMIT " + cant_mostrar + " OFFSET " + empezando_desde;
-                Log.i(TAG, "Query + join: " + MY_QUERY);
-                return db.rawQuery(MY_QUERY, args);
-            }
-            else {
-                String MY_QUERY = "SELECT " + columns + " FROM " + TABLA_PRODUCTOS + " a INNER JOIN " + join + " ORDER BY " + orderby;
-                MY_QUERY += " LIMIT " + cant_mostrar + " OFFSET " + empezando_desde;
-                Log.i(TAG, "Query + join: " + MY_QUERY);
-                return db.rawQuery(MY_QUERY, args);
-            }
-        }
-        else {
-            if (where != null) {
-                String MY_QUERY = "SELECT " + columns + " FROM " + TABLA_PRODUCTOS + " WHERE " + where + " ORDER BY " + orderby;
-                MY_QUERY += " LIMIT " + cant_mostrar + " OFFSET " + empezando_desde;
-                Log.i(TAG, "Query: " + MY_QUERY);
-                return db.rawQuery(MY_QUERY, args);
-            }
-            else {
-                String MY_QUERY = "SELECT " + columns + " FROM " + TABLA_PRODUCTOS + " ORDER BY " + orderby;
-                MY_QUERY += " LIMIT " + cant_mostrar + " OFFSET " + empezando_desde;
-                Log.i(TAG, "Query: " + MY_QUERY);
-                return db.rawQuery(MY_QUERY, args);
-            }
-        }
-
-        // CONCATENAR EL LIMIT ---> LIMIT 10 OFFSET 15 (Retorna 10 valores a partir del 16)
-        //return db.query(TABLA_PRODUCTOS, columnas, where, args, null, null, orderby);
-    }
-
-    public Cursor cargarProductos_Filtrado_Ordenado(String tipo, String talla, String color, String modelo, String columna_ordenada, String orden)
-    {
-        String where = null;
-        String orderby;
-        String join = null;
-
-        final String columns = CN_ID_PRODUCTO+", "+CN_TALLA_PRODUCTO+", "+CN_TIPO_PRODUCTO+", "+CN_MODELO_PRODUCTO+", "+CN_COLOR_PRODUCTO+", "+CN_PRECIO_PRODUCTO+", "+CN_NUMERACION_PRODUCTO+", "+CN_ESTATUS_PRODUCTO+", "+CN_PARES_TALLAS_PRODUCTO;
 
         /* Generando el ORDER BY */
         switch (columna_ordenada)
@@ -499,68 +416,185 @@ public class DBAdapter
 
         ArrayList<String> argumentos = new ArrayList<>();
 
-        if(tipo!=null)
+        if (tipo != null)
         {
             where = CN_TIPO_PRODUCTO + "=?";
             argumentos.add(tipo);
         }
-        if(talla!=null)
+        if (talla != null)
         {
             argumentos.add(talla);
 
-            if(where!=null)
+            if (where != null)
                 where += " AND " + CN_TALLA_PRODUCTO + "=?";
             else
                 where = CN_TALLA_PRODUCTO + "=?";
         }
-        if(color!=null)
+        if (color != null)
         {
             argumentos.add(color);
 
-            if(where!=null)
+            if (where != null)
                 where += " AND " + CN_COLOR_PRODUCTO + "=?";
             else
                 where = CN_COLOR_PRODUCTO + "=?";
         }
-        if(modelo!=null)
+        if (modelo != null)
         {
             argumentos.add("%" + modelo + "%");
 
-            if(where!=null)
+            if (where != null)
                 where += " AND " + CN_MODELO_PRODUCTO + " LIKE ?";
             else
                 where = CN_MODELO_PRODUCTO + " LIKE ?";
         }
+        if (destacado_filtrado.equals("1") || destacado_filtrado.equals("0"))
+        {
+            // Nuevos o Viejos
+            argumentos.add(destacado_filtrado);
+            if (where != null) where += " AND " + CN_DESTACADO_PRODUCTO + "=?";
+            else where = CN_DESTACADO_PRODUCTO + "=?";
+        }
 
         String[] args = argumentos.toArray(new String[argumentos.size()]);
 
-        if(join!=null)
+        if (join != null)
         {
-            if(where != null)
+            if (where != null)
             {
-                String MY_QUERY = "SELECT "+columns+" FROM "+TABLA_PRODUCTOS+" a INNER JOIN "+join+" WHERE "+where+" ORDER BY "+orderby;
-                Log.i(TAG, "Query + join: "+MY_QUERY);
+                String MY_QUERY = "SELECT " + columns + " FROM " + TABLA_PRODUCTOS + " a INNER JOIN " + join + " WHERE " + where + " ORDER BY " + orderby;
+                MY_QUERY += " LIMIT " + cant_mostrar + " OFFSET " + empezando_desde;
+                Log.i(TAG, "Query + join: " + MY_QUERY);
                 return db.rawQuery(MY_QUERY, args);
             }
             else
             {
-                String MY_QUERY = "SELECT "+columns+" FROM "+TABLA_PRODUCTOS+" a INNER JOIN "+join+" ORDER BY "+orderby;
-                Log.i(TAG, "Query + join: "+MY_QUERY);
+                String MY_QUERY = "SELECT " + columns + " FROM " + TABLA_PRODUCTOS + " a INNER JOIN " + join + " ORDER BY " + orderby;
+                MY_QUERY += " LIMIT " + cant_mostrar + " OFFSET " + empezando_desde;
+                Log.i(TAG, "Query + join: " + MY_QUERY);
                 return db.rawQuery(MY_QUERY, args);
             }
         }
         else
         {
-            if(where != null)
+            if (where != null)
             {
-                String MY_QUERY = "SELECT "+columns+" FROM "+TABLA_PRODUCTOS+" WHERE "+where+" ORDER BY "+orderby;
-                Log.i(TAG, "Query: "+MY_QUERY);
+                String MY_QUERY = "SELECT " + columns + " FROM " + TABLA_PRODUCTOS + " WHERE " + where + " ORDER BY " + orderby;
+                MY_QUERY += " LIMIT " + cant_mostrar + " OFFSET " + empezando_desde;
+                Log.i(TAG, "Query: " + MY_QUERY);
                 return db.rawQuery(MY_QUERY, args);
             }
             else
             {
-                String MY_QUERY = "SELECT "+columns+" FROM "+TABLA_PRODUCTOS+" ORDER BY "+orderby;
-                Log.i(TAG, "Query: "+MY_QUERY);
+                String MY_QUERY = "SELECT " + columns + " FROM " + TABLA_PRODUCTOS + " ORDER BY " + orderby;
+                MY_QUERY += " LIMIT " + cant_mostrar + " OFFSET " + empezando_desde;
+                Log.i(TAG, "Query: " + MY_QUERY);
+                return db.rawQuery(MY_QUERY, args);
+            }
+        }
+
+        // CONCATENAR EL LIMIT ---> LIMIT 10 OFFSET 15 (Retorna 10 valores a partir del 16)
+        //return db.query(TABLA_PRODUCTOS, columnas, where, args, null, null, orderby);
+    }
+
+    public Cursor cargarProductos_Filtrado_Ordenado(String tipo, String talla, String color,
+                                                    String modelo, String columna_ordenada,
+                                                    String orden, String destacado_filtrado)
+    {
+        String where = null;
+        String orderby;
+        String join  = null;
+
+        final String columns = CN_ID_PRODUCTO + ", " + CN_TALLA_PRODUCTO + ", " + CN_TIPO_PRODUCTO + ", " + CN_MODELO_PRODUCTO + ", " + CN_COLOR_PRODUCTO + ", " + CN_PRECIO_PRODUCTO + ", " + CN_NUMERACION_PRODUCTO + ", " + CN_ESTATUS_PRODUCTO + ", " + CN_PARES_TALLAS_PRODUCTO;
+
+        /* Generando el ORDER BY */
+        switch (columna_ordenada)
+        {
+            case "monto":
+                orderby = "CAST(" + columna_ordenada.toLowerCase() + " AS DECIMAL(15,2)) " + orden;
+                break;
+            case "color":
+                join = TABLA_COLORES + " b ON a." + CN_COLOR_PRODUCTO + " = b." + CN_ID_COLOR;
+                orderby = "b." + CN_NOMBRE_COLOR + " " + orden;
+                break;
+            default:
+                orderby = columna_ordenada.toLowerCase() + " " + orden;
+                break;
+        }
+
+        /* Generando el WHERE */
+
+        ArrayList<String> argumentos = new ArrayList<>();
+
+        if (tipo != null)
+        {
+            where = CN_TIPO_PRODUCTO + "=?";
+            argumentos.add(tipo);
+        }
+        if (talla != null)
+        {
+            argumentos.add(talla);
+
+            if (where != null)
+                where += " AND " + CN_TALLA_PRODUCTO + "=?";
+            else
+                where = CN_TALLA_PRODUCTO + "=?";
+        }
+        if (color != null)
+        {
+            argumentos.add(color);
+
+            if (where != null)
+                where += " AND " + CN_COLOR_PRODUCTO + "=?";
+            else
+                where = CN_COLOR_PRODUCTO + "=?";
+        }
+        if (modelo != null)
+        {
+            argumentos.add("%" + modelo + "%");
+
+            if (where != null)
+                where += " AND " + CN_MODELO_PRODUCTO + " LIKE ?";
+            else
+                where = CN_MODELO_PRODUCTO + " LIKE ?";
+        }
+        if (destacado_filtrado.equals("1") || destacado_filtrado.equals("0"))
+        {
+            // Nuevos o Viejos
+            argumentos.add(destacado_filtrado);
+            if (where != null) where += " AND " + CN_DESTACADO_PRODUCTO + "=?";
+            else where = CN_DESTACADO_PRODUCTO + "=?";
+        }
+
+        String[] args = argumentos.toArray(new String[argumentos.size()]);
+
+        if (join != null)
+        {
+            if (where != null)
+            {
+                String MY_QUERY = "SELECT " + columns + " FROM " + TABLA_PRODUCTOS + " a INNER JOIN " + join + " WHERE " + where + " ORDER BY " + orderby;
+                Log.i(TAG, "Query + join: " + MY_QUERY);
+                return db.rawQuery(MY_QUERY, args);
+            }
+            else
+            {
+                String MY_QUERY = "SELECT " + columns + " FROM " + TABLA_PRODUCTOS + " a INNER JOIN " + join + " ORDER BY " + orderby;
+                Log.i(TAG, "Query + join: " + MY_QUERY);
+                return db.rawQuery(MY_QUERY, args);
+            }
+        }
+        else
+        {
+            if (where != null)
+            {
+                String MY_QUERY = "SELECT " + columns + " FROM " + TABLA_PRODUCTOS + " WHERE " + where + " ORDER BY " + orderby;
+                Log.i(TAG, "Query: " + MY_QUERY);
+                return db.rawQuery(MY_QUERY, args);
+            }
+            else
+            {
+                String MY_QUERY = "SELECT " + columns + " FROM " + TABLA_PRODUCTOS + " ORDER BY " + orderby;
+                Log.i(TAG, "Query: " + MY_QUERY);
                 return db.rawQuery(MY_QUERY, args);
             }
         }
@@ -571,15 +605,27 @@ public class DBAdapter
 
     public Cursor cargarProductosId(String id)
     {
-        String[] columnas = new String[]{CN_MODELO_PRODUCTO};
-        String[] args = { id };
+        String[] columnas = new String[]
+                {
+                        CN_MODELO_PRODUCTO,
+                        CN_TALLA_PRODUCTO,
+                        CN_TIPO_PRODUCTO,
+                        CN_COLOR_PRODUCTO,
+                        CN_PRECIO_PRODUCTO,
+                        CN_NUMERACION_PRODUCTO,
+                        CN_ESTATUS_PRODUCTO,
+                        CN_PARES_TALLAS_PRODUCTO,
+                        CN_DESTACADO_PRODUCTO
+                };
+
+        String[] args = {id};
         return db.query(TABLA_PRODUCTOS, columnas, CN_ID_PRODUCTO + "=?", args, null, null, null);
     }
 
     public Cursor cargarProductosModelo(String modelo)
     {
         String[] columnas = new String[]{CN_ID_PRODUCTO};
-        String[] args = { modelo };
+        String[] args     = {modelo};
         return db.query(TABLA_PRODUCTOS, columnas, CN_MODELO_PRODUCTO + "=?", args, null, null, null);
     }
 
@@ -590,12 +636,12 @@ public class DBAdapter
 
         Cursor c = cargarProductos();
 
-        for(c.moveToFirst(); !c.isAfterLast(); c.moveToNext())
+        for (c.moveToFirst(); !c.isAfterLast(); c.moveToNext())
             modelos.add(c.getString(3)); // CN_MODELO_PRODUCTO
 
         String[] ids = modelos.toArray(new String[modelos.size()]);
 
-        if(existe_dato(ids, datos[4]))
+        if (existe_dato(ids, datos[4]))
         {
             ContentValues valores = new ContentValues();
             valores.put(CN_TALLA_PRODUCTO, datos[0]);
@@ -604,8 +650,9 @@ public class DBAdapter
             valores.put(CN_COLOR_PRODUCTO, datos[3]);
             valores.put(CN_MODELO_PRODUCTO, datos[4]);
             valores.put(CN_NUMERACION_PRODUCTO, datos[5]);
-            valores.put(CN_PARES_TALLAS_PRODUCTO, datos [6]);
+            valores.put(CN_PARES_TALLAS_PRODUCTO, datos[6]);
             valores.put(CN_ESTATUS_PRODUCTO, "1");
+            valores.put(CN_DESTACADO_PRODUCTO, datos[7]);
 
             return db.insert(TABLA_PRODUCTOS, null, valores);
         }
@@ -616,7 +663,9 @@ public class DBAdapter
         }
     }
 
-    public long editarProducto(String id, String talla, String tipo, String modelo, String color, String precio, String numeracion, String estatus, String paresxtalla)
+    public long editarProducto(String id, String talla, String tipo, String modelo, String color,
+                               String precio, String numeracion, String estatus, String paresxtalla,
+                               String destacado)
     {
         ContentValues valores_nuevos = new ContentValues();
         valores_nuevos.put(CN_TALLA_PRODUCTO, talla);
@@ -627,6 +676,7 @@ public class DBAdapter
         valores_nuevos.put(CN_NUMERACION_PRODUCTO, numeracion);
         valores_nuevos.put(CN_ESTATUS_PRODUCTO, estatus);
         valores_nuevos.put(CN_PARES_TALLAS_PRODUCTO, paresxtalla);
+        valores_nuevos.put(CN_DESTACADO_PRODUCTO, destacado);
 
         return db.update(TABLA_PRODUCTOS, valores_nuevos, CN_ID_PRODUCTO + "=?", new String[]{id});
     }
@@ -642,17 +692,17 @@ public class DBAdapter
     /**
      * Getting all labels
      * returns list of labels
-     * */
+     */
     public List<List<String>> cargarListaTallas()
     {
-        List<String> tallas = new ArrayList<>();
-        List<String> ids_tallas = new ArrayList<>();
-        List<String> numeraciones = new ArrayList<>();
-        List<List<String>> contenedor = new ArrayList<>();
+        List<String>       tallas       = new ArrayList<>();
+        List<String>       ids_tallas   = new ArrayList<>();
+        List<String>       numeraciones = new ArrayList<>();
+        List<List<String>> contenedor   = new ArrayList<>();
         tallas.add("Seleccione una talla..");
 
         String[] columnas = new String[]{CN_ID_TALLA, CN_NOMBRE_TALLA, CN_NUMERACION_TALLA};
-        Cursor cursor = db.query(TABLA_TALLAS, columnas, null, null, null, null, null);
+        Cursor   cursor   = db.query(TABLA_TALLAS, columnas, null, null, null, null, null);
 
         if (cursor.moveToFirst())
         {
@@ -674,7 +724,7 @@ public class DBAdapter
     public Cursor buscarTalla_ID(String id_talla)
     {
         String[] columnas = new String[]{CN_NOMBRE_TALLA, CN_NUMERACION_TALLA};
-        String[] args = { id_talla };
+        String[] args     = {id_talla};
         return db.query(TABLA_TALLAS, columnas, CN_ID_TALLA + "=?", args, null, null, null);
     }
 
@@ -687,39 +737,39 @@ public class DBAdapter
     public Cursor cargarTallas_nombre(String nombre)
     {
         String[] columnas = new String[]{CN_ID_TALLA};
-        String[] args = { nombre };
+        String[] args     = {nombre};
         return db.query(TABLA_TALLAS, columnas, CN_NOMBRE_TALLA + "=?", args, null, null, null);
     }
 
     public Cursor cargarTallas_nombreID(String nombre, String id)
     {
         String[] columnas = new String[]{CN_ID_TALLA};
-        String[] args = { nombre, id };
+        String[] args     = {nombre, id};
         return db.query(TABLA_TALLAS, columnas, CN_NOMBRE_TALLA + "=? AND " + CN_ID_TALLA + "!=?", args, null, null, null);
     }
 
     /**
      * Funcion encargada de agregar una talla a la base de datos local
-     * @param nombre Nombre de la talla a agregar, por ej. "P"
+     *
+     * @param nombre     Nombre de la talla a agregar, por ej. "P"
      * @param numeracion Numeracion de la talla a agregar, por ej. "(18-25)"
-     *              Array de los datos a insertar en la tabla datos [nombre_talla, numeracion]
-     * @return
-     *              Si la talla fue agregada exitosamente, retorna el ID de la talla insertada..
-     *              Si el nombre de la talla (P, M, G) ya existe, retorna -2..
-     *              Si ocurrio algun error insertando la talla, retorna -1..
+     *                   Array de los datos a insertar en la tabla datos [nombre_talla, numeracion]
+     * @return Si la talla fue agregada exitosamente, retorna el ID de la talla insertada..
+     * Si el nombre de la talla (P, M, G) ya existe, retorna -2..
+     * Si ocurrio algun error insertando la talla, retorna -1..
      */
     public long agregarTallas(String nombre, String numeracion)
     {
         ArrayList<String> tallas = new ArrayList<>(); // tallas
-        Cursor c = cargarTallas();
+        Cursor            c      = cargarTallas();
 
-        for(c.moveToFirst(); !c.isAfterLast(); c.moveToNext())
+        for (c.moveToFirst(); !c.isAfterLast(); c.moveToNext())
             tallas.add(c.getString(1));
 
         String[] ids = tallas.toArray(new String[tallas.size()]);
 
         // Verifico si la talla ya existe (nombre_talla)
-        if(existe_dato(ids, nombre))
+        if (existe_dato(ids, nombre))
         {
             ContentValues valores = new ContentValues();
             valores.put(CN_NOMBRE_TALLA, nombre);
@@ -748,17 +798,17 @@ public class DBAdapter
     /**
      * Getting all labels
      * returns list of labels
-     * */
+     */
     public List<List<String>> cargarListaTipos()
     {
-        List<String> tipos = new ArrayList<>();
-        List<String> ids_tipos = new ArrayList<>();
+        List<String>       tipos      = new ArrayList<>();
+        List<String>       ids_tipos  = new ArrayList<>();
         List<List<String>> contenedor = new ArrayList<>();
         tipos.add("Seleccione un tipo..");
         String orderBy = CN_NOMBRE_TIPO + " ASC";
 
         String[] columnas = new String[]{CN_ID_TIPO, CN_NOMBRE_TIPO};
-        Cursor cursor = db.query(TABLA_TIPOS, columnas, null, null, null, null, orderBy);
+        Cursor   cursor   = db.query(TABLA_TIPOS, columnas, null, null, null, null, orderBy);
 
         if (cursor.moveToFirst())
         {
@@ -778,43 +828,43 @@ public class DBAdapter
     public Cursor buscarTipo_ID(String id_tipo)
     {
         String[] columnas = new String[]{CN_NOMBRE_TIPO};
-        String[] args = { id_tipo };
+        String[] args     = {id_tipo};
         return db.query(TABLA_TIPOS, columnas, CN_ID_TIPO + "=?", args, null, null, null);
     }
 
     public Cursor cargarTipos()
     {
         String[] columnas = new String[]{CN_ID_TIPO, CN_NOMBRE_TIPO};
-        String orderBy = CN_NOMBRE_TIPO + " ASC";
+        String   orderBy  = CN_NOMBRE_TIPO + " ASC";
         return db.query(TABLA_TIPOS, columnas, null, null, null, null, orderBy);
     }
 
     public Cursor cargarTipos_nombre(String nombre)
     {
         String[] columnas = new String[]{CN_ID_TIPO};
-        String[] args = { nombre };
+        String[] args     = {nombre};
         return db.query(TABLA_TIPOS, columnas, CN_NOMBRE_TIPO + "=?", args, null, null, null);
     }
 
     public Cursor cargarTipos_nombreID(String nombre, String id)
     {
         String[] columnas = new String[]{CN_ID_TIPO};
-        String[] args = { nombre, id };
+        String[] args     = {nombre, id};
         return db.query(TABLA_TIPOS, columnas, CN_NOMBRE_TIPO + "=? AND " + CN_ID_TIPO + "!=?", args, null, null, null);
     }
 
     public long agregarTipos(String nombre)
     {
         ArrayList<String> tallas = new ArrayList<>(); // tallas
-        Cursor c = cargarTipos();
+        Cursor            c      = cargarTipos();
 
-        for(c.moveToFirst(); !c.isAfterLast(); c.moveToNext())
+        for (c.moveToFirst(); !c.isAfterLast(); c.moveToNext())
             tallas.add(c.getString(1));
 
         String[] ids = tallas.toArray(new String[tallas.size()]);
 
         // Verifico si el tipo ya existe (nombre_tipo)
-        if(existe_dato(ids, nombre))
+        if (existe_dato(ids, nombre))
         {
             ContentValues valores = new ContentValues();
             valores.put(CN_NOMBRE_TIPO, nombre);
@@ -840,17 +890,17 @@ public class DBAdapter
     /**
      * Getting all labels
      * returns list of labels
-     * */
+     */
     public List<List<String>> cargarListaColores()
     {
-        List<String> colores = new ArrayList<>();
-        List<String> ids_colores = new ArrayList<>();
-        List<List<String>> contenedor = new ArrayList<>();
+        List<String>       colores     = new ArrayList<>();
+        List<String>       ids_colores = new ArrayList<>();
+        List<List<String>> contenedor  = new ArrayList<>();
         colores.add("Seleccione un color..");
         String orderBy = CN_NOMBRE_COLOR + " ASC";
 
         String[] columnas = new String[]{CN_ID_COLOR, CN_NOMBRE_COLOR};
-        Cursor cursor = db.query(TABLA_COLORES, columnas, null, null, null, null, orderBy);
+        Cursor   cursor   = db.query(TABLA_COLORES, columnas, null, null, null, null, orderBy);
 
         if (cursor.moveToFirst())
         {
@@ -870,43 +920,43 @@ public class DBAdapter
     public Cursor buscarColor_ID(String id_color)
     {
         String[] columnas = new String[]{CN_NOMBRE_COLOR};
-        String[] args = { id_color };
+        String[] args     = {id_color};
         return db.query(TABLA_COLORES, columnas, CN_ID_COLOR + "=?", args, null, null, null);
     }
 
     public Cursor cargarColores()
     {
         String[] columnas = new String[]{CN_ID_COLOR, CN_NOMBRE_COLOR};
-        String orderBy = CN_NOMBRE_COLOR + " ASC";
+        String   orderBy  = CN_NOMBRE_COLOR + " ASC";
         return db.query(TABLA_COLORES, columnas, null, null, null, null, orderBy);
     }
 
     public Cursor cargarColores_nombre(String nombre)
     {
         String[] columnas = new String[]{CN_ID_COLOR};
-        String[] args = { nombre };
+        String[] args     = {nombre};
         return db.query(TABLA_COLORES, columnas, CN_NOMBRE_COLOR + "=?", args, null, null, null);
     }
 
     public Cursor cargarColores_nombreID(String nombre, String id)
     {
         String[] columnas = new String[]{CN_ID_COLOR};
-        String[] args = { nombre, id };
+        String[] args     = {nombre, id};
         return db.query(TABLA_COLORES, columnas, CN_NOMBRE_COLOR + "=? AND " + CN_ID_COLOR + "!=?", args, null, null, null);
     }
 
     public long agregarColores(String nombre)
     {
         ArrayList<String> tallas = new ArrayList<>(); // colores
-        Cursor c = cargarColores();
+        Cursor            c      = cargarColores();
 
-        for(c.moveToFirst(); !c.isAfterLast(); c.moveToNext())
+        for (c.moveToFirst(); !c.isAfterLast(); c.moveToNext())
             tallas.add(c.getString(1));
 
         String[] ids = tallas.toArray(new String[tallas.size()]);
 
         // Verifico si el tipo ya existe (nombre_tipo)
-        if(existe_dato(ids, nombre))
+        if (existe_dato(ids, nombre))
         {
             ContentValues valores = new ContentValues();
             valores.put(CN_NOMBRE_COLOR, nombre);
@@ -931,14 +981,14 @@ public class DBAdapter
 
     public List<List<String>> cargarListaClientes()
     {
-        List<String> razones_sociales = new ArrayList<>();
-        List<String> ids_clientes = new ArrayList<>();
-        List<List<String>> contenedor = new ArrayList<>();
+        List<String>       razones_sociales = new ArrayList<>();
+        List<String>       ids_clientes     = new ArrayList<>();
+        List<List<String>> contenedor       = new ArrayList<>();
         razones_sociales.add("Seleccione un cliente..");
         String orderBy = CN_RAZON_SOCIAL_CLIENTE + " ASC";
 
         String[] columnas = new String[]{CN_ID_CLIENTE, CN_RAZON_SOCIAL_CLIENTE};
-        Cursor cursor = db.query(TABLA_CLIENTES, columnas, null, null, null, null, orderBy);
+        Cursor   cursor   = db.query(TABLA_CLIENTES, columnas, null, null, null, null, orderBy);
 
         if (cursor.moveToFirst())
         {
@@ -957,17 +1007,17 @@ public class DBAdapter
 
     public List<String> cargarDatosClientes(String id)
     {
-        String razones_sociales = null;
-        String rif = null;
-        String estado = null;
-        String telefono = null;
-        String email = null;
-        String direccion = null;
-        String estatus = null;
-        List<String> contenedor = new ArrayList<>();
+        String       razones_sociales = null;
+        String       rif              = null;
+        String       estado           = null;
+        String       telefono         = null;
+        String       email            = null;
+        String       direccion        = null;
+        String       estatus          = null;
+        List<String> contenedor       = new ArrayList<>();
 
-        String[] columnas = new String[]{ CN_RAZON_SOCIAL_CLIENTE, CN_RIF_CLIENTE, CN_ESTADO_CLIENTE, CN_TELEFONO_CLIENTE, CN_EMAIL_CLIENTE, CN_DIRECCION_CLIENTE, CN_ESTATUS_CLIENTE};
-        Cursor cursor = db.query(TABLA_CLIENTES, columnas, CN_ID_CLIENTE + "=?", new String[]{id}, null, null, null);
+        String[] columnas = new String[]{CN_RAZON_SOCIAL_CLIENTE, CN_RIF_CLIENTE, CN_ESTADO_CLIENTE, CN_TELEFONO_CLIENTE, CN_EMAIL_CLIENTE, CN_DIRECCION_CLIENTE, CN_ESTATUS_CLIENTE};
+        Cursor   cursor   = db.query(TABLA_CLIENTES, columnas, CN_ID_CLIENTE + "=?", new String[]{id}, null, null, null);
 
         if (cursor.moveToFirst())
         {
@@ -993,9 +1043,11 @@ public class DBAdapter
 
     public Cursor cargarClientes()
     {
-        String[] columnas = new String[]{ CN_ID_CLIENTE, CN_RAZON_SOCIAL_CLIENTE, CN_RIF_CLIENTE,
+        String[] columnas = new String[]{
+                CN_ID_CLIENTE, CN_RAZON_SOCIAL_CLIENTE, CN_RIF_CLIENTE,
                 CN_ESTADO_CLIENTE, CN_TELEFONO_CLIENTE, CN_EMAIL_CLIENTE, CN_DIRECCION_CLIENTE,
-                CN_ESTATUS_CLIENTE };
+                CN_ESTATUS_CLIENTE
+        };
         String orderBy = CN_RAZON_SOCIAL_CLIENTE + " ASC";
         return db.query(TABLA_CLIENTES, columnas, null, null, null, null, orderBy);
     }
@@ -1014,20 +1066,20 @@ public class DBAdapter
                         CN_ESTATUS_CLIENTE
                 };
 
-        String selection = null;
+        String            selection  = null;
         ArrayList<String> argumentos = new ArrayList<>();
-        String orderby = columna_ordenada.toLowerCase() + " " + orden;
+        String            orderby    = columna_ordenada.toLowerCase() + " " + orden;
 
-        if(estado!=null)
+        if (estado != null)
         {
             selection = CN_ESTADO_CLIENTE + " LIKE ?";
             argumentos.add("%" + estado + "%");
         }
-        if(razon_social!=null)
+        if (razon_social != null)
         {
             argumentos.add("%" + razon_social + "%");
 
-            if(selection!=null)
+            if (selection != null)
                 selection += " AND " + CN_RAZON_SOCIAL_CLIENTE + " LIKE ?";
             else
                 selection = CN_RAZON_SOCIAL_CLIENTE + " LIKE ?";
@@ -1079,28 +1131,28 @@ public class DBAdapter
 
     public Cursor cargarClientesNombre(String rs, String rif, String id_cliente)
     {
-        String[] columnas = new String[]{ CN_ID_CLIENTE };
-        String[] args = new String[]{rs, rif, id_cliente};
+        String[] columnas = new String[]{CN_ID_CLIENTE};
+        String[] args     = new String[]{rs, rif, id_cliente};
         return db.query(TABLA_CLIENTES, columnas, "(" + CN_RAZON_SOCIAL_CLIENTE + "=? OR " + CN_RIF_CLIENTE + "=?) AND " + CN_ID_CLIENTE + " !=?", args, null, null, null);
     }
 
     public long agregarCliente(String[] datos)
     {
-        ArrayList<String> rs = new ArrayList<>(); // Razon social
+        ArrayList<String> rs  = new ArrayList<>(); // Razon social
         ArrayList<String> rif = new ArrayList<>(); // Rif
-        Cursor c = cargarClientes();
+        Cursor            c   = cargarClientes();
 
-        for(c.moveToFirst(); !c.isAfterLast(); c.moveToNext())
+        for (c.moveToFirst(); !c.isAfterLast(); c.moveToNext())
         {
             rs.add(c.getString(1));
             rif.add(c.getString(2));
         }
 
         String[] razones_sociales = rs.toArray(new String[rs.size()]);
-        String[] rifs = rs.toArray(new String[rif.size()]);
+        String[] rifs             = rs.toArray(new String[rif.size()]);
 
         // Verifico si el tipo ya existe (nombre_tipo)
-        if( existe_dato( razones_sociales, datos[1], rifs, datos[2] ) )
+        if (existe_dato(razones_sociales, datos[1], rifs, datos[2]))
         {
             ContentValues valores = new ContentValues();
             valores.put(CN_RAZON_SOCIAL_CLIENTE, datos[0]);
@@ -1135,8 +1187,8 @@ public class DBAdapter
 
     public Cursor cargarClientesNombre(String rs, String rif)
     {
-        String[] columnas = new String[]{ CN_ID_CLIENTE };
-        String[] args = new String[]{rs, rif};
+        String[] columnas = new String[]{CN_ID_CLIENTE};
+        String[] args     = new String[]{rs, rif};
         return db.query(TABLA_CLIENTES, columnas, CN_RAZON_SOCIAL_CLIENTE + "=? OR " + CN_RIF_CLIENTE + "=?", args, null, null, null);
 
     }
@@ -1146,34 +1198,34 @@ public class DBAdapter
     @SuppressWarnings("unused")
     public Cursor cargarPedidos()
     {
-        String[] columnas = new String[]{ CN_ID_PEDIDO, CN_RAZON_SOCIAL_CLIENTE_PEDIDO, CN_NOMBRE_VENDEDOR_PEDIDO, CN_MONTO_PEDIDO, CN_FECHA_PEDIDO, CN_ESTATUS_PEDIDO, CN_OBSERVACIONES_PEDIDO };
+        String[] columnas = new String[]{CN_ID_PEDIDO, CN_RAZON_SOCIAL_CLIENTE_PEDIDO, CN_NOMBRE_VENDEDOR_PEDIDO, CN_MONTO_PEDIDO, CN_FECHA_PEDIDO, CN_ESTATUS_PEDIDO, CN_OBSERVACIONES_PEDIDO};
         return db.query(TABLA_PEDIDOS, columnas, null, null, null, null, null);
     }
 
     public Cursor cargarPedidosOrdenadosPor(String columna_ordenada, String orden, String cliente_filtrado, String estatus_filtrado)
     {
-        String[] columnas = new String[]{ CN_ID_PEDIDO, CN_RAZON_SOCIAL_CLIENTE_PEDIDO , CN_NOMBRE_VENDEDOR_PEDIDO , CN_MONTO_PEDIDO, CN_FECHA_PEDIDO, CN_ESTATUS_PEDIDO, CN_OBSERVACIONES_PEDIDO };
-        String orderby;
-        String selection = null;
+        String[]          columnas   = new String[]{CN_ID_PEDIDO, CN_RAZON_SOCIAL_CLIENTE_PEDIDO, CN_NOMBRE_VENDEDOR_PEDIDO, CN_MONTO_PEDIDO, CN_FECHA_PEDIDO, CN_ESTATUS_PEDIDO, CN_OBSERVACIONES_PEDIDO};
+        String            orderby;
+        String            selection  = null;
         ArrayList<String> argumentos = new ArrayList<>();
 
-        if(cliente_filtrado!=null)
+        if (cliente_filtrado != null)
         {
             selection = CN_RAZON_SOCIAL_CLIENTE_PEDIDO + "=?";
             argumentos.add(cliente_filtrado);
         }
-        if(estatus_filtrado!=null)
+        if (estatus_filtrado != null)
         {
             argumentos.add(estatus_filtrado);
 
-            if(selection!=null)
+            if (selection != null)
                 selection += " AND " + CN_ESTATUS_PEDIDO + "=?";
             else
                 selection = CN_ESTATUS_PEDIDO + "=?";
         }
 
         if (columna_ordenada.equals("monto"))
-            orderby = "CAST("+columna_ordenada.toLowerCase()+" AS DECIMAL(15,2)) " + orden;
+            orderby = "CAST(" + columna_ordenada.toLowerCase() + " AS DECIMAL(15,2)) " + orden;
         else
             orderby = columna_ordenada.toLowerCase() + " " + orden;
 
@@ -1217,6 +1269,7 @@ public class DBAdapter
 
     /**
      * Metodo para agregar un pedido nuevo a la BD.
+     *
      * @param datos String array [5] con los valores del pedido en el siguiente orden: id_Cliente,
      *              id_vendedor , monto, estatus, observaciones
      * @return the row ID of the newly inserted row, or -1 if an error occurred
@@ -1237,13 +1290,13 @@ public class DBAdapter
         valores.put(CN_EMAIL_VENDEDOR_PEDIDO, datos.get(9));
         valores.put(CN_TELEFONO_VENDEDOR_PEDIDO, datos.get(10));
         valores.put(CN_ESTADO_VENDEDOR_PEDIDO, datos.get(11));
-        valores.put(CN_MONTO_PEDIDO, datos.get(12) );
-        valores.put(CN_FECHA_PEDIDO, getDateTime() );
+        valores.put(CN_MONTO_PEDIDO, datos.get(12));
+        valores.put(CN_FECHA_PEDIDO, getDateTime());
         valores.put(CN_ESTATUS_PEDIDO, datos.get(13));
         valores.put(CN_OBSERVACIONES_PEDIDO, datos.get(14));
-        long id =  db.insert(TABLA_PEDIDOS, null, valores);
+        long id = db.insert(TABLA_PEDIDOS, null, valores);
 
-        if (id!= -1)
+        if (id != -1)
         {
             return agregarPedidoDetalles(String.valueOf(id));
         }
@@ -1254,7 +1307,7 @@ public class DBAdapter
     @SuppressWarnings("unused")
     public int borrarPedidos()
     {
-        if(db.delete(TABLA_PEDIDOS, "1", null)>0 && db.delete(TABLA_PEDIDOS_DETALLES, "1", null)>0)
+        if (db.delete(TABLA_PEDIDOS, "1", null) > 0 && db.delete(TABLA_PEDIDOS_DETALLES, "1", null) > 0)
         {
             Log.w(TAG, "Pedidos borrados exitosamente");
             return 1;
@@ -1264,7 +1317,7 @@ public class DBAdapter
 
     public Cursor cargarIDClientePedido(String id_pedido)
     {
-        String[] columnas = new String[]{ CN_RAZON_SOCIAL_CLIENTE_PEDIDO, CN_NOMBRE_VENDEDOR_PEDIDO, CN_MONTO_PEDIDO, CN_FECHA_PEDIDO, CN_ESTATUS_PEDIDO, CN_OBSERVACIONES_PEDIDO, CN_RIF_CLIENTE_PEDIDO, CN_ESTADO_CLIENTE_PEDIDO, CN_TELEFONO_CLIENTE_PEDIDO , CN_EMAIL_CLIENTE_PEDIDO , CN_DIRECCION_CLIENTE_PEDIDO };
+        String[] columnas = new String[]{CN_RAZON_SOCIAL_CLIENTE_PEDIDO, CN_NOMBRE_VENDEDOR_PEDIDO, CN_MONTO_PEDIDO, CN_FECHA_PEDIDO, CN_ESTATUS_PEDIDO, CN_OBSERVACIONES_PEDIDO, CN_RIF_CLIENTE_PEDIDO, CN_ESTADO_CLIENTE_PEDIDO, CN_TELEFONO_CLIENTE_PEDIDO, CN_EMAIL_CLIENTE_PEDIDO, CN_DIRECCION_CLIENTE_PEDIDO};
         return db.query(TABLA_PEDIDOS, columnas, CN_ID_PEDIDO + "=?", new String[]{id_pedido}, null, null, null);
     }
 
@@ -1302,11 +1355,11 @@ public class DBAdapter
         valores.put(CN_ESTATUS_PEDIDO, datos.get(14));
         valores.put(CN_OBSERVACIONES_PEDIDO, datos.get(15));
 
-        long id =  db.insert(TABLA_PEDIDOS, null, valores);
+        long id = db.insert(TABLA_PEDIDOS, null, valores);
 
-        if (id!= -1)
+        if (id != -1)
         {
-            Log.d(TAG, "Pedido Insertado (COPIA)... id generado: "+id);
+            Log.d(TAG, "Pedido Insertado (COPIA)... id generado: " + id);
             return id;
         }
         else
@@ -1318,10 +1371,10 @@ public class DBAdapter
 
     public long eliminarDataPedido(String id)
     {
-        long col = db.delete(TABLA_PEDIDOS, CN_ID_PEDIDO + "=?", new String[]{id});
+        long col  = db.delete(TABLA_PEDIDOS, CN_ID_PEDIDO + "=?", new String[]{id});
         long col2 = db.delete(TABLA_PEDIDOS_DETALLES, CN_ID_PEDIDO_DETALLES + "=?", new String[]{id});
 
-        if(col>0 && col2>0)
+        if (col > 0 && col2 > 0)
             return col + col2;
         else
             return -1;
@@ -1331,28 +1384,28 @@ public class DBAdapter
 
     public Cursor cargarPedidosDetalles(String id_pedido)
     {
-        String[] columnas = new String[]{ CN_ID_PEDIDO_DETALLES, CN_PRODUCTO_TIPO_PEDIDO_DETALLES, CN_PRODUCTO_MODELO_PEDIDO_DETALLES, CN_PRODUCTO_COLOR_PEDIDO_DETALLES, CN_TALLA_PEDIDOS_DETALLES, CN_NUMERACION_PEDIDOS_DETALLES, CN_PARES_PEDIDOS_DETALLES, CN_BULTOS_PEDIDOS_DETALLES, CN_PRECIO_UNITARIO_PEDIDOS_DETALLES, CN_SUBTOTAL_PEDIDOS_DETALLES, CN_ID_PEDIDOS_DETALLES };
-        return db.query(TABLA_PEDIDOS_DETALLES, columnas, CN_ID_PEDIDOS_DETALLES + "=?", new String[]{ id_pedido }, null, null, null);
+        String[] columnas = new String[]{CN_ID_PEDIDO_DETALLES, CN_PRODUCTO_TIPO_PEDIDO_DETALLES, CN_PRODUCTO_MODELO_PEDIDO_DETALLES, CN_PRODUCTO_COLOR_PEDIDO_DETALLES, CN_TALLA_PEDIDOS_DETALLES, CN_NUMERACION_PEDIDOS_DETALLES, CN_PARES_PEDIDOS_DETALLES, CN_BULTOS_PEDIDOS_DETALLES, CN_PRECIO_UNITARIO_PEDIDOS_DETALLES, CN_SUBTOTAL_PEDIDOS_DETALLES, CN_ID_PEDIDOS_DETALLES};
+        return db.query(TABLA_PEDIDOS_DETALLES, columnas, CN_ID_PEDIDOS_DETALLES + "=?", new String[]{id_pedido}, null, null, null);
     }
 
     private long agregarPedidoDetalles(final String id_pedido)
     {
-        String sql = "INSERT INTO "+TABLA_PEDIDOS_DETALLES  +" ( "+CN_ID_PEDIDOS_DETALLES+",  "+CN_PRODUCTO_TIPO_PEDIDO_DETALLES+", "+CN_PRODUCTO_MODELO_PEDIDO_DETALLES+", "+CN_PRODUCTO_COLOR_PEDIDO_DETALLES+", "+CN_TALLA_PEDIDOS_DETALLES+", "+CN_NUMERACION_PEDIDOS_DETALLES+", "+CN_PARES_PEDIDOS_DETALLES+", "+CN_BULTOS_PEDIDOS_DETALLES+", "+CN_PRECIO_UNITARIO_PEDIDOS_DETALLES+", "+CN_SUBTOTAL_PEDIDOS_DETALLES+") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO " + TABLA_PEDIDOS_DETALLES + " ( " + CN_ID_PEDIDOS_DETALLES + ",  " + CN_PRODUCTO_TIPO_PEDIDO_DETALLES + ", " + CN_PRODUCTO_MODELO_PEDIDO_DETALLES + ", " + CN_PRODUCTO_COLOR_PEDIDO_DETALLES + ", " + CN_TALLA_PEDIDOS_DETALLES + ", " + CN_NUMERACION_PEDIDOS_DETALLES + ", " + CN_PARES_PEDIDOS_DETALLES + ", " + CN_BULTOS_PEDIDOS_DETALLES + ", " + CN_PRECIO_UNITARIO_PEDIDOS_DETALLES + ", " + CN_SUBTOTAL_PEDIDOS_DETALLES + ") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         db.beginTransaction();
         Log.d("INSERTANDO", "PEDIDOS_LOCALES_DETALLES: BEGIN");
 
-        Cursor c = cargarPedidoTemporal();
-        ArrayList<String> tallas = new ArrayList<>();
+        Cursor            c          = cargarPedidoTemporal();
+        ArrayList<String> tallas     = new ArrayList<>();
         ArrayList<String> numeracion = new ArrayList<>();
-        ArrayList<String> pares = new ArrayList<>();
-        ArrayList<String> bultos = new ArrayList<>();
-        ArrayList<String> precio = new ArrayList<>();
-        ArrayList<String> subtotal = new ArrayList<>();
-        ArrayList<String> tipo = new ArrayList<>();
-        ArrayList<String> modelo = new ArrayList<>();
-        ArrayList<String> color = new ArrayList<>();
+        ArrayList<String> pares      = new ArrayList<>();
+        ArrayList<String> bultos     = new ArrayList<>();
+        ArrayList<String> precio     = new ArrayList<>();
+        ArrayList<String> subtotal   = new ArrayList<>();
+        ArrayList<String> tipo       = new ArrayList<>();
+        ArrayList<String> modelo     = new ArrayList<>();
+        ArrayList<String> color      = new ArrayList<>();
 
-        for ( c.moveToFirst(); !c.isAfterLast(); c.moveToNext() )
+        for (c.moveToFirst(); !c.isAfterLast(); c.moveToNext())
         {
             tallas.add(c.getString(2));
             numeracion.add(c.getString(3));
@@ -1370,7 +1423,7 @@ public class DBAdapter
         /* Iniciando procesado por lotes ( INSERTS ) */
 
         SQLiteStatement stmt = db.compileStatement(sql);
-        long cont = 0;
+        long            cont = 0;
 
         for (int i = 0; i < tallas.size(); i++)
         {
@@ -1399,17 +1452,17 @@ public class DBAdapter
 
     public Cursor cargarPedidoTemporal()
     {
-        String[] columnas = new String[]{ CN_ID_PEDIDO_TEMPORALES, CN_ID_PRODUCTO_PEDIDO_TEMPORALES, CN_TALLA_PEDIDOS_TEMPORALES, CN_NUMERACION_PEDIDOS_TEMPORALES, CN_PARES_PEDIDOS_TEMPORALES, CN_BULTOS_PEDIDOS_TEMPORALES, CN_PRECIO_UNITARIO_PEDIDOS_TEMPORALES, CN_SUBTOTAL_PEDIDOS_TEMPORALES, CN_PRODUCTO_TIPO_PEDIDO_TEMPORALES, CN_PRODUCTO_MODELO_PEDIDO_TEMPORALES, CN_PRODUCTO_COLOR_PEDIDO_TEMPORALES  };
+        String[] columnas = new String[]{CN_ID_PEDIDO_TEMPORALES, CN_ID_PRODUCTO_PEDIDO_TEMPORALES, CN_TALLA_PEDIDOS_TEMPORALES, CN_NUMERACION_PEDIDOS_TEMPORALES, CN_PARES_PEDIDOS_TEMPORALES, CN_BULTOS_PEDIDOS_TEMPORALES, CN_PRECIO_UNITARIO_PEDIDOS_TEMPORALES, CN_SUBTOTAL_PEDIDOS_TEMPORALES, CN_PRODUCTO_TIPO_PEDIDO_TEMPORALES, CN_PRODUCTO_MODELO_PEDIDO_TEMPORALES, CN_PRODUCTO_COLOR_PEDIDO_TEMPORALES};
         return db.query(TABLA_PEDIDOS_TEMPORALES, columnas, null, null, null, null, null);
     }
 
-    public Cursor cargarPedidoTemporal_Ordenado( String columna_ordenada, String orden )
+    public Cursor cargarPedidoTemporal_Ordenado(String columna_ordenada, String orden)
     {
-        String[] columnas = new String[]{ CN_ID_PEDIDO_TEMPORALES, CN_ID_PRODUCTO_PEDIDO_TEMPORALES, CN_TALLA_PEDIDOS_TEMPORALES, CN_NUMERACION_PEDIDOS_TEMPORALES, CN_PARES_PEDIDOS_TEMPORALES, CN_BULTOS_PEDIDOS_TEMPORALES, CN_PRECIO_UNITARIO_PEDIDOS_TEMPORALES, CN_SUBTOTAL_PEDIDOS_TEMPORALES, CN_PRODUCTO_TIPO_PEDIDO_TEMPORALES, CN_PRODUCTO_MODELO_PEDIDO_TEMPORALES, CN_PRODUCTO_COLOR_PEDIDO_TEMPORALES  };
-        String orderby;
+        String[] columnas = new String[]{CN_ID_PEDIDO_TEMPORALES, CN_ID_PRODUCTO_PEDIDO_TEMPORALES, CN_TALLA_PEDIDOS_TEMPORALES, CN_NUMERACION_PEDIDOS_TEMPORALES, CN_PARES_PEDIDOS_TEMPORALES, CN_BULTOS_PEDIDOS_TEMPORALES, CN_PRECIO_UNITARIO_PEDIDOS_TEMPORALES, CN_SUBTOTAL_PEDIDOS_TEMPORALES, CN_PRODUCTO_TIPO_PEDIDO_TEMPORALES, CN_PRODUCTO_MODELO_PEDIDO_TEMPORALES, CN_PRODUCTO_COLOR_PEDIDO_TEMPORALES};
+        String   orderby;
 
         if (columna_ordenada.equals("precio_unitario") || columna_ordenada.equals("subtotal"))
-            orderby = "CAST("+columna_ordenada.toLowerCase()+" AS DECIMAL(15,2)) " + orden;
+            orderby = "CAST(" + columna_ordenada.toLowerCase() + " AS DECIMAL(15,2)) " + orden;
         else
             orderby = columna_ordenada.toLowerCase() + " " + orden;
 
@@ -1418,7 +1471,7 @@ public class DBAdapter
 
     public void agregarPedidoTemporal(ArrayList<ArrayList<String>> datos)
     {
-        String sql = "INSERT INTO "+TABLA_PEDIDOS_TEMPORALES +" ("+CN_ID_PRODUCTO_PEDIDO_TEMPORALES +", "+CN_TALLA_PEDIDOS_TEMPORALES +", "+CN_NUMERACION_PEDIDOS_TEMPORALES +", "+CN_PARES_PEDIDOS_TEMPORALES +", "+CN_BULTOS_PEDIDOS_TEMPORALES  +", "+CN_PRECIO_UNITARIO_PEDIDOS_TEMPORALES  +", "+CN_SUBTOTAL_PEDIDOS_TEMPORALES  +", "+CN_PRODUCTO_TIPO_PEDIDO_TEMPORALES+", "+CN_PRODUCTO_MODELO_PEDIDO_TEMPORALES+", "+CN_PRODUCTO_COLOR_PEDIDO_TEMPORALES+" ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO " + TABLA_PEDIDOS_TEMPORALES + " (" + CN_ID_PRODUCTO_PEDIDO_TEMPORALES + ", " + CN_TALLA_PEDIDOS_TEMPORALES + ", " + CN_NUMERACION_PEDIDOS_TEMPORALES + ", " + CN_PARES_PEDIDOS_TEMPORALES + ", " + CN_BULTOS_PEDIDOS_TEMPORALES + ", " + CN_PRECIO_UNITARIO_PEDIDOS_TEMPORALES + ", " + CN_SUBTOTAL_PEDIDOS_TEMPORALES + ", " + CN_PRODUCTO_TIPO_PEDIDO_TEMPORALES + ", " + CN_PRODUCTO_MODELO_PEDIDO_TEMPORALES + ", " + CN_PRODUCTO_COLOR_PEDIDO_TEMPORALES + " ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         db.beginTransaction();
         Log.d("INSERTANDO PEDIDOS TEMP", "BEGIN");
         SQLiteStatement stmt = db.compileStatement(sql);
@@ -1452,7 +1505,7 @@ public class DBAdapter
 
     public int eliminarProductoPedidoTemporal(String id)
     {
-        String[] args = { id };
+        String[] args = {id};
         return db.delete(TABLA_PEDIDOS_TEMPORALES, CN_ID_PRODUCTO_PEDIDO_TEMPORALES + "=?", args);
     }
 
@@ -1466,15 +1519,15 @@ public class DBAdapter
 
     public ArrayList<String> calcularTotalesNuevosPedidoTemp()
     {
-        Cursor c = cargarPedidoTemporal();
-        int bultos = 0;
-        int pares = 0;
+        Cursor c                   = cargarPedidoTemporal();
+        int    bultos              = 0;
+        int    pares               = 0;
         Double precioProductoViejo = 0.0;
 
-        for ( c.moveToFirst(); !c.isAfterLast(); c.moveToNext() )
+        for (c.moveToFirst(); !c.isAfterLast(); c.moveToNext())
         {
-            precioProductoViejo += ( Integer.parseInt(c.getString(4)) * Integer.parseInt(c.getString(5)) * Double.parseDouble(c.getString(6)) );
-            pares += ( Integer.parseInt(c.getString(4)) * Integer.parseInt(c.getString(5)) );
+            precioProductoViejo += (Integer.parseInt(c.getString(4)) * Integer.parseInt(c.getString(5)) * Double.parseDouble(c.getString(6)));
+            pares += (Integer.parseInt(c.getString(4)) * Integer.parseInt(c.getString(5)));
             bultos += Integer.parseInt(c.getString(5));
         }
         c.close();
@@ -1507,11 +1560,11 @@ public class DBAdapter
         valores.put(CN_FECHA_PEDIDO_EDITAR, getDateTime());
         valores.put(CN_ESTATUS_PEDIDO_EDITAR, datos.get(13));
         valores.put(CN_OBSERVACIONES_PEDIDO_EDITAR, datos.get(14));
-        long id =  db.insert(TABLA_PEDIDOS_EDITAR, null, valores);
+        long id = db.insert(TABLA_PEDIDOS_EDITAR, null, valores);
 
-        if (id!= -1)
+        if (id != -1)
         {
-            Log.d(TAG, "id generado: "+id);
+            Log.d(TAG, "id generado: " + id);
             return agregarPedidoDetallesEditado(String.valueOf(id_pedido));
         }
         else
@@ -1520,22 +1573,22 @@ public class DBAdapter
 
     private long agregarPedidoDetallesEditado(final String id_pedido)
     {
-        String sql = "INSERT INTO "+TABLA_PEDIDOS_DETALLES_EDITAR  +" ( "+CN_ID_PEDIDOS_DETALLES_EDITAR+",  "+CN_PRODUCTO_TIPO_PEDIDO_DETALLES_EDITAR+", "+CN_PRODUCTO_MODELO_PEDIDO_DETALLES_EDITAR+", "+CN_PRODUCTO_COLOR_PEDIDO_DETALLES_EDITAR+", "+CN_TALLA_PEDIDOS_DETALLES_EDITAR+", "+CN_NUMERACION_PEDIDOS_DETALLES_EDITAR+", "+CN_PARES_PEDIDOS_DETALLES_EDITAR+", "+CN_BULTOS_PEDIDOS_DETALLES_EDITAR+", "+CN_PRECIO_UNITARIO_PEDIDOS_DETALLES_EDITAR+", "+CN_SUBTOTAL_PEDIDOS_DETALLES_EDITAR+") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO " + TABLA_PEDIDOS_DETALLES_EDITAR + " ( " + CN_ID_PEDIDOS_DETALLES_EDITAR + ",  " + CN_PRODUCTO_TIPO_PEDIDO_DETALLES_EDITAR + ", " + CN_PRODUCTO_MODELO_PEDIDO_DETALLES_EDITAR + ", " + CN_PRODUCTO_COLOR_PEDIDO_DETALLES_EDITAR + ", " + CN_TALLA_PEDIDOS_DETALLES_EDITAR + ", " + CN_NUMERACION_PEDIDOS_DETALLES_EDITAR + ", " + CN_PARES_PEDIDOS_DETALLES_EDITAR + ", " + CN_BULTOS_PEDIDOS_DETALLES_EDITAR + ", " + CN_PRECIO_UNITARIO_PEDIDOS_DETALLES_EDITAR + ", " + CN_SUBTOTAL_PEDIDOS_DETALLES_EDITAR + ") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         db.beginTransaction();
         Log.d("INSERTANDO", "PEDIDOS_LOCALES_DETALLES: BEGIN - id_pedido:" + id_pedido);
 
-        Cursor c = cargarPedidosDetalles(id_pedido);
-        ArrayList<String> tallas = new ArrayList<>();
+        Cursor            c          = cargarPedidosDetalles(id_pedido);
+        ArrayList<String> tallas     = new ArrayList<>();
         ArrayList<String> numeracion = new ArrayList<>();
-        ArrayList<String> pares = new ArrayList<>();
-        ArrayList<String> bultos = new ArrayList<>();
-        ArrayList<String> precio = new ArrayList<>();
-        ArrayList<String> subtotal = new ArrayList<>();
-        ArrayList<String> tipo = new ArrayList<>();
-        ArrayList<String> modelo = new ArrayList<>();
-        ArrayList<String> color = new ArrayList<>();
+        ArrayList<String> pares      = new ArrayList<>();
+        ArrayList<String> bultos     = new ArrayList<>();
+        ArrayList<String> precio     = new ArrayList<>();
+        ArrayList<String> subtotal   = new ArrayList<>();
+        ArrayList<String> tipo       = new ArrayList<>();
+        ArrayList<String> modelo     = new ArrayList<>();
+        ArrayList<String> color      = new ArrayList<>();
 
-        for ( c.moveToFirst(); !c.isAfterLast(); c.moveToNext() )
+        for (c.moveToFirst(); !c.isAfterLast(); c.moveToNext())
         {
             // 0  CN_ID_PEDIDO_DETALLES,
             // 1  CN_PRODUCTO_TIPO_PEDIDO_DETALLES,
@@ -1564,7 +1617,7 @@ public class DBAdapter
         /* Iniciando procesado por lotes ( INSERTS ) */
 
         SQLiteStatement stmt = db.compileStatement(sql);
-        long cont = 0;
+        long            cont = 0;
 
         for (int i = 0; i < tallas.size(); i++)
         {
@@ -1591,7 +1644,7 @@ public class DBAdapter
 
     public int borrarPedidoEditar()
     {
-        if ( db.delete(TABLA_PEDIDOS_EDITAR, "1", null) >0 && db.delete(TABLA_PEDIDOS_DETALLES_EDITAR, "1", null) >0 )
+        if (db.delete(TABLA_PEDIDOS_EDITAR, "1", null) > 0 && db.delete(TABLA_PEDIDOS_DETALLES_EDITAR, "1", null) > 0)
         {
             Log.w(TAG, "Borrado exitoso de pedidos editar..");
             return 2;
@@ -1602,7 +1655,7 @@ public class DBAdapter
 
     public Cursor cargarPedidosDetallesEditar()
     {
-        String[] columnas = new String[]{ CN_ID_PEDIDO_DETALLES_EDITAR, CN_PRODUCTO_TIPO_PEDIDO_DETALLES_EDITAR, CN_PRODUCTO_MODELO_PEDIDO_DETALLES_EDITAR, CN_PRODUCTO_COLOR_PEDIDO_DETALLES_EDITAR, CN_TALLA_PEDIDOS_DETALLES_EDITAR, CN_NUMERACION_PEDIDOS_DETALLES_EDITAR, CN_PARES_PEDIDOS_DETALLES_EDITAR, CN_BULTOS_PEDIDOS_DETALLES_EDITAR, CN_PRECIO_UNITARIO_PEDIDOS_DETALLES_EDITAR, CN_SUBTOTAL_PEDIDOS_DETALLES_EDITAR, CN_ID_PEDIDOS_DETALLES_EDITAR };
+        String[] columnas = new String[]{CN_ID_PEDIDO_DETALLES_EDITAR, CN_PRODUCTO_TIPO_PEDIDO_DETALLES_EDITAR, CN_PRODUCTO_MODELO_PEDIDO_DETALLES_EDITAR, CN_PRODUCTO_COLOR_PEDIDO_DETALLES_EDITAR, CN_TALLA_PEDIDOS_DETALLES_EDITAR, CN_NUMERACION_PEDIDOS_DETALLES_EDITAR, CN_PARES_PEDIDOS_DETALLES_EDITAR, CN_BULTOS_PEDIDOS_DETALLES_EDITAR, CN_PRECIO_UNITARIO_PEDIDOS_DETALLES_EDITAR, CN_SUBTOTAL_PEDIDOS_DETALLES_EDITAR, CN_ID_PEDIDOS_DETALLES_EDITAR};
         return db.query(TABLA_PEDIDOS_DETALLES_EDITAR, columnas, null, null, null, null, null);
     }
 
@@ -1613,7 +1666,7 @@ public class DBAdapter
         valores_nuevos.put(CN_SUBTOTAL_PEDIDOS_DETALLES_EDITAR, nuevo_subtotal);
         int res1 = db.update(TABLA_PEDIDOS_DETALLES_EDITAR, valores_nuevos, CN_PRODUCTO_MODELO_PEDIDO_DETALLES_EDITAR + "=?", new String[]{modelo});
 
-        if(res1>0)
+        if (res1 > 0)
         {
             // Actualizar el nuevo subtotal de la tabla pedidos editar
             Double total_pedido = 0.00;
@@ -1629,7 +1682,7 @@ public class DBAdapter
             valores_nuevos2.put(CN_MONTO_PEDIDO_EDITAR, total_pedido);
             int res2 = db.update(TABLA_PEDIDOS_EDITAR, valores_nuevos2, null, null);
 
-            if(res2>0) return res1 + res2;
+            if (res2 > 0) return res1 + res2;
             else return -1;
         }
         else return -1;
@@ -1637,21 +1690,21 @@ public class DBAdapter
 
     public ArrayList<String> calcularTotalesNuevosPedidoEditar()
     {
-        Cursor c = cargarPedidoDetalleEditar();
-        int bultos = 0;
-        int pares = 0;
+        Cursor c                   = cargarPedidoDetalleEditar();
+        int    bultos              = 0;
+        int    pares               = 0;
         Double precioProductoViejo = 0.0;
 
-        for ( c.moveToFirst(); !c.isAfterLast(); c.moveToNext() )
+        for (c.moveToFirst(); !c.isAfterLast(); c.moveToNext())
         {
-            precioProductoViejo += ( Integer.parseInt(c.getString(0)) * Integer.parseInt(c.getString(1)) * Double.parseDouble(c.getString(2)) );
-            pares += ( Integer.parseInt(c.getString(0)) * Integer.parseInt(c.getString(1)) );
+            precioProductoViejo += (Integer.parseInt(c.getString(0)) * Integer.parseInt(c.getString(1)) * Double.parseDouble(c.getString(2)));
+            pares += (Integer.parseInt(c.getString(0)) * Integer.parseInt(c.getString(1)));
             bultos += Integer.parseInt(c.getString(1));
         }
         c.close();
 
         ArrayList<String> datos = new ArrayList<>();
-        datos.add( String.valueOf(precioProductoViejo) );
+        datos.add(String.valueOf(precioProductoViejo));
         datos.add(String.valueOf(bultos));
         datos.add(String.valueOf(pares));
         return datos;
@@ -1659,13 +1712,13 @@ public class DBAdapter
 
     public Cursor cargarPedidoDetalleEditar()
     {
-        String[] columnas = new String[]{ CN_PARES_PEDIDOS_DETALLES_EDITAR, CN_BULTOS_PEDIDOS_DETALLES_EDITAR, CN_PRECIO_UNITARIO_PEDIDOS_DETALLES_EDITAR };
+        String[] columnas = new String[]{CN_PARES_PEDIDOS_DETALLES_EDITAR, CN_BULTOS_PEDIDOS_DETALLES_EDITAR, CN_PRECIO_UNITARIO_PEDIDOS_DETALLES_EDITAR};
         return db.query(TABLA_PEDIDOS_DETALLES_EDITAR, columnas, null, null, null, null, null);
     }
 
     public Cursor cargarPedidosEditar()
     {
-        String[] columnas = new String[]{ CN_RAZON_SOCIAL_CLIENTE_PEDIDO_EDITAR, CN_RIF_CLIENTE_PEDIDO_EDITAR, CN_ESTADO_CLIENTE_PEDIDO_EDITAR, CN_TELEFONO_CLIENTE_PEDIDO_EDITAR, CN_EMAIL_CLIENTE_PEDIDO_EDITAR, CN_DIRECCION_CLIENTE_PEDIDO_EDITAR, CN_CEDULA_VENDEDOR_PEDIDO_EDITAR, CN_NOMBRE_VENDEDOR_PEDIDO_EDITAR, CN_APELLIDO_VENDEDOR_PEDIDO_EDITAR, CN_EMAIL_VENDEDOR_PEDIDO_EDITAR, CN_TELEFONO_VENDEDOR_PEDIDO_EDITAR, CN_ESTADO_VENDEDOR_PEDIDO_EDITAR, CN_MONTO_PEDIDO_EDITAR, CN_FECHA_PEDIDO_EDITAR, CN_ESTATUS_PEDIDO_EDITAR, CN_OBSERVACIONES_PEDIDO_EDITAR};
+        String[] columnas = new String[]{CN_RAZON_SOCIAL_CLIENTE_PEDIDO_EDITAR, CN_RIF_CLIENTE_PEDIDO_EDITAR, CN_ESTADO_CLIENTE_PEDIDO_EDITAR, CN_TELEFONO_CLIENTE_PEDIDO_EDITAR, CN_EMAIL_CLIENTE_PEDIDO_EDITAR, CN_DIRECCION_CLIENTE_PEDIDO_EDITAR, CN_CEDULA_VENDEDOR_PEDIDO_EDITAR, CN_NOMBRE_VENDEDOR_PEDIDO_EDITAR, CN_APELLIDO_VENDEDOR_PEDIDO_EDITAR, CN_EMAIL_VENDEDOR_PEDIDO_EDITAR, CN_TELEFONO_VENDEDOR_PEDIDO_EDITAR, CN_ESTADO_VENDEDOR_PEDIDO_EDITAR, CN_MONTO_PEDIDO_EDITAR, CN_FECHA_PEDIDO_EDITAR, CN_ESTATUS_PEDIDO_EDITAR, CN_OBSERVACIONES_PEDIDO_EDITAR};
         return db.query(TABLA_PEDIDOS_EDITAR, columnas, null, null, null, null, null);
     }
 
@@ -1674,102 +1727,110 @@ public class DBAdapter
         // Agregar informacion nueva, de la Tabla Pedidos Editar a la Tabla Pedidos
         Log.d(TAG, "Extrayendo datos de la tabla pedidos_editar..");
 
-        Cursor cursor = cargarPedidosEditar();
+        Cursor            cursor        = cargarPedidosEditar();
         ArrayList<String> datos_pedidos = new ArrayList<>();
 
         for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor.moveToNext())
         {
-            Log.d(TAG, "Razon Social: "+cursor.getString(0));
-            Log.d(TAG, "Rif: "+cursor.getString(1));
-            Log.d(TAG, "Estado: "+cursor.getString(2));
-            Log.d(TAG, "Telefono: "+cursor.getString(3));
-            Log.d(TAG, "Email: "+cursor.getString(4));
-            Log.d(TAG, "Direccion: "+cursor.getString(5));
-            Log.d(TAG, "Cedula Vendedor: "+cursor.getString(6));
-            Log.d(TAG, "Nombre Vendedor: "+cursor.getString(7));
-            Log.d(TAG, "Apellido Vendedor: "+cursor.getString(8));
-            Log.d(TAG, "Email Vendedor: "+cursor.getString(9));
-            Log.d(TAG, "Telefono Vendedor: "+cursor.getString(10));
-            Log.d(TAG, "Estado Vendedor: "+cursor.getString(11));
-            Log.d(TAG, "Monto: "+cursor.getString(12));
-            Log.d(TAG, "Fecha: "+cursor.getString(13));
-            Log.d(TAG, "Estatus: "+cursor.getString(14));
-            Log.d(TAG, "Observaciones: "+cursor.getString(15));
-            datos_pedidos.add( cursor.getString(0) );
-            datos_pedidos.add( cursor.getString(1) );
-            datos_pedidos.add( cursor.getString(2) );
-            datos_pedidos.add( cursor.getString(3) );
-            datos_pedidos.add( cursor.getString(4) );
-            datos_pedidos.add( cursor.getString(5) );
-            datos_pedidos.add( cursor.getString(6) );
-            datos_pedidos.add( cursor.getString(7) );
-            datos_pedidos.add( cursor.getString(8) );
-            datos_pedidos.add( cursor.getString(9) );
-            datos_pedidos.add( cursor.getString(10) );
-            datos_pedidos.add( cursor.getString(11) );
-            datos_pedidos.add( cursor.getString(12) );
-            datos_pedidos.add( cursor.getString(13) );
-            datos_pedidos.add( cursor.getString(14) );
-            datos_pedidos.add( cursor.getString(15) );
+            Log.d(TAG, "Razon Social: " + cursor.getString(0));
+            Log.d(TAG, "Rif: " + cursor.getString(1));
+            Log.d(TAG, "Estado: " + cursor.getString(2));
+            Log.d(TAG, "Telefono: " + cursor.getString(3));
+            Log.d(TAG, "Email: " + cursor.getString(4));
+            Log.d(TAG, "Direccion: " + cursor.getString(5));
+            Log.d(TAG, "Cedula Vendedor: " + cursor.getString(6));
+            Log.d(TAG, "Nombre Vendedor: " + cursor.getString(7));
+            Log.d(TAG, "Apellido Vendedor: " + cursor.getString(8));
+            Log.d(TAG, "Email Vendedor: " + cursor.getString(9));
+            Log.d(TAG, "Telefono Vendedor: " + cursor.getString(10));
+            Log.d(TAG, "Estado Vendedor: " + cursor.getString(11));
+            Log.d(TAG, "Monto: " + cursor.getString(12));
+            Log.d(TAG, "Fecha: " + cursor.getString(13));
+            Log.d(TAG, "Estatus: " + cursor.getString(14));
+            Log.d(TAG, "Observaciones: " + cursor.getString(15));
+            datos_pedidos.add(cursor.getString(0));
+            datos_pedidos.add(cursor.getString(1));
+            datos_pedidos.add(cursor.getString(2));
+            datos_pedidos.add(cursor.getString(3));
+            datos_pedidos.add(cursor.getString(4));
+            datos_pedidos.add(cursor.getString(5));
+            datos_pedidos.add(cursor.getString(6));
+            datos_pedidos.add(cursor.getString(7));
+            datos_pedidos.add(cursor.getString(8));
+            datos_pedidos.add(cursor.getString(9));
+            datos_pedidos.add(cursor.getString(10));
+            datos_pedidos.add(cursor.getString(11));
+            datos_pedidos.add(cursor.getString(12));
+            datos_pedidos.add(cursor.getString(13));
+            datos_pedidos.add(cursor.getString(14));
+            datos_pedidos.add(cursor.getString(15));
         }
         cursor.close();
 
         long res1 = insertar_pedido(datos_pedidos);
-        if (res1==-1) return -1;
+        if (res1 == -1) return -1;
         else Log.d(TAG, "OK");
 
         // Agregar informacion nueva, de la Tabla Pedidos Detalles Editar a la Tabla Pedidos Detalles
         Log.d(TAG, "Extrayendo datos de la tabla pedidos_editar_detalles..");
-        Cursor cursor2 = cargarPedidosDetallesEditar();
+        Cursor                       cursor2                = cargarPedidosDetallesEditar();
         ArrayList<ArrayList<String>> datos_pedidos_detalles = new ArrayList<>();
 
         for (cursor2.moveToFirst(); !cursor2.isAfterLast(); cursor2.moveToNext())
         {
-            Log.d(TAG, "Tipo: "+cursor2.getString(1));
-            Log.d(TAG, "Modelo: "+cursor2.getString(2));
-            Log.d(TAG, "Color: "+cursor2.getString(3));
-            Log.d(TAG, "Talla: "+cursor2.getString(4));
-            Log.d(TAG, "Numeracion: "+cursor2.getString(5));
-            Log.d(TAG, "Pares: "+cursor2.getString(6));
-            Log.d(TAG, "Bultos: "+cursor2.getString(7));
-            Log.d(TAG, "Precio Unitario: "+cursor2.getString(8));
+            Log.d(TAG, "Tipo: " + cursor2.getString(1));
+            Log.d(TAG, "Modelo: " + cursor2.getString(2));
+            Log.d(TAG, "Color: " + cursor2.getString(3));
+            Log.d(TAG, "Talla: " + cursor2.getString(4));
+            Log.d(TAG, "Numeracion: " + cursor2.getString(5));
+            Log.d(TAG, "Pares: " + cursor2.getString(6));
+            Log.d(TAG, "Bultos: " + cursor2.getString(7));
+            Log.d(TAG, "Precio Unitario: " + cursor2.getString(8));
             Log.d(TAG, "Subtotal: " + cursor2.getString(9));
 
             ArrayList<String> producto = new ArrayList<>();
-            producto.add( cursor2.getString(1) );
-            producto.add( cursor2.getString(2) );
-            producto.add( cursor2.getString(3) );
-            producto.add( cursor2.getString(4) );
-            producto.add( cursor2.getString(5) );
-            producto.add( cursor2.getString(6) );
-            producto.add( cursor2.getString(7) );
-            producto.add( cursor2.getString(8) );
-            producto.add( cursor2.getString(9) );
+            producto.add(cursor2.getString(1));
+            producto.add(cursor2.getString(2));
+            producto.add(cursor2.getString(3));
+            producto.add(cursor2.getString(4));
+            producto.add(cursor2.getString(5));
+            producto.add(cursor2.getString(6));
+            producto.add(cursor2.getString(7));
+            producto.add(cursor2.getString(8));
+            producto.add(cursor2.getString(9));
 
-            datos_pedidos_detalles.add( producto );
+            datos_pedidos_detalles.add(producto);
         }
         cursor2.close();
 
         long res2 = insertar_pedido_detalles(datos_pedidos_detalles, String.valueOf(res1));
-        if (res2==-1) { eliminarDataPedido(String.valueOf(res1)); return -1; }
+        if (res2 == -1)
+        {
+            eliminarDataPedido(String.valueOf(res1));
+            return -1;
+        }
         else Log.d(TAG, "OK");
 
         // Borrar la informacion vieja de la tabla pedidos y pedidos detalles
         long res3 = eliminarDataPedido(id_pedido);
-        if (res3==-1) return -1;
-        else { Log.d(TAG, "OK FINAL.. ID_Pedido_Nuevo: "+res1); return res1; }
+        if (res3 == -1) return -1;
+        else
+        {
+            Log.d(TAG, "OK FINAL.. ID_Pedido_Nuevo: " + res1);
+            return res1;
+        }
     }
 
     private long insertar_pedido_detalles(ArrayList<ArrayList<String>> datos_pedidos_detalles, String id_pedido)
     {
-        String sql = "INSERT INTO "+TABLA_PEDIDOS_DETALLES  +" ( "+CN_ID_PEDIDOS_DETALLES+",  "+CN_PRODUCTO_TIPO_PEDIDO_DETALLES+", "+CN_PRODUCTO_MODELO_PEDIDO_DETALLES+", "+CN_PRODUCTO_COLOR_PEDIDO_DETALLES+", "+CN_TALLA_PEDIDOS_DETALLES+", "+CN_NUMERACION_PEDIDOS_DETALLES+", "+CN_PARES_PEDIDOS_DETALLES+", "+CN_BULTOS_PEDIDOS_DETALLES+", "+CN_PRECIO_UNITARIO_PEDIDOS_DETALLES+", "+CN_SUBTOTAL_PEDIDOS_DETALLES+") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO " + TABLA_PEDIDOS_DETALLES + " ( " + CN_ID_PEDIDOS_DETALLES + ",  " + CN_PRODUCTO_TIPO_PEDIDO_DETALLES + ", " + CN_PRODUCTO_MODELO_PEDIDO_DETALLES + ", " + CN_PRODUCTO_COLOR_PEDIDO_DETALLES + ", " + CN_TALLA_PEDIDOS_DETALLES + ", " + CN_NUMERACION_PEDIDOS_DETALLES + ", " + CN_PARES_PEDIDOS_DETALLES + ", " + CN_BULTOS_PEDIDOS_DETALLES + ", " + CN_PRECIO_UNITARIO_PEDIDOS_DETALLES + ", " + CN_SUBTOTAL_PEDIDOS_DETALLES + ") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         db.beginTransaction();
         Log.d("INSERTANDO", "PEDIDOS_LOCALES_DETALLES: BEGIN");
 
         /* Iniciando procesado por lotes ( INSERTS ) */
 
         SQLiteStatement stmt = db.compileStatement(sql);
-        long cont = 0;
+        long            cont = 0;
 
         for (int i = 0; i < datos_pedidos_detalles.size(); i++)
         {
@@ -1796,10 +1857,10 @@ public class DBAdapter
 
     public int eliminarProductoPedidoEditar(String nombre_producto)
     {
-        String[] args = { nombre_producto };
-        int res = db.delete(TABLA_PEDIDOS_DETALLES_EDITAR, CN_PRODUCTO_MODELO_PEDIDO_DETALLES_EDITAR + "=?", args);
+        String[] args = {nombre_producto};
+        int      res  = db.delete(TABLA_PEDIDOS_DETALLES_EDITAR, CN_PRODUCTO_MODELO_PEDIDO_DETALLES_EDITAR + "=?", args);
 
-        if (res>0)
+        if (res > 0)
         {
             // Actualizar el nuevo subtotal de la tabla pedidos editar
             Double total_pedido = 0.00;
@@ -1816,7 +1877,7 @@ public class DBAdapter
             valores_nuevos2.put(CN_MONTO_PEDIDO_EDITAR, total_pedido);
             int res2 = db.update(TABLA_PEDIDOS_EDITAR, valores_nuevos2, null, null);
 
-            if(res2>0) return res;
+            if (res2 > 0) return res;
             else return -1;
         }
         else
@@ -1825,7 +1886,7 @@ public class DBAdapter
 
     public int agregarProductoPedidoEditar(ArrayList<ArrayList<String>> datos, String id_pedido)
     {
-        String sql = "INSERT INTO "+TABLA_PEDIDOS_DETALLES_EDITAR +" ("+CN_ID_PEDIDOS_DETALLES_EDITAR+", "+CN_PRODUCTO_TIPO_PEDIDO_DETALLES_EDITAR+", "+CN_PRODUCTO_MODELO_PEDIDO_DETALLES_EDITAR+", "+CN_PRODUCTO_COLOR_PEDIDO_DETALLES_EDITAR+", "+CN_TALLA_PEDIDOS_DETALLES_EDITAR+", "+CN_NUMERACION_PEDIDOS_DETALLES_EDITAR+", "+CN_PARES_PEDIDOS_DETALLES_EDITAR+", "+CN_BULTOS_PEDIDOS_DETALLES_EDITAR+", "+CN_PRECIO_UNITARIO_PEDIDOS_DETALLES_EDITAR+", "+CN_SUBTOTAL_PEDIDOS_DETALLES_EDITAR+") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO " + TABLA_PEDIDOS_DETALLES_EDITAR + " (" + CN_ID_PEDIDOS_DETALLES_EDITAR + ", " + CN_PRODUCTO_TIPO_PEDIDO_DETALLES_EDITAR + ", " + CN_PRODUCTO_MODELO_PEDIDO_DETALLES_EDITAR + ", " + CN_PRODUCTO_COLOR_PEDIDO_DETALLES_EDITAR + ", " + CN_TALLA_PEDIDOS_DETALLES_EDITAR + ", " + CN_NUMERACION_PEDIDOS_DETALLES_EDITAR + ", " + CN_PARES_PEDIDOS_DETALLES_EDITAR + ", " + CN_BULTOS_PEDIDOS_DETALLES_EDITAR + ", " + CN_PRECIO_UNITARIO_PEDIDOS_DETALLES_EDITAR + ", " + CN_SUBTOTAL_PEDIDOS_DETALLES_EDITAR + ") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         db.beginTransaction();
         Log.d("INSERTANDO PEDIDOS EDIT", "BEGIN");
         SQLiteStatement stmt = db.compileStatement(sql);
@@ -1867,7 +1928,7 @@ public class DBAdapter
         valores_nuevos2.put(CN_MONTO_PEDIDO_EDITAR, total_pedido);
         int res2 = db.update(TABLA_PEDIDOS_EDITAR, valores_nuevos2, null, null);
 
-        if(res2>0) return res2;
+        if (res2 > 0) return res2;
         else return -1;
     }
 }

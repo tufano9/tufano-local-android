@@ -41,7 +41,7 @@ public class Producto
         return id_talla;
     }
 
-    public String getTalla()
+    public String getNombreTalla()
     {
         if (nombre_talla == null)
             return buscarTallaxID(id_talla);
@@ -54,7 +54,7 @@ public class Producto
         return id_tipo;
     }
 
-    public String getTipo()
+    public String getNombreTipo()
     {
         if (nombre_tipo == null)
             return buscarTipoxID(id_tipo);
@@ -67,7 +67,7 @@ public class Producto
         return id_color;
     }
 
-    public String getColor()
+    public String getNombreColor()
     {
         if (nombre_color == null)
             return buscarColorxID(id_color);
@@ -110,7 +110,7 @@ public class Producto
     {
         //Log.i(TAG, "Buscando color con id: "+id_color);
         DBAdapter manager = new DBAdapter(contexto);
-        Cursor cursor = manager.buscarColor_ID(id_color);
+        Cursor    cursor  = manager.buscarColor_ID(id_color);
         for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor.moveToNext())
         {
 
@@ -118,7 +118,7 @@ public class Producto
             //Log.i(TAG, "Color encontrado: "+nombre_color);
         }
         cursor.close();
-        manager.cerrar();
+        //manager.cerrar();
         return nombre_color;
     }
 
@@ -132,14 +132,14 @@ public class Producto
     {
         //Log.i(TAG, "Buscando talla con id: "+id_talla);
         DBAdapter manager = new DBAdapter(contexto);
-        Cursor cursor = manager.buscarTalla_ID(id_talla);
+        Cursor    cursor  = manager.buscarTalla_ID(id_talla);
         for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor.moveToNext())
         {
             nombre_talla = String.valueOf(cursor.getString(0));
             //Log.i(TAG, "Talla encontrado: "+nombre_talla);
         }
         cursor.close();
-        manager.cerrar();
+        //manager.cerrar();
         return nombre_talla;
     }
 
@@ -153,14 +153,14 @@ public class Producto
     {
         //Log.i(TAG, "Buscando tipo con id: "+id_tipo);
         DBAdapter manager = new DBAdapter(contexto);
-        Cursor cursor = manager.buscarTipo_ID(id_tipo);
+        Cursor    cursor  = manager.buscarTipo_ID(id_tipo);
         for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor.moveToNext())
         {
             nombre_tipo = String.valueOf(cursor.getString(0));
             //Log.i(TAG, "Tipo encontrado: "+nombre_tipo);
         }
         cursor.close();
-        manager.cerrar();
+        //manager.cerrar();
         return nombre_tipo;
     }
 }

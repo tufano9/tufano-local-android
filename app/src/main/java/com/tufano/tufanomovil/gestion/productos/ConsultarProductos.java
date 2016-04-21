@@ -23,6 +23,7 @@ import android.widget.AutoCompleteTextView;
 import android.widget.BaseAdapter;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.RadioGroup;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -32,8 +33,8 @@ import com.tufano.tufanomovil.adapters.productosAdapter;
 import com.tufano.tufanomovil.database.DBAdapter;
 import com.tufano.tufanomovil.global.EndlessScrollListener;
 import com.tufano.tufanomovil.global.Funciones;
+import com.tufano.tufanomovil.objetos.Producto;
 
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -53,16 +54,15 @@ public class ConsultarProductos extends AppCompatActivity
     private ListView         list;
     private productosAdapter adapter;
     private int              limit; // Numero total de elementos
-    private String           usuario;
-    private String           columna_ordenada;
-    private String           orden;
+    private String usuario, columna_ordenada, orden, tipo_filtrado, color_filtrado,
+            talla_filtrado, modelo_filtrado, destacado_filtrado = "1";
+
     private boolean primerInicio1 = true, primerInicio2 = true, primerInicio3 = true;
     private AutoCompleteTextView modelo_autoComplete;
     private LinearLayout         layout;
     private List<List<String>>   contenedor_colores, contenedor_tipos, contenedor_tallas;
     private Spinner tipo, talla, color;
     private TextView cabecera_1, cabecera_2, cabecera_3, cabecera_4, cabecera_5, cabecera_6;
-    private String tipo_filtrado, color_filtrado, talla_filtrado, modelo_filtrado;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -80,12 +80,45 @@ public class ConsultarProductos extends AppCompatActivity
         initSpinners();
         initAutoComplete();
         initTextViewHeader();
+        initRadioButton();
         initFloatingActionButton();
 
         columna_ordenada = "talla";
         orden = "ASC";
 
         new cargarDatos().execute();
+    }
+
+    private void initRadioButton()
+    {
+        final RadioGroup rg = (RadioGroup) findViewById(R.id.radio_group_producto);
+        rg.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener()
+        {
+            @Override
+            public void onCheckedChanged(RadioGroup group, int checkedId)
+            {
+                //boolean checked = ((RadioButton) view).isChecked();
+                switch (rg.getCheckedRadioButtonId())
+                {
+                    case R.id.rb_new:
+                        Log.i(TAG, "rb_new");
+                        destacado_filtrado = "1";
+                        break;
+                    case R.id.rb_old:
+                        Log.i(TAG, "rb_old");
+                        destacado_filtrado = "0";
+                        break;
+                    case R.id.rb_all:
+                        Log.i(TAG, "rb_all");
+                        destacado_filtrado = "2";
+                        break;
+                }
+
+                new reCargarDatos().execute(tipo_filtrado, talla_filtrado, color_filtrado,
+                        modelo_filtrado);
+            }
+        });
+        //radio_group_producto
     }
 
     /**
@@ -571,35 +604,34 @@ public class ConsultarProductos extends AppCompatActivity
         talla.setAdapter(dataAdapter);
     }
 
-    private void loadData(String tipo_filtrado, String talla_filtrado, String color_filtrado, String modelo_filtrado, boolean filtrando)
+    private void loadData(String tipo_filtrado, String talla_filtrado, String color_filtrado,
+                          String modelo_filtrado, boolean filtrando)
     {
         Log.i(TAG, "Inicializando tabla.. Ordenando por: " + columna_ordenada + ", orden: " + orden
-                + " Filtrando por... Tipo: " + tipo_filtrado + ", Talla: " + talla_filtrado + ", Color: "
-                + color_filtrado + ", Modelo: " + modelo_filtrado);
+                + " Filtrando por... Tipo: " + tipo_filtrado + ", Talla: " + talla_filtrado +
+                ", Color: " + color_filtrado + ", Modelo: " + modelo_filtrado +
+                ", Destacado: " + destacado_filtrado);
 
         eliminarMensajeInformativo();
-
         list = (ListView) findViewById(R.id.list);
-        final List<List<String>> datos = new ArrayList<>();
-        final Activity           a     = this;
+        final List<Producto> datos = new ArrayList<>();
+        final Activity       a     = this;
 
-        Cursor cursor2 = manager.cargarProductos_Filtrado_Ordenado(tipo_filtrado, talla_filtrado,
-                color_filtrado, modelo_filtrado, columna_ordenada, orden);
         // Numero de registros que existen con dichos parametros de filtrado..
+        Cursor cursor2 = manager.cargarProductos_Filtrado_Ordenado(tipo_filtrado, talla_filtrado,
+                color_filtrado, modelo_filtrado, columna_ordenada, orden, destacado_filtrado);
         limit = cursor2.getCount();
         cursor2.close();
 
         Cursor cursor = manager.cargarProductos_Filtrado_Ordenado(tipo_filtrado, talla_filtrado,
                 color_filtrado, modelo_filtrado, columna_ordenada, orden,
-                CANT_DATOS_MOSTRAR_INICIALMENTE, 0);
-
-        //filas = new ArrayList<>();
+                CANT_DATOS_MOSTRAR_INICIALMENTE, 0, destacado_filtrado);
 
         if (cursor.getCount() > 0)
         {
             for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor.moveToNext())
             {
-                Log.i(TAG, "Creando Data..");
+                Log.i(TAG, "Agregando fila..");
                 final String id_producto         = String.valueOf(cursor.getInt(0));
                 final String id_talla            = cursor.getString(1);
                 final String id_tipo             = cursor.getString(2);
@@ -609,28 +641,11 @@ public class ConsultarProductos extends AppCompatActivity
                 final String numeracion_producto = cursor.getString(6);
                 final String estatus_producto    = cursor.getString(7);
                 final String paresxtalla         = cursor.getString(8);
-                final String talla_producto, tipo_producto, color_producto;
 
-                DecimalFormat priceFormat       = new DecimalFormat("###,###.##");
-                String        precio_formateado = priceFormat.format(Double.parseDouble(precio_producto));
-
-                talla_producto = obtenerNombreTalla(id_talla);
-                tipo_producto = obtenerNombreTipo(id_tipo);
-                color_producto = obtenerNombreColor(id_color);
-
-                List<String> producto = new ArrayList<>();
-                producto.add(id_producto); // id 0
-                producto.add(talla_producto); // talla 1
-                producto.add(tipo_producto); // tipo 2
-                producto.add(modelo_nombre); // modelo 3
-                producto.add(color_producto); // color 4
-                producto.add(precio_formateado); // precio 5
-                producto.add(numeracion_producto); // numeracion 6
-                producto.add(id_color); // id_color 7
-                producto.add(estatus_producto); // estatus_producto 8
-                producto.add(paresxtalla); // paresxtalla 9
-
-                datos.add(producto);
+                Producto p = new Producto(id_producto, id_talla, id_tipo, id_color, modelo_nombre,
+                        precio_producto, numeracion_producto, estatus_producto, paresxtalla,
+                        contexto);
+                datos.add(p);
             }
         }
         else
@@ -774,21 +789,14 @@ public class ConsultarProductos extends AppCompatActivity
 
         if (totalItemsCount >= limit)
         {
-            Toast.makeText(getApplicationContext(), "No hay mas elementos que mostrar.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplicationContext(), "No hay mas elementos que mostrar.",
+                    Toast.LENGTH_SHORT).show();
         }
         else
         {
-            int min = totalItemsCount + 1;
-            int max = min + CANT_DATOS_CARGAR;
-
-            //String msj = "min: "+min+", max: "+max;
-            //Toast.makeText(getApplicationContext(), msj, Toast.LENGTH_LONG).show();
-
-            Log.i(TAG, "min: " + min + ", max: " + max);
-
-            //CANT_DATOS_ACTUALES += CANT_DATOS_CARGAR;
-
-            Cursor cursor = manager.cargarProductos_Filtrado_Ordenado(null, null, null, null, columna_ordenada, orden, CANT_DATOS_CARGAR, totalItemsCount);
+            Cursor cursor = manager.cargarProductos_Filtrado_Ordenado(tipo_filtrado, talla_filtrado,
+                    color_filtrado, modelo_filtrado, columna_ordenada, orden, CANT_DATOS_CARGAR,
+                    totalItemsCount, destacado_filtrado);
 
             if (cursor.getCount() > 0)
             {
@@ -804,97 +812,18 @@ public class ConsultarProductos extends AppCompatActivity
                     final String numeracion_producto = cursor.getString(6);
                     final String estatus_producto    = cursor.getString(7);
                     final String paresxtalla         = cursor.getString(8);
-                    final String talla_producto, tipo_producto, color_producto;
 
-                    DecimalFormat priceFormat       = new DecimalFormat("###,###.##");
-                    String        precio_formateado = priceFormat.format(Double.parseDouble(precio_producto));
+                    Producto p = new Producto(id_producto, id_talla, id_tipo, id_color,
+                            modelo_nombre, precio_producto, numeracion_producto, estatus_producto,
+                            paresxtalla, contexto);
 
-                    talla_producto = obtenerNombreTalla(id_talla);
-                    tipo_producto = obtenerNombreTipo(id_tipo);
-                    color_producto = obtenerNombreColor(id_color);
-
-                    List<String> producto = new ArrayList<>();
-                    producto.add(id_producto); // id
-                    producto.add(talla_producto); // talla
-                    producto.add(tipo_producto); // tipo
-                    producto.add(modelo_nombre); // modelo
-                    producto.add(color_producto); // color
-                    producto.add(precio_formateado); // precio
-                    producto.add(numeracion_producto); // numeracion
-                    producto.add(id_color); // id_color 7
-                    producto.add(estatus_producto); // estatus_producto 8
-                    producto.add(paresxtalla); // paresxtalla 9
-
-                    adapter.add(producto);
+                    adapter.add(p);
                 }
             }
             cursor.close();
 
-            //adapter.add(producto1);
-            //adapter.add(producto2);
-
             ((BaseAdapter) list.getAdapter()).notifyDataSetChanged();
         }
-    }
-
-    /**
-     * Obtiene el nombre del color de la base de datos, a partir de su ID.
-     *
-     * @param id_color ID del color a consultar.
-     * @return Nombre del color.
-     */
-    private String obtenerNombreColor(String id_color)
-    {
-        //Log.i(TAG, "Buscando color con id: "+id_color);
-        String nombre_color = null;
-        Cursor cursor       = manager.buscarColor_ID(id_color);
-        for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor.moveToNext())
-        {
-            nombre_color = String.valueOf(cursor.getString(0));
-            //Log.i(TAG, "Color encontrado: "+nombre_color);
-        }
-        cursor.close();
-        return nombre_color;
-    }
-
-    /**
-     * Obtiene el nombre de la talla del producto de la BD a partir de su ID.
-     *
-     * @param id_talla ID de la talla.
-     * @return Nombre de la talla del producto.
-     */
-    private String obtenerNombreTalla(String id_talla)
-    {
-        //Log.i(TAG, "Buscando talla con id: "+id_talla);
-        String nombre_talla = null;
-        Cursor cursor       = manager.buscarTalla_ID(id_talla);
-        for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor.moveToNext())
-        {
-            nombre_talla = String.valueOf(cursor.getString(0));
-            //Log.i(TAG, "Talla encontrado: "+nombre_talla);
-        }
-        cursor.close();
-        return nombre_talla;
-    }
-
-    /**
-     * Obtiene el nombre del tipo de producto de la BD a partir de su ID.
-     *
-     * @param id_tipo ID del tipo.
-     * @return Nombre del tipo de producto.
-     */
-    private String obtenerNombreTipo(String id_tipo)
-    {
-        //Log.i(TAG, "Buscando tipo con id: "+id_tipo);
-        String nombre_tipo = null;
-        Cursor cursor      = manager.buscarTipo_ID(id_tipo);
-        for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor.moveToNext())
-        {
-            nombre_tipo = String.valueOf(cursor.getString(0));
-            //Log.i(TAG, "Tipo encontrado: "+nombre_tipo);
-        }
-        cursor.close();
-        return nombre_tipo;
     }
 
     /**

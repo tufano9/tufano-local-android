@@ -7,7 +7,6 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.content.res.ResourcesCompat;
@@ -23,7 +22,6 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TableLayout;
-import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -46,24 +44,24 @@ import java.util.Locale;
  */
 public class ConsultarPedidos extends AppCompatActivity
 {
-    private static final int CANT_DATOS_MOSTRAR_INICIALMENTE = 5;
-    private static final int CANT_DATOS_CARGAR               = 3;
+    private static final int CANT_DATOS_MOSTRAR_INICIALMENTE = 10;
+    private static final int CANT_DATOS_CARGAR               = 5;
     public static Activity fa;
     private final int    id_mensaje = Funciones.generateViewId();
     private final String TAG        = "ConsultarPedidos";
     private ListView       list;
     private pedidosAdapter adapter;
     private int            limit; // Numero total de elementos
-    private String usuario;
-    private Context contexto;
+    private String         usuario;
+    private Context        contexto;
     private ProgressDialog pDialog;
-    private DBAdapter manager;
-    private Spinner clientes, estatus;
+    private DBAdapter      manager;
+    private Spinner        clientes, estatus;
     private TextView cabecera_1, cabecera_2, cabecera_3, cabecera_4, cabecera_5, cabecera_6;
     private String columna_ordenada, orden;
     private String cliente_filtrado = null, estatus_filtrado = null;
-    private ArrayList<View> filas;
-    private boolean primerCargaTabla = true , primerInicio1 = true, primerInicio2 = true;
+    //private ArrayList<View> filas;
+    private boolean primerCargaTabla = true, primerInicio1 = true, primerInicio2 = true;
     private boolean filtrando = false;
 
     @Override
@@ -130,49 +128,61 @@ public class ConsultarPedidos extends AppCompatActivity
     private void initTextViewHeader()
     {
         cabecera_1 = (TextView) findViewById(R.id.cabecera_1);
-        cabecera_1.setOnClickListener(new View.OnClickListener() {
+        cabecera_1.setOnClickListener(new View.OnClickListener()
+        {
             @Override
-            public void onClick(View v) {
+            public void onClick(View v)
+            {
                 cabeceraPresionada(cabecera_1, "_id_pedido");
             }
         });
 
         cabecera_2 = (TextView) findViewById(R.id.cabecera_2);
-        cabecera_2.setOnClickListener(new View.OnClickListener() {
+        cabecera_2.setOnClickListener(new View.OnClickListener()
+        {
             @Override
-            public void onClick(View v) {
+            public void onClick(View v)
+            {
                 cabeceraPresionada(cabecera_2, "nombre_vendedor");
             }
         });
 
         cabecera_3 = (TextView) findViewById(R.id.cabecera_3);
-        cabecera_3.setOnClickListener(new View.OnClickListener() {
+        cabecera_3.setOnClickListener(new View.OnClickListener()
+        {
             @Override
-            public void onClick(View v) {
+            public void onClick(View v)
+            {
                 cabeceraPresionada(cabecera_3, "razon_social_cliente");
             }
         });
 
         cabecera_4 = (TextView) findViewById(R.id.cabecera_4);
-        cabecera_4.setOnClickListener(new View.OnClickListener() {
+        cabecera_4.setOnClickListener(new View.OnClickListener()
+        {
             @Override
-            public void onClick(View v) {
+            public void onClick(View v)
+            {
                 cabeceraPresionada(cabecera_4, "fecha");
             }
         });
 
         cabecera_5 = (TextView) findViewById(R.id.cabecera_5);
-        cabecera_5.setOnClickListener(new View.OnClickListener() {
+        cabecera_5.setOnClickListener(new View.OnClickListener()
+        {
             @Override
-            public void onClick(View v) {
+            public void onClick(View v)
+            {
                 cabeceraPresionada(cabecera_5, "monto");
             }
         });
 
         cabecera_6 = (TextView) findViewById(R.id.cabecera_6);
-        cabecera_6.setOnClickListener(new View.OnClickListener() {
+        cabecera_6.setOnClickListener(new View.OnClickListener()
+        {
             @Override
-            public void onClick(View v) {
+            public void onClick(View v)
+            {
                 cabeceraPresionada(cabecera_6, "estatus");
             }
         });
@@ -180,13 +190,14 @@ public class ConsultarPedidos extends AppCompatActivity
 
     /**
      * Funcion para la gestion de la cabecera de la tabla presionada.
-     * @param cabecera Cabecera presionada.
+     *
+     * @param cabecera  Cabecera presionada.
      * @param columnaBD Columna de la base de datos a ordenar.
      */
     private void cabeceraPresionada(TextView cabecera, String columnaBD)
     {
-        Drawable[] cd = cabecera.getCompoundDrawables();
-        boolean lleno = false;
+        Drawable[] cd    = cabecera.getCompoundDrawables();
+        boolean    lleno = false;
 
         for (Drawable aCd : cd)
         {
@@ -197,7 +208,7 @@ public class ConsultarPedidos extends AppCompatActivity
             }
         }
 
-        if(lleno)
+        if (lleno)
         {
             // Invertir orden.. (Si estaba ordenando en ASC, ahora lo ahora DESC
             invertirCompoundDrawable(cabecera, columnaBD);
@@ -214,8 +225,9 @@ public class ConsultarPedidos extends AppCompatActivity
 
     /**
      * Funcion que prepara el ordenamiento de la tabla, segun parametros de entrada.
+     *
      * @param cabecera Cabebera de la tabla que sera ordenada.
-     * @param orden Orden en el cual estara (ASC o DESC)
+     * @param orden    Orden en el cual estara (ASC o DESC)
      */
     private void ordenarTabla(String cabecera, String orden)
     {
@@ -228,7 +240,8 @@ public class ConsultarPedidos extends AppCompatActivity
     /**
      * Invierte el drawable que exista actualmente en la cabecera de la tabla, es decir, si esta en
      * forma ASC, cambia a forma DESC y viceversa.
-     * @param cabecera Cabecera afectada por la operacion.
+     *
+     * @param cabecera  Cabecera afectada por la operacion.
      * @param columnaBD Columna de la base de datos que sera afectada (Orden).
      */
     private void invertirCompoundDrawable(TextView cabecera, String columnaBD)
@@ -241,12 +254,12 @@ public class ConsultarPedidos extends AppCompatActivity
         }*/
 
         Drawable draw = ResourcesCompat.getDrawable(getResources(), R.drawable.arrow_up, null);
-        if(draw!=null)
+        if (draw != null)
         {
             Drawable.ConstantState upArrow = draw.getConstantState();
             //Log.d(TAG, "if: " + upArrow);
 
-            if( d[2].getConstantState().equals( upArrow ) )
+            if (d[2].getConstantState().equals(upArrow))
             {
                 Log.d(TAG, "Colocare DESC..");
                 int drawable = Funciones.getDescDrawable();
@@ -268,6 +281,7 @@ public class ConsultarPedidos extends AppCompatActivity
 
     /**
      * Coloca el drawable sobre la cabecera presionada (Icono)
+     *
      * @param cabecera Cabecera presionada.
      */
     private void colocarCompoundDrawable(TextView cabecera)
@@ -299,11 +313,11 @@ public class ConsultarPedidos extends AppCompatActivity
      */
     private void limpiarTabla()
     {
-        final TableLayout tabla = (TableLayout) findViewById(R.id.table_consultar_pedidos);
+        /*final TableLayout tabla = (TableLayout) findViewById(R.id.table_consultar_pedidos);
         for (int i = 0; i < filas.size(); i++)
         {
             tabla.removeView(filas.get(i));
-        }
+        }*/
     }
 
     /**
@@ -315,9 +329,11 @@ public class ConsultarPedidos extends AppCompatActivity
         clientes = (Spinner) findViewById(R.id.spCliente);
         estatus = (Spinner) findViewById(R.id.spEstatus);
 
-        clientes.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        clientes.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener()
+        {
             @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id)
+            {
                 if (!primerInicio1)
                 {
                     gestionarFiltrado();
@@ -329,13 +345,16 @@ public class ConsultarPedidos extends AppCompatActivity
             }
 
             @Override
-            public void onNothingSelected(AdapterView<?> parent) {
+            public void onNothingSelected(AdapterView<?> parent)
+            {
             }
         });
 
-        estatus.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        estatus.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener()
+        {
             @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id)
+            {
                 if (!primerInicio2)
                 {
                     gestionarFiltrado();
@@ -347,7 +366,8 @@ public class ConsultarPedidos extends AppCompatActivity
             }
 
             @Override
-            public void onNothingSelected(AdapterView<?> parent) {
+            public void onNothingSelected(AdapterView<?> parent)
+            {
 
             }
         });
@@ -360,8 +380,8 @@ public class ConsultarPedidos extends AppCompatActivity
      */
     private void loadSpinnerData()
     {
-        List<List<String>> contenedor_clientes = manager.cargarListaClientes();
-        ArrayAdapter<String> dataAdapter = new ArrayAdapter<>(this, R.layout.spinner_item, contenedor_clientes.get(1));
+        List<List<String>>   contenedor_clientes = manager.cargarListaClientes();
+        ArrayAdapter<String> dataAdapter         = new ArrayAdapter<>(this, R.layout.spinner_item, contenedor_clientes.get(1));
         dataAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
         clientes.setAdapter(dataAdapter);
 
@@ -381,7 +401,7 @@ public class ConsultarPedidos extends AppCompatActivity
         String defaultValueEstatus = this.estatus.getItemAtPosition(0).toString();
         filtrando = false;
 
-        if(clientes.getSelectedItem().toString().equals(defaultValueCliente))
+        if (clientes.getSelectedItem().toString().equals(defaultValueCliente))
         {
             cliente = null;
         }
@@ -392,7 +412,7 @@ public class ConsultarPedidos extends AppCompatActivity
             filtrando = true;
         }
 
-        if(this.estatus.getSelectedItem().toString().equals(defaultValueEstatus))
+        if (this.estatus.getSelectedItem().toString().equals(defaultValueEstatus))
         {
             estatus = null;
         }
@@ -411,6 +431,7 @@ public class ConsultarPedidos extends AppCompatActivity
 
     /**
      * Obtiene el ID del estatus, a partir de una cadena, por ej. "Aprobado" = 2
+     *
      * @param estatus Cadena con el estatus.
      * @return El ID del estatus.
      */
@@ -432,6 +453,7 @@ public class ConsultarPedidos extends AppCompatActivity
 
     /**
      * Prepara el filtrado de la tabla
+     *
      * @param cliente Cliente con el cual se filtrara.
      * @param estatus Estatus con el cual se filtrara.
      */
@@ -449,17 +471,16 @@ public class ConsultarPedidos extends AppCompatActivity
      */
     private void inicializarTabla()
     {
-        Log.i(TAG, "Inicializando tabla.. Ordenando por: "+columna_ordenada+" de forma "+orden);
+        Log.i(TAG, "Inicializando tabla.. Ordenando por: " + columna_ordenada + " de forma " + orden);
 
         eliminarMensajeInformativo();
-
-        final TableLayout tabla = (TableLayout) findViewById(R.id.table_consultar_pedidos);
-        filas = new ArrayList<>();
+        list = (ListView) findViewById(R.id.list);
         final List<Pedido> datos = new ArrayList<>();
         final Activity     a     = this;
 
-        Cursor cursor2 = manager.cargarPedidosOrdenadosPor(columna_ordenada, orden, cliente_filtrado, estatus_filtrado);
         // Numero de registros que existen con dichos parametros de filtrado..
+        Cursor cursor2 = manager.cargarPedidosOrdenadosPor(columna_ordenada, orden,
+                cliente_filtrado, estatus_filtrado);
         limit = cursor2.getCount();
         cursor2.close();
 
@@ -472,138 +493,28 @@ public class ConsultarPedidos extends AppCompatActivity
             {
                 Log.i(TAG, "Agregando fila..");
 
-                Date date = null;
                 try
                 {
-                    date = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US).parse(String.valueOf(cursor.getString(4)));
+                    Date date = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US).parse(cursor.getString(4));
+
+                    final String id_pedido       = String.valueOf(cursor.getInt(0));
+                    final String razon_social    = String.valueOf(cursor.getString(1));
+                    final String nombre_vendedor = String.valueOf(cursor.getString(2));
+                    final String monto_pedido    = Funciones.formatoPrecio(cursor.getString(3));
+                    final String fecha_pedido    = new SimpleDateFormat("dd-MM-yyyy h:mm a", Locale.US).format(date);
+                    final String estatus_pedido  = convertirEstatus(String.valueOf(cursor.getString(5)));
+                    final String observaciones   = String.valueOf(cursor.getString(6));
+
+                    Pedido pedido = new Pedido(id_pedido, razon_social, nombre_vendedor, monto_pedido,
+                            fecha_pedido, estatus_pedido, observaciones);
+
+                    datos.add(pedido);
                 }
                 catch (ParseException e)
                 {
-                    e.printStackTrace();
+                    Log.e(TAG, "Ha ocurrido un error egregando la fila.. (" + e + ")");
+                    //e.printStackTrace();
                 }
-
-                // CN_ID_PEDIDO, CN_RAZON_SOCIAL_CLIENTE_PEDIDO , CN_NOMBRE_VENDEDOR_PEDIDO ,
-                // CN_MONTO_PEDIDO, CN_FECHA_PEDIDO, CN_ESTATUS_PEDIDO, CN_OBSERVACIONES_PEDIDO
-
-                //final TableRow fila = new TableRow(contexto);
-                final String id_pedido       = String.valueOf(cursor.getInt(0));
-                final String razon_social    = String.valueOf(cursor.getString(1));
-                final String nombre_vendedor = String.valueOf(cursor.getString(2));
-                final String monto_pedido    = String.valueOf(cursor.getString(3));
-                final String fecha_pedido    = new SimpleDateFormat("dd-MM-yyyy h:mm a", Locale.US).format(date);
-                final String estatus_pedido  = convertirEstatus(String.valueOf(cursor.getString(5)));
-                final String observaciones   = String.valueOf(cursor.getString(6));
-
-                Pedido pedido = new Pedido(id_pedido, razon_social, nombre_vendedor, monto_pedido,
-                        fecha_pedido, estatus_pedido, observaciones);
-
-                datos.add(pedido);
-
-                /*TextView pedido_num = new TextView(contexto);
-                pedido_num.setText(id_pedido);
-                pedido_num.setTextColor(Color.DKGRAY);
-                pedido_num.setGravity(Gravity.CENTER);
-                pedido_num.setLayoutParams(params);
-                pedido_num.setTextSize(16f);
-
-                TextView vendedor = new TextView(contexto);
-                //String vendedor_nombre = obtenerNombreVendedor(nombre_vendedor);
-                vendedor.setText(nombre_vendedor);
-                vendedor.setTextColor(Color.DKGRAY);
-                vendedor.setGravity(Gravity.CENTER);
-                vendedor.setLayoutParams(params);
-                vendedor.setTextSize(16f);
-
-                TextView cliente = new TextView(contexto);
-                //String cliente_nombre = obtenerNombreCliente(razon_social);
-                cliente.setText(razon_social);
-                cliente.setTextColor(Color.DKGRAY);
-                cliente.setGravity(Gravity.CENTER);
-                cliente.setLayoutParams(params);
-                cliente.setTextSize(16f);
-
-                TextView fecha = new TextView(contexto);
-                fecha.setText(fecha_pedido);
-                fecha.setTextColor(Color.DKGRAY);
-                fecha.setGravity(Gravity.CENTER);
-                fecha.setLayoutParams(params);
-                fecha.setTextSize(16f);
-
-                TextView monto = new TextView(contexto);
-                DecimalFormat priceFormat = new DecimalFormat("###,###.##");
-                String output = priceFormat.format(Double.parseDouble(monto_pedido));
-                monto.setText(output);
-                monto.setTextColor(Color.DKGRAY);
-                monto.setGravity(Gravity.CENTER);
-                monto.setLayoutParams(params);
-                monto.setTextSize(16f);
-
-                TextView estatus = new TextView(contexto);
-                estatus.setText(estatus_pedido);
-                estatus.setTextColor(Color.DKGRAY);
-                estatus.setGravity(Gravity.CENTER);
-                estatus.setLayoutParams(params);
-                estatus.setTextSize(16f);*/
-
-                /* Opciones */
-                /*Button editar = new Button(contexto);
-                editar.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v)
-                    {
-                        Log.i(TAG, "Editar presionado");
-                        Intent c = new Intent(ConsultarPedidos.this, DetallesPedido.class);
-                        c.putExtra("usuario", usuario);
-                        c.putExtra("id_pedido", id_pedido);
-                        startActivity(c);
-                    }
-                });
-                editar.setBackgroundResource(R.drawable.icn_edit);
-                int edit_image_width = 70;
-                int edit_image_height = 70;
-                LinearLayout.LayoutParams parms = new LinearLayout.LayoutParams(edit_image_width, edit_image_height);
-                editar.setLayoutParams(parms);
-                editar.setPadding(2, 10, 2, 10);
-
-                LinearLayout opciones = new LinearLayout(contexto);
-                opciones.setGravity(Gravity.CENTER);
-                opciones.setLayoutParams(params);
-                opciones.addView(editar);
-
-                // Llenando la fila con data
-                fila.setBackgroundColor(Color.WHITE);
-                fila.addView(pedido_num);
-                fila.addView(vendedor);
-                fila.addView(cliente);
-                fila.addView(fecha);
-                fila.addView(monto);
-                fila.addView(estatus);
-                fila.addView(opciones);
-
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN)
-                    fila.setBackground(Funciones.intToDrawable(contexto, R.drawable.table_border));
-                else
-                    //noinspection deprecation
-                    fila.setBackgroundDrawable(Funciones.intToDrawable(contexto, R.drawable.table_border));
-
-                filas.add(fila);
-
-                final Thread hilo1 = new Thread() {
-                    @Override
-                    public void run() {
-                        synchronized (this) {
-                            runOnUiThread(new Runnable() {
-                                @Override
-                                public void run()
-                                {
-                                    tabla.addView(fila);
-                                }
-                            });
-
-                        }
-                    }
-                };
-                hilo1.start();*/
             }
         }
         else
@@ -611,7 +522,7 @@ public class ConsultarPedidos extends AppCompatActivity
             Log.d(TAG, "No encontre nada..");
             // Se realiza un condicional para saber si estoy filtrando, de estar filtrando o no, el
             // mensaje obtenido cambiara.
-            if(!filtrando)
+            if (!filtrando)
             {
                 final Thread hilo = new Thread()
                 {
@@ -625,17 +536,14 @@ public class ConsultarPedidos extends AppCompatActivity
                                 @Override
                                 public void run()
                                 {
-                                    ocultarTodo(tabla);
-
-                                    LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.MATCH_PARENT, 1f);
+                                    //ocultarTodo(tabla);
                                     TextView mensaje = new TextView(contexto);
                                     mensaje.setText(R.string.msj_sin_pedidos);
                                     mensaje.setGravity(Gravity.CENTER);
                                     mensaje.setTextSize(20f);
-                                    mensaje.setLayoutParams(params);
+                                    mensaje.setId(id_mensaje);
 
-                                    LinearLayout contenedor = (LinearLayout) findViewById(R.id.contenedor);
-                                    contenedor.removeAllViews();
+                                    LinearLayout contenedor = (LinearLayout) findViewById(R.id.contenedor_base);
                                     contenedor.addView(mensaje);
                                 }
                             });
@@ -646,48 +554,20 @@ public class ConsultarPedidos extends AppCompatActivity
             }
             else
             {
-                Log.d(TAG, "Pero estoy filtrando..");
-                TableRow.LayoutParams parametros = new TableRow.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT, 1f);
-
-                // Con esto hago que el mensaje ocupe toda la fila completa, sin alargar la cabecera
-                // que se alarga automaticamente debido al stretchColumns del tableLayout
-                TableRow cabecera = (TableRow) findViewById(R.id.cabecera);
-                parametros.span = cabecera.getChildCount();
+                Log.d(TAG, "Pero estoy filtrando...");
+                //ocultarTodo(tabla);
 
                 TextView mensaje = new TextView(contexto);
                 mensaje.setText(R.string.sin_resultados);
                 mensaje.setGravity(Gravity.CENTER);
                 mensaje.setTextSize(20f);
-                mensaje.setLayoutParams(parametros);
+                mensaje.setId(id_mensaje);
 
-                final TableRow fila = new TableRow(contexto);
-                fila.addView(mensaje);
-
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN)
-                    fila.setBackground(Funciones.intToDrawable(contexto, R.drawable.table_border));
-                else
-                    //noinspection deprecation
-                    fila.setBackgroundDrawable(Funciones.intToDrawable(contexto, R.drawable.table_border));
-
-                filas.add(fila);
-
-                final Thread hilo1 = new Thread() {
-                    @Override
-                    public void run() {
-                        synchronized (this) {
-                            runOnUiThread(new Runnable() {
-                                @Override
-                                public void run()
-                                {
-                                    tabla.addView(fila);
-                                }
-                            });
-                        }
-                    }
-                };
-                hilo1.start();
+                LinearLayout contenedor = (LinearLayout) findViewById(R.id.contenedor_base);
+                contenedor.addView(mensaje);
             }
         }
+        cursor.close();
 
         final Thread hilo1 = new Thread()
         {
@@ -728,8 +608,6 @@ public class ConsultarPedidos extends AppCompatActivity
             }
         };
         hilo1.start();
-
-        cursor.close();
     }
 
     // Append more data into the adapter
@@ -753,30 +631,31 @@ public class ConsultarPedidos extends AppCompatActivity
             {
                 for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor.moveToNext())
                 {
-                    Date date = null;
+                    Log.i(TAG, "Creando Data.. (Añadido)");
                     try
                     {
-                        date = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US).parse(String.valueOf(cursor.getString(4)));
+                        Date date = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss",
+                                Locale.US).parse(cursor.getString(4));
+
+                        final String id_pedido       = String.valueOf(cursor.getInt(0));
+                        final String razon_social    = String.valueOf(cursor.getString(1));
+                        final String nombre_vendedor = String.valueOf(cursor.getString(2));
+                        final String monto_pedido    = Funciones.formatoPrecio(cursor.getString(3));
+                        final String fecha_pedido = new SimpleDateFormat("dd-MM-yyyy h:mm a",
+                                Locale.US).format(date);
+                        final String estatus_pedido = convertirEstatus(cursor.getString(5));
+                        final String observaciones  = String.valueOf(cursor.getString(6));
+
+                        Pedido pedido = new Pedido(id_pedido, razon_social, nombre_vendedor, monto_pedido,
+                                fecha_pedido, estatus_pedido, observaciones);
+
+                        adapter.add(pedido);
                     }
                     catch (ParseException e)
                     {
-                        e.printStackTrace();
+                        Log.e(TAG, "Ha ocurrido un error egregando la fila.. (" + e + ")");
+                        //e.printStackTrace();
                     }
-
-                    Log.i(TAG, "Creando Data.. (Añadido)");
-                    // Extrayendo datos de la base de datos
-                    final String id_pedido       = String.valueOf(cursor.getInt(0));
-                    final String razon_social    = String.valueOf(cursor.getString(1));
-                    final String nombre_vendedor = String.valueOf(cursor.getString(2));
-                    final String monto_pedido    = String.valueOf(cursor.getString(3));
-                    final String fecha_pedido    = new SimpleDateFormat("dd-MM-yyyy h:mm a", Locale.US).format(date);
-                    final String estatus_pedido  = convertirEstatus(String.valueOf(cursor.getString(5)));
-                    final String observaciones   = String.valueOf(cursor.getString(6));
-
-                    Pedido pedido = new Pedido(id_pedido, razon_social, nombre_vendedor, monto_pedido,
-                            fecha_pedido, estatus_pedido, observaciones);
-
-                    adapter.add(pedido);
                 }
             }
             cursor.close();
@@ -787,12 +666,13 @@ public class ConsultarPedidos extends AppCompatActivity
 
     /**
      * Asigna un equivalente al codigo del estatus de entrada, por ej: 0 = Cancelado, 2 = Aprobado
+     *
      * @param codigo_estatus Codigo del estatus (Numerico)
      * @return El estatus equivalente al codigo.
      */
     private String convertirEstatus(String codigo_estatus)
     {
-        switch(codigo_estatus)
+        switch (codigo_estatus)
         {
             case "0":
                 return "Cancelado";
@@ -831,36 +711,9 @@ public class ConsultarPedidos extends AppCompatActivity
         hilo.start();
     }
 
-    /*
-
-    private String obtenerNombreCliente(String id_cliente)
-    {
-        String nombre_cliente = null;
-        Cursor cursor = manager.buscarClienteID(id_cliente);
-        for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor.moveToNext())
-        {
-            nombre_cliente = String.valueOf(cursor.getString(0));
-        }
-        cursor.close();
-        return nombre_cliente;
-    }
-
-    private String obtenerNombreVendedor(String id_vendedor)
-    {
-        String nombre_vendedor = null;
-        Cursor cursor = manager.buscarUsuarioID(id_vendedor);
-        for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor.moveToNext())
-        {
-            nombre_vendedor = String.valueOf(cursor.getString(2)) + " " + String.valueOf(cursor.getString(3));
-        }
-        cursor.close();
-        return nombre_vendedor;
-    }
-
-    */
-
     /**
      * Funcion encargada de ocultar los elementos de la tabla.
+     *
      * @param tabla Tabla a la cual se le ocultaran los elementos.
      */
     private void ocultarTodo(TableLayout tabla)

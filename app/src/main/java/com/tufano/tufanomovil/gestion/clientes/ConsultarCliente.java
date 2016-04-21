@@ -39,8 +39,8 @@ import java.util.List;
 
 public class ConsultarCliente extends AppCompatActivity
 {
-    private static final int CANT_DATOS_MOSTRAR_INICIALMENTE = 7;
-    private static final int CANT_DATOS_CARGAR               = 3;
+    private static final int CANT_DATOS_MOSTRAR_INICIALMENTE = 10;
+    private static final int CANT_DATOS_CARGAR               = 5;
     public static Activity fa;
     private final String TAG        = "ConsultarCliente";
     private final int    id_mensaje = Funciones.generateViewId();

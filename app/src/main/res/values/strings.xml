@@ -262,5 +262,8 @@
     <string name="consultar_pedido_subtitulo">Consultar Pedidos</string>
     <string name="consultar_cliente_subtitulo">Consultar Clientes</string>
     <string name="gestion_pedido_subtitulo">Gestion de Pedidos</string>
+    <string name="rb_new">Mostrar destacados</string>
+    <string name="rb_old">Mostrar Otros</string>
+    <string name="rb_all">Mostrar Todos</string>
 
 </resources>

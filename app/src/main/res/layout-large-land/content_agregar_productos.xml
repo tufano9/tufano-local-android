@@ -3,183 +3,191 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     android:paddingBottom="@dimen/activity_vertical_margin"
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context="com.tufano.tufanomovil.AgregarProductos"
+    tools:context="com.tufano.tufanomovil.gestion.productos.AgregarProducto"
     tools:showIn="@layout/activity_agregar_productos">
 
     <LinearLayout
-        android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
+        android:layout_marginBottom="20dp"
         android:layout_marginLeft="60dp"
         android:layout_marginRight="60dp"
-        android:layout_marginBottom="20dp">
+        android:layout_marginTop="20dp"
+        android:orientation="vertical">
 
         <LinearLayout
             android:id="@+id/LinearLayout_MainActivity"
-            android:focusable="true"
-            android:focusableInTouchMode="true"
             android:layout_width="0px"
-            android:layout_height="0px" >
+            android:layout_height="0px"
+            android:focusable="true"
+            android:focusableInTouchMode="true">
             <requestFocus />
         </LinearLayout>
 
         <LinearLayout
-            android:orientation="horizontal"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:gravity="center">
+            android:gravity="center"
+            android:orientation="horizontal">
 
             <Spinner
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/btn_size"
                 android:id="@+id/tipo_producto"
                 style="@android:style/Widget.Spinner"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/btn_size"
                 android:layout_weight="1" />
 
             <Button
+                android:id="@+id/btn_agregar_tipo"
+                style="@android:style/Widget.Button"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/btn_size"
-                android:text="@string/agregar_tipo"
-                style="@android:style/Widget.Button"
-                android:id="@+id/btn_agregar_tipo"
+                android:layout_marginLeft="20dp"
                 android:layout_weight="2"
-                android:layout_marginLeft="20dp" />
+                android:text="@string/agregar_tipo"/>
 
             <Button
+                android:id="@+id/btn_editar_tipo"
+                style="@android:style/Widget.Button"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/btn_size"
-                android:text="@string/editar_tipo"
-                style="@android:style/Widget.Button"
-                android:id="@+id/btn_editar_tipo"
+                android:layout_marginLeft="20dp"
                 android:layout_weight="2"
-                android:layout_marginLeft="20dp" />
+                android:text="@string/editar_tipo"/>
         </LinearLayout>
 
         <LinearLayout
-            android:orientation="horizontal"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:layout_marginTop="20dp"
             android:gravity="center"
-            android:layout_marginTop="20dp">
+            android:orientation="horizontal">
 
             <Spinner
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/btn_size"
                 android:id="@+id/talla_producto"
                 style="@android:style/Widget.Spinner"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/btn_size"
                 android:layout_weight="1" />
 
             <Button
+                android:id="@+id/btn_agregar_talla"
+                style="@android:style/Widget.Button"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/btn_size"
-                android:text="@string/agregar_talla"
-                android:id="@+id/btn_agregar_talla"
+                android:layout_marginLeft="20dp"
                 android:layout_weight="2"
-                style="@android:style/Widget.Button"
-                android:layout_marginLeft="20dp" />
+                android:text="@string/agregar_talla"/>
 
             <Button
+                android:id="@+id/btn_editar_talla"
+                style="@android:style/Widget.Button"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/btn_size"
-                android:text="@string/editar_talla"
-                android:id="@+id/btn_editar_talla"
+                android:layout_marginLeft="20dp"
                 android:layout_weight="2"
-                style="@android:style/Widget.Button"
-                android:layout_marginLeft="20dp" />
+                android:text="@string/editar_talla"/>
         </LinearLayout>
 
         <LinearLayout
-            android:orientation="horizontal"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:layout_marginTop="20dp"
             android:gravity="center"
-            android:layout_marginTop="20dp">
+            android:orientation="horizontal">
 
             <Spinner
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/btn_size"
                 android:id="@+id/color_producto"
                 style="@android:style/Widget.Spinner"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/btn_size"
                 android:layout_weight="1" />
 
             <Button
+                android:id="@+id/btn_agregar_color"
+                style="@android:style/Widget.Button"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/btn_size"
-                android:text="@string/agregar_color"
-                android:id="@+id/btn_agregar_color"
+                android:layout_marginLeft="20dp"
                 android:layout_weight="2"
-                style="@android:style/Widget.Button"
-                android:layout_marginLeft="20dp" />
+                android:text="@string/agregar_color"/>
 
             <Button
+                android:id="@+id/btn_editar_color"
+                style="@android:style/Widget.Button"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/btn_size"
-                android:text="@string/editar_color"
-                android:id="@+id/btn_editar_color"
+                android:layout_marginLeft="20dp"
                 android:layout_weight="2"
-                style="@android:style/Widget.Button"
-                android:layout_marginLeft="20dp" />
+                android:text="@string/editar_color"/>
         </LinearLayout>
 
 
         <EditText
+            android:id="@+id/modelo_producto"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/modelo_producto"
+            android:layout_marginTop="20dp"
             android:hint="@string/hint_modelo"
-            android:singleLine="true"
-            android:layout_marginTop="20dp" />
+            android:singleLine="true"/>
 
         <EditText
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:inputType="numberDecimal"
-            android:ems="10"
             android:id="@+id/precio_producto"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:ems="10"
             android:hint="@string/hint_precio"
-            android:layout_marginTop="20dp" />
+            android:inputType="numberDecimal"/>
+
+        <Switch
+            android:id="@+id/destacado_switch"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="15dp"
+            android:textSize="18sp"/>
 
         <LinearLayout
-            android:orientation="horizontal"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
             android:id="@+id/cabecera_bulto_numeracion"
-            android:layout_marginTop="20dp"/>
-
-        <LinearLayout
-            android:orientation="horizontal"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:orientation="horizontal"/>
+
+        <LinearLayout
             android:id="@+id/bulto_numeracion"
-            android:layout_marginTop="5dp" />
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:orientation="horizontal"/>
 
         <ImageView
+            android:id="@+id/seleccion_img_producto"
             android:layout_width="432dp"
             android:layout_height="324dp"
-            android:id="@+id/seleccion_img_producto"
-            android:layout_marginTop="20dp"
             android:layout_gravity="center"
-            android:contentDescription="@string/imagesContentDescription"
+            android:layout_marginTop="20dp"
             android:background="@drawable/img_notfound"
+            android:contentDescription="@string/imagesContentDescription"
             android:cropToPadding="false" />
 
         <Button
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/btn_size"
-            android:text="@string/agregar_producto_btn"
             android:id="@+id/btn_agregar_producto"
             style="@android:style/Widget.Button"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/btn_size"
+            android:layout_marginBottom="20dp"
             android:layout_marginTop="35dp"
-            android:layout_marginBottom="20dp" />
+            android:text="@string/agregar_producto_btn"/>
 
     </LinearLayout>
 </ScrollView>

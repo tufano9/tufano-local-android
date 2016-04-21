@@ -16,23 +16,43 @@ import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.security.GeneralSecurityException;
 
-import static com.tufano.tufanomovil.database.tables.Usuarios.*;
-import static com.tufano.tufanomovil.database.creates.CreateSentences.*;
+import static com.tufano.tufanomovil.database.altern.Producto.ALTER_TABLE_PRODUCTO_ADDDESTACADO;
+import static com.tufano.tufanomovil.database.creates.CreateSentences.CREAR_TABLA_CLIENTES;
+import static com.tufano.tufanomovil.database.creates.CreateSentences.CREAR_TABLA_COLORES;
+import static com.tufano.tufanomovil.database.creates.CreateSentences.CREAR_TABLA_PEDIDOS;
+import static com.tufano.tufanomovil.database.creates.CreateSentences.CREAR_TABLA_PEDIDOS_DETALLES;
+import static com.tufano.tufanomovil.database.creates.CreateSentences.CREAR_TABLA_PEDIDOS_DETALLES_EDITAR;
+import static com.tufano.tufanomovil.database.creates.CreateSentences.CREAR_TABLA_PEDIDOS_EDITAR;
+import static com.tufano.tufanomovil.database.creates.CreateSentences.CREAR_TABLA_PEDIDOS_TEMPORALES;
+import static com.tufano.tufanomovil.database.creates.CreateSentences.CREAR_TABLA_PRODUCTO;
+import static com.tufano.tufanomovil.database.creates.CreateSentences.CREAR_TABLA_TALLAS;
+import static com.tufano.tufanomovil.database.creates.CreateSentences.CREAR_TABLA_TIPOS;
+import static com.tufano.tufanomovil.database.creates.CreateSentences.CREAR_TABLA_USUARIO;
+import static com.tufano.tufanomovil.database.tables.Usuarios.CN_APELLIDO;
+import static com.tufano.tufanomovil.database.tables.Usuarios.CN_CEDULA;
+import static com.tufano.tufanomovil.database.tables.Usuarios.CN_EMAIL;
+import static com.tufano.tufanomovil.database.tables.Usuarios.CN_ESTADO;
+import static com.tufano.tufanomovil.database.tables.Usuarios.CN_KEY;
+import static com.tufano.tufanomovil.database.tables.Usuarios.CN_NOMBRE;
+import static com.tufano.tufanomovil.database.tables.Usuarios.CN_NOMBRE_USUARIO;
+import static com.tufano.tufanomovil.database.tables.Usuarios.CN_PASSWORD;
+import static com.tufano.tufanomovil.database.tables.Usuarios.CN_TELEFONO;
+import static com.tufano.tufanomovil.database.tables.Usuarios.TABLA_USUARIO;
 
 /**
  * Created por Usuario Tufano on 11/01/2016.
  */
 public class DBHelper extends SQLiteOpenHelper
 {
+    private static final String DB_NAME    = "tufanomovil.db";
+    private final static int    DB_VERSION = 3;
+    private static final String TAG        = "DBHelper";
     //Ruta por defecto de las bases de datos en el sistema Android
     //private static String DB_PATH =  "/data/data/paquete.tufanoapp/databases/";
     private static String DB_RUTA;
-    private static final String DB_NAME = "tufanomovil.db";
-    private SQLiteDatabase myDataBase;
-    private final Context myContext;
     private static DBHelper mInstance = null;
-    private final static int DB_VERSION = 2;
-    private static final String TAG = "DBHelper";
+    private final Context        myContext;
+    private       SQLiteDatabase myDataBase;
 
     /**
      * Constructor
@@ -52,7 +72,7 @@ public class DBHelper extends SQLiteOpenHelper
     {
         super(context, DB_NAME, null, DB_VERSION);
         this.myContext = context;
-        Log.w("DBHelper", "(" + context.getFilesDir().getPath() + ") DB_RUTA:  (" + context.getDatabasePath(DB_NAME));
+        Log.i("DBHelper", "(" + context.getFilesDir().getPath() + ") DB_RUTA:  (" + context.getDatabasePath(DB_NAME));
         DB_RUTA = context.getDatabasePath(DB_NAME).toString();
     }
 
@@ -139,6 +159,9 @@ public class DBHelper extends SQLiteOpenHelper
                 case 2:
                     db.execSQL(CREAR_TABLA_PEDIDOS_EDITAR);
                     db.execSQL(CREAR_TABLA_PEDIDOS_DETALLES_EDITAR);
+                    break;
+                case 3:
+                    db.execSQL(ALTER_TABLE_PRODUCTO_ADDDESTACADO);
                     break;
             }
             upgradeTo++;

@@ -29,6 +29,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
+import android.widget.Switch;
 import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -60,23 +61,24 @@ import java.util.List;
 public class AgregarProducto extends AppCompatActivity
 {
     public static Activity fa;
-    private final String TAG = "AgregarProducto";
-    private final int PICK_IMAGE_REQUEST = 1;
+    private final String TAG                = "AgregarProducto";
+    private final int    PICK_IMAGE_REQUEST = 1;
     private String  usuario;
     private Context contexto;
     private Bitmap imagen_cargada = null;
-    private ProgressDialog pDialog;
-    private DBAdapter manager;
-    private Spinner sp_color;
+    private ProgressDialog     pDialog;
+    private DBAdapter          manager;
+    private Spinner            sp_color;
     private List<List<String>> contenedor_colores, contenedor_tipos, contenedor_tallas;
     private Spinner talla, tipo;
     private ArrayList<Integer> ids_tabla;
-    private Button btn_agregar_producto, btn_agregar_tipo, btn_agregar_talla, btn_agregar_color,
-    btn_editar_tipo, btn_editar_talla, btn_editar_color;
+    private Button             btn_agregar_producto, btn_agregar_tipo, btn_agregar_talla, btn_agregar_color,
+            btn_editar_tipo, btn_editar_talla, btn_editar_color;
     private String current_talla, current_tipo, current_color;
     private String idTipoSeleccionado;
     private String idTallaSeleccionada;
     private String idColorSeleccionado;
+    private Switch destacado_seleccionado;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -98,13 +100,13 @@ public class AgregarProducto extends AppCompatActivity
         spinnersActions();
 
         //if(desdeTipo)
-            seleccionarTipo(idTipoSeleccionado);
+        seleccionarTipo(idTipoSeleccionado);
 
         //if(desdeTalla)
-            seleccionarTalla(idTallaSeleccionada);
+        seleccionarTalla(idTallaSeleccionada);
 
         //if(desdeColor)
-            seleccionarColor(idColorSeleccionado);
+        seleccionarColor(idColorSeleccionado);
     }
 
     /**
@@ -146,11 +148,12 @@ public class AgregarProducto extends AppCompatActivity
 
     /**
      * Selecciona el tipo de producto por defecto.
+     *
      * @param id ID del tipo de producto.
      */
     private void seleccionarTipo(String id)
     {
-        if(id!=null)
+        if (id != null)
         {
             Log.i(TAG, "Seleccionando tipo..");
             int pos = buscarPosicion(id, contenedor_tipos);
@@ -160,11 +163,12 @@ public class AgregarProducto extends AppCompatActivity
 
     /**
      * Selecciona la talla del producto por defecto.
+     *
      * @param id ID de la talla del producto.
      */
     private void seleccionarTalla(String id)
     {
-        if(id!=null)
+        if (id != null)
         {
             Log.i(TAG, "Seleccionando talla..");
             int pos = buscarPosicion(id, contenedor_tallas);
@@ -174,11 +178,12 @@ public class AgregarProducto extends AppCompatActivity
 
     /**
      * Selecciona el color de producto por defecto.
+     *
      * @param id ID del color de producto.
      */
     private void seleccionarColor(String id)
     {
-        if(id!=null)
+        if (id != null)
         {
             Log.i(TAG, "Seleccionando color..");
             int pos = buscarPosicion(id, contenedor_colores);
@@ -188,16 +193,17 @@ public class AgregarProducto extends AppCompatActivity
 
     /**
      * Busca la posicion de un elemento dentro de una Array de listas (String)
-     * @param id Elemento a buscar
+     *
+     * @param id         Elemento a buscar
      * @param contenedor Array de Array en el cual se buscara el elemento.
      * @return Retorna la posicion del elemento encontrado.
      */
     private int buscarPosicion(String id, List<List<String>> contenedor)
     {
-        for(int i=0; i< contenedor.get(0).size(); i++)
+        for (int i = 0; i < contenedor.get(0).size(); i++)
         {
-            if(contenedor.get(0).get(i).equals(id))
-                return i+1;
+            if (contenedor.get(0).get(i).equals(id))
+                return i + 1;
         }
         return -1;
     }
@@ -208,25 +214,31 @@ public class AgregarProducto extends AppCompatActivity
      */
     private void buttonsActions()
     {
-        btn_agregar_producto.setOnClickListener(new View.OnClickListener() {
+        btn_agregar_producto.setOnClickListener(new View.OnClickListener()
+        {
             @Override
-            public void onClick(View v) {
+            public void onClick(View v)
+            {
                 if (camposValidados())
                 {
                     AlertDialog.Builder dialog = new AlertDialog.Builder(AgregarProducto.this);
 
                     dialog.setMessage(R.string.confirmacion_agregar_producto);
                     dialog.setCancelable(false);
-                    dialog.setPositiveButton("Si", new DialogInterface.OnClickListener() {
+                    dialog.setPositiveButton("Si", new DialogInterface.OnClickListener()
+                    {
                         @Override
-                        public void onClick(DialogInterface dialog, int which) {
+                        public void onClick(DialogInterface dialog, int which)
+                        {
                             agregarProducto();
                         }
                     });
 
-                    dialog.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    dialog.setNegativeButton("No", new DialogInterface.OnClickListener()
+                    {
                         @Override
-                        public void onClick(DialogInterface dialog, int which) {
+                        public void onClick(DialogInterface dialog, int which)
+                        {
                             dialog.cancel();
                         }
                     });
@@ -285,7 +297,7 @@ public class AgregarProducto extends AppCompatActivity
             @Override
             public void onClick(View v)
             {
-                if(tipo.getSelectedItemPosition() >0)
+                if (tipo.getSelectedItemPosition() > 0)
                 {
                     String id_tipo = contenedor_tipos.get(0).get(tipo.getSelectedItemPosition() - 1);
 
@@ -309,7 +321,7 @@ public class AgregarProducto extends AppCompatActivity
             @Override
             public void onClick(View v)
             {
-                if(talla.getSelectedItemPosition() >0)
+                if (talla.getSelectedItemPosition() > 0)
                 {
                     String id_talla = contenedor_tallas.get(0).get(talla.getSelectedItemPosition() - 1);
 
@@ -333,7 +345,7 @@ public class AgregarProducto extends AppCompatActivity
             @Override
             public void onClick(View v)
             {
-                if(sp_color.getSelectedItemPosition() >0)
+                if (sp_color.getSelectedItemPosition() > 0)
                 {
                     String id_color = contenedor_colores.get(0).get(sp_color.getSelectedItemPosition() - 1);
 
@@ -360,9 +372,11 @@ public class AgregarProducto extends AppCompatActivity
     private void initImageView()
     {
         ImageView seleccion_img_producto = (ImageView) findViewById(R.id.seleccion_img_producto);
-        seleccion_img_producto.setOnClickListener(new View.OnClickListener() {
+        seleccion_img_producto.setOnClickListener(new View.OnClickListener()
+        {
             @Override
-            public void onClick(View v) {
+            public void onClick(View v)
+            {
                 Intent intent = new Intent();
                 intent.setType("image/*");
                 intent.setAction(Intent.ACTION_GET_CONTENT);
@@ -376,19 +390,20 @@ public class AgregarProducto extends AppCompatActivity
      */
     private void spinnersActions()
     {
-        talla.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        talla.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener()
+        {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id)
             {
-                if(position>0)
+                if (position > 0)
                 {
-                    String numeracion = talla.getSelectedItem().toString().trim();
-                    int parentesisPos = Funciones.buscarCaracter(numeracion, '(');
+                    String numeracion    = talla.getSelectedItem().toString().trim();
+                    int    parentesisPos = Funciones.buscarCaracter(numeracion, '(');
                     numeracion = numeracion.substring(parentesisPos);
                     numeracion = numeracion.replace("(", "").replace(")", "");
-                    int guionPos = Funciones.buscarCaracter(numeracion, '-');
-                    int minimo = Integer.parseInt(numeracion.substring(0, guionPos));
-                    int maximo = Integer.parseInt(numeracion.substring(guionPos+1));
+                    int guionPos   = Funciones.buscarCaracter(numeracion, '-');
+                    int minimo     = Integer.parseInt(numeracion.substring(0, guionPos));
+                    int maximo     = Integer.parseInt(numeracion.substring(guionPos + 1));
                     int diferencia = maximo - minimo;
                     current_talla = String.valueOf(obtenerIDTalla());
                     Log.d(TAG, "Has seleccionado la numeracion: " + numeracion);
@@ -399,7 +414,7 @@ public class AgregarProducto extends AppCompatActivity
                 else
                 {
                     final LinearLayout bulto_numeracion = (LinearLayout) findViewById(R.id.bulto_numeracion);
-                    final LinearLayout cabecera = (LinearLayout) findViewById(R.id.cabecera_bulto_numeracion);
+                    final LinearLayout cabecera         = (LinearLayout) findViewById(R.id.cabecera_bulto_numeracion);
                     bulto_numeracion.removeAllViews();
                     cabecera.removeAllViews();
                     ids_tabla = new ArrayList<>();
@@ -408,39 +423,44 @@ public class AgregarProducto extends AppCompatActivity
             }
 
             @Override
-            public void onNothingSelected(AdapterView<?> parent) {
+            public void onNothingSelected(AdapterView<?> parent)
+            {
                 Log.d(TAG, "onNothingSelected");
             }
         });
 
-        tipo.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        tipo.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener()
+        {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id)
             {
-                if(position>0)
+                if (position > 0)
                     current_tipo = String.valueOf(obtenerIDTipo());
                 else
                     current_tipo = null;
             }
 
             @Override
-            public void onNothingSelected(AdapterView<?> parent) {
+            public void onNothingSelected(AdapterView<?> parent)
+            {
 
             }
         });
 
-        sp_color.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        sp_color.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener()
+        {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id)
             {
-                if(position>0)
+                if (position > 0)
                     current_color = String.valueOf(obtenerIDColor());
                 else
                     current_color = null;
             }
 
             @Override
-            public void onNothingSelected(AdapterView<?> parent) {
+            public void onNothingSelected(AdapterView<?> parent)
+            {
 
             }
         });
@@ -461,36 +481,41 @@ public class AgregarProducto extends AppCompatActivity
         btn_editar_tipo = (Button) findViewById(R.id.btn_editar_tipo);
         btn_editar_talla = (Button) findViewById(R.id.btn_editar_talla);
         btn_editar_color = (Button) findViewById(R.id.btn_editar_color);
+        destacado_seleccionado = (Switch) findViewById(R.id.destacado_switch);
+        destacado_seleccionado.setTextOn("Destacado");
+        destacado_seleccionado.setTextOff("Otros");
+        destacado_seleccionado.setChecked(false);
     }
 
     /**
      * Crea la tabla de numeracion de pares por talla.
-     * @param minimo Valor minimo de la talla. Por ej 26.
+     *
+     * @param minimo     Valor minimo de la talla. Por ej 26.
      * @param diferencia Diferencia entre el valor minimo y el valor maximo.
-     * Por ej (34-26) = 8 (Diferencia) ---> Numero de tallas
+     *                   Por ej (34-26) = 8 (Diferencia) ---> Numero de tallas
      */
     private void crearMiniTablaNumeracion(int minimo, int diferencia)
     {
-        TableRow.LayoutParams params = new TableRow.LayoutParams(0, LinearLayout.LayoutParams.MATCH_PARENT, 1f);
-        final LinearLayout bulto_numeracion = (LinearLayout) findViewById(R.id.bulto_numeracion);
-        final LinearLayout cabecera = (LinearLayout) findViewById(R.id.cabecera_bulto_numeracion);
-        String currentValue;
+        TableRow.LayoutParams params           = new TableRow.LayoutParams(0, LinearLayout.LayoutParams.MATCH_PARENT, 1f);
+        final LinearLayout    bulto_numeracion = (LinearLayout) findViewById(R.id.bulto_numeracion);
+        final LinearLayout    cabecera         = (LinearLayout) findViewById(R.id.cabecera_bulto_numeracion);
+        String                currentValue;
 
         bulto_numeracion.removeAllViews();
         cabecera.removeAllViews();
         ids_tabla = new ArrayList<>();
         int nextId = 0;
 
-        for(int i=0; i<=diferencia; i++)
+        for (int i = 0; i <= diferencia; i++)
         {
             currentValue = String.valueOf(minimo + i);
 
             final EditText componente = new EditText(contexto);
-            final TextView titulo = new TextView(contexto);
+            final TextView titulo     = new TextView(contexto);
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1)
             {
-                if(nextId!=0)
+                if (nextId != 0)
                 {
                     componente.setId(nextId);
                     ids_tabla.add(nextId);
@@ -502,14 +527,14 @@ public class AgregarProducto extends AppCompatActivity
                     ids_tabla.add(id);
                 }
 
-                if(i+1 <= diferencia)
+                if (i + 1 <= diferencia)
                 {
                     nextId = View.generateViewId();
                 }
             }
             else
             {
-                if(nextId!=0)
+                if (nextId != 0)
                 {
                     componente.setId(nextId);
                     ids_tabla.add(nextId);
@@ -521,7 +546,7 @@ public class AgregarProducto extends AppCompatActivity
                     ids_tabla.add(id);
                 }
 
-                if(i+1 <= diferencia)
+                if (i + 1 <= diferencia)
                 {
                     nextId = Funciones.generateViewId();
                 }
@@ -532,7 +557,7 @@ public class AgregarProducto extends AppCompatActivity
             componente.setInputType(InputType.TYPE_CLASS_NUMBER);
             componente.setLayoutParams(params);
             componente.setTextColor(Color.DKGRAY);
-            if(i+1 <= diferencia)
+            if (i + 1 <= diferencia)
                 componente.setNextFocusDownId(nextId);
             titulo.setLayoutParams(params);
             titulo.setGravity(Gravity.CENTER);
@@ -541,11 +566,15 @@ public class AgregarProducto extends AppCompatActivity
             titulo.setText(currentValue);
             titulo.setTextColor(Color.DKGRAY);
 
-            final Thread hilo = new Thread() {
+            final Thread hilo = new Thread()
+            {
                 @Override
-                public void run() {
-                    synchronized (this) {
-                        runOnUiThread(new Runnable() {
+                public void run()
+                {
+                    synchronized (this)
+                    {
+                        runOnUiThread(new Runnable()
+                        {
                             @Override
                             public void run()
                             {
@@ -565,7 +594,7 @@ public class AgregarProducto extends AppCompatActivity
 
     /**
      * Function to load the spinner data from SQLite database
-     * */
+     */
     private void loadSpinnerData()
     {
         contenedor_colores = manager.cargarListaColores();
@@ -586,6 +615,7 @@ public class AgregarProducto extends AppCompatActivity
 
     /**
      * Obtiene el ID del color a partir de contenedor con todos los colores.
+     *
      * @return ID del color.
      */
     private int obtenerIDColor()
@@ -596,6 +626,7 @@ public class AgregarProducto extends AppCompatActivity
 
     /**
      * Obtiene el ID del tipo de producto a partir de contenedor con todos los tipos.
+     *
      * @return ID del tipo de producto.
      */
     private int obtenerIDTipo()
@@ -606,6 +637,7 @@ public class AgregarProducto extends AppCompatActivity
 
     /**
      * Obtiene el ID de la talla a partir de contenedor con todas las tallas.
+     *
      * @return ID de la talla.
      */
     private int obtenerIDTalla()
@@ -625,26 +657,35 @@ public class AgregarProducto extends AppCompatActivity
         EditText et_modelo = (EditText) findViewById(R.id.modelo_producto);
         EditText et_precio = (EditText) findViewById(R.id.precio_producto);
 
-        String tipo = this.tipo.getSelectedItem().toString().trim(); // Obtengo por ej. "Torera"
-        String talla = this.talla.getSelectedItem().toString().substring(0, 1).trim(); // Obtengo por ej. "P (18-25)"
-        String color = this.sp_color.getSelectedItem().toString().trim();
-        String precio = et_precio.getText().toString().trim();
-        String modelo = et_modelo.getText().toString().trim();
-        String numeracion = this.talla.getSelectedItem().toString().substring(2).trim();
-        numeracion = numeracion.substring(0, numeracion.length());
+        String tipo       = this.tipo.getSelectedItem().toString().trim(); // Obtengo por ej. "Torera"
+        String talla      = this.talla.getSelectedItem().toString().substring(0, 1).trim(); // Obtengo por ej. "P (18-25)"
+        String color      = this.sp_color.getSelectedItem().toString().trim();
+        String precio     = et_precio.getText().toString().trim();
+        String modelo     = et_modelo.getText().toString().trim();
+        String numeracion = this.talla.getSelectedItem().toString().trim();
+
+        int start = Funciones.buscarCaracter(numeracion, '(') + 1;
+        int end   = Funciones.buscarCaracter(numeracion, ')');
+
+        if (start == -1) start = 0;
+        if (end == -1) end = numeracion.length();
+        numeracion = numeracion.substring(start, end);
 
         int idColor = obtenerIDColor();
-        int idTipo = obtenerIDTipo();
+        int idTipo  = obtenerIDTipo();
         int idTalla = obtenerIDTalla();
 
         String paresxtalla = obtenerParesxTallas();
 
         Log.i(TAG, "Los datos del producto a agregar son los siguientes: -Talla: " + talla + " -Tipo: " + tipo + " -Modelo: " + modelo + " -Precio: " + precio + " -Color: " + color + " -id_color: " + idColor + " -Numeracion: " + numeracion);
-        new async_crearProductoBD().execute(String.valueOf(idTalla), String.valueOf(idTipo), precio, String.valueOf(idColor), modelo, numeracion, paresxtalla);
+        new async_crearProductoBD().execute(String.valueOf(idTalla), String.valueOf(idTipo),
+                precio, String.valueOf(idColor), modelo, numeracion, paresxtalla,
+                destacado_seleccionado.isChecked() ? "1" : "0");
     }
 
     /**
      * Obtiene los pares por tallas de la mini tabla.
+     *
      * @return Pares por talla en un formato separado por comas.
      */
     private String obtenerParesxTallas()
@@ -654,33 +695,34 @@ public class AgregarProducto extends AppCompatActivity
         {
             EditText et = (EditText) findViewById(ids_tabla.get(i));
 
-            if(i==0)
+            if (i == 0)
                 res = et.getText().toString();
             else
-                res += ","+et.getText().toString();
+                res += "," + et.getText().toString();
         }
         return res;
     }
 
     /**
      * Validacion previa de campos para agregar un producto.
+     *
      * @return True si los campos estan correctos, False en caso contrario.
      */
     private boolean camposValidados()
     {
         Log.i(TAG, "Validando campos");
         EditText modelo = (EditText) findViewById(R.id.modelo_producto);
-        Spinner color = (Spinner) findViewById(R.id.color_producto);
+        Spinner  color  = (Spinner) findViewById(R.id.color_producto);
         EditText precio = (EditText) findViewById(R.id.precio_producto);
-        Spinner tipo = (Spinner) findViewById(R.id.tipo_producto);
-        Spinner talla = (Spinner) findViewById(R.id.talla_producto);
+        Spinner  tipo   = (Spinner) findViewById(R.id.tipo_producto);
+        Spinner  talla  = (Spinner) findViewById(R.id.talla_producto);
 
-        if( modelo.getText().toString().trim().equals("") )
+        if (modelo.getText().toString().trim().equals(""))
         {
             modelo.setError("Inserte un modelo!");
             return false;
         }
-        else if ( color.getSelectedItemPosition()==0 )
+        else if (color.getSelectedItemPosition() == 0)
         {
             TextView errorText = (TextView) color.getSelectedView();
             errorText.setError("");
@@ -688,12 +730,12 @@ public class AgregarProducto extends AppCompatActivity
             errorText.setText(R.string.error_color);//changes the selected item text to this
             return false;
         }
-        else if ( precio.getText().toString().trim().equals("") )
+        else if (precio.getText().toString().trim().equals(""))
         {
             precio.setError("Inserte un precio!");
             return false;
         }
-        else if ( tipo.getSelectedItemPosition()==0 )
+        else if (tipo.getSelectedItemPosition() == 0)
         {
             TextView errorText = (TextView) tipo.getSelectedView();
             errorText.setError("");
@@ -701,7 +743,7 @@ public class AgregarProducto extends AppCompatActivity
             errorText.setText(R.string.error_tipo);//changes the selected item text to this
             return false;
         }
-        else if( talla.getSelectedItemPosition()==0 )
+        else if (talla.getSelectedItemPosition() == 0)
         {
             TextView errorText = (TextView) talla.getSelectedView();
             errorText.setError("");
@@ -709,12 +751,12 @@ public class AgregarProducto extends AppCompatActivity
             errorText.setText(R.string.error_talla);//changes the selected item text to this
             return false;
         }
-        else if (imagen_cargada==null)
+        else if (imagen_cargada == null)
         {
             Toast.makeText(contexto, "Indique una imagen para el producto", Toast.LENGTH_LONG).show();
             return false;
         }
-        else if(!miniTablaEstaLlena())
+        else if (!miniTablaEstaLlena())
         {
             Toast.makeText(contexto, "Indique la cantidad de pares por talla", Toast.LENGTH_LONG).show();
             return false;
@@ -729,6 +771,7 @@ public class AgregarProducto extends AppCompatActivity
 
     /**
      * Determina si la mini-tabla de los pares por talla esta llena o no.
+     *
      * @return True si la tabla de cantidad x pares esta llena
      */
     private boolean miniTablaEstaLlena()
@@ -736,7 +779,7 @@ public class AgregarProducto extends AppCompatActivity
         for (int i = 0; i < ids_tabla.size(); i++)
         {
             EditText et = (EditText) findViewById(ids_tabla.get(i));
-            if(et.getText().toString().isEmpty())
+            if (et.getText().toString().isEmpty())
                 return false;
         }
         return true;
@@ -750,6 +793,7 @@ public class AgregarProducto extends AppCompatActivity
 
         if (requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK && data != null && data.getData() != null)
         {
+            Log.i(TAG, "Selecting..");
             Uri selectedImageUri = data.getData();
 
             // Buscamos la ruta de la imagen en cuestion.
@@ -761,42 +805,68 @@ public class AgregarProducto extends AppCompatActivity
             File file = new File(selectedImagePath);
 
             // Creamos una version minificada de la imagen.
-            imagen_cargada = Funciones.decodeSampledBitmapFromResource(file, 432, 324);
+            imagen_cargada = Funciones.decodeSampledBitmapFromResource(file, 2160, 1620);
+            final Bitmap img_preview = Funciones.decodeSampledBitmapFromResource(file, 432, 324);
 
-            // Asignamos la imagen preview para que el usuario la visualice.
-            ImageView imageView = (ImageView) findViewById(R.id.seleccion_img_producto);
-            imageView.setImageBitmap(imagen_cargada);
-
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN)
+            final Thread hilo1 = new Thread()
             {
-                imageView.setBackground(null);
-            }
+                @Override
+                public void run()
+                {
+                    synchronized (this)
+                    {
+                        runOnUiThread(new Runnable()
+                        {
+                            @Override
+                            public void run()
+                            {
+                                // Asignamos la imagen preview para que el usuario la visualice.
+                                ImageView imageView = (ImageView) findViewById(R.id.seleccion_img_producto);
+                                imageView.setImageBitmap(img_preview);
+
+                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN)
+                                {
+                                    imageView.setBackground(null);
+                                }
+                            }
+                        });
+                    }
+                }
+            };
+            hilo1.start();
+        }
+        else
+        {
+            Log.i(TAG, "null");
         }
     }
 
     /**
      * Crea el producto en la Base de datos
+     *
      * @param datos Datos con los cuales se creara el producto.
      * @return True si la operacion fue exitosa, false en caso contrario.
      */
-    private boolean crearProducto(String[] datos)
+    private long crearProducto(String[] datos)
     {
-        if( !existeProducto(datos[4]) )
+        if (!existeProducto(datos[4]))
         {
             long id_producto = manager.agregarProducto(datos);
-            Log.d(TAG, "ID_producto: " + id_producto);
+
             // Si el producto fue agregado exitosamente en BD, proceso a copiar la imagen..
-            return id_producto != -1 && guardarImagen(datos[4]);
+            if (id_producto != -1 && guardarImagen(datos[4]))
+                return id_producto; // El proceso salio bien
+            else
+                return -1; // Ocurrio un error agregando el producto o la imagen
         }
         else
         {
             Log.e(TAG, "Ya existe dicho producto!!");
-            return false;
+            return -2;
         }
     }
 
     /**
-     *
      * @param modelo Modelo que se quiere saber si existe
      * @return Devuelve true si el producto ya existe con el modelo ingresado
      */
@@ -808,20 +878,21 @@ public class AgregarProducto extends AppCompatActivity
 
     /**
      * Funcion para guardar una imagen del producto en el dispositivo movil.
+     *
      * @param nombre Nombre de la imagen.
      * @return True si la imagen fue guardada con exito, false en caso contrario.
      */
     private boolean guardarImagen(String nombre)
     {
         Log.i(TAG, "Se guardara una imagen con el nombre de: " + nombre);
-        File imagesFolder;
+        File                  imagesFolder;
         ByteArrayOutputStream bytes = new ByteArrayOutputStream();
 
-        if(imagen_cargada != null)
+        if (imagen_cargada != null)
         {
             imagen_cargada.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
         }
-        if(Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState()))
+        if (Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState()))
         {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.FROYO)
             {
@@ -843,9 +914,9 @@ public class AgregarProducto extends AppCompatActivity
             }
             try
             {
-                File myfile = File.createTempFile(nombre, Constantes.EXTENSION_IMG, imagesFolder);
-                FileOutputStream out = new FileOutputStream(myfile);
-                String temp_name = myfile.getName();
+                File             myfile    = File.createTempFile(nombre, Constantes.EXTENSION_IMG, imagesFolder);
+                FileOutputStream out       = new FileOutputStream(myfile);
+                String           temp_name = myfile.getName();
 
                 Log.i(TAG, "Temporal name: " + temp_name);
 
@@ -854,7 +925,7 @@ public class AgregarProducto extends AppCompatActivity
                 out.close();
 
                 File from = new File(imagesFolder, temp_name);
-                File to = new File(imagesFolder, nombre + Constantes.EXTENSION_IMG);
+                File to   = new File(imagesFolder, nombre + Constantes.EXTENSION_IMG);
 
                 if (from.renameTo(to))
                 {
@@ -889,14 +960,16 @@ public class AgregarProducto extends AppCompatActivity
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
+    public boolean onCreateOptionsMenu(Menu menu)
+    {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_agregar_productos, menu);
         return true;
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
+    public boolean onOptionsItemSelected(MenuItem item)
+    {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
@@ -986,7 +1059,7 @@ public class AgregarProducto extends AppCompatActivity
     private void mostrarGestionTipos()
     {
         Intent c = new Intent(AgregarProducto.this, GestionTipos.class);
-        c.putExtra("usuario",usuario);
+        c.putExtra("usuario", usuario);
         startActivity(c);
     }
 
@@ -996,7 +1069,7 @@ public class AgregarProducto extends AppCompatActivity
     private void mostrarGestionTallas()
     {
         Intent c = new Intent(AgregarProducto.this, GestionTallas.class);
-        c.putExtra("usuario",usuario);
+        c.putExtra("usuario", usuario);
         startActivity(c);
     }
 
@@ -1006,7 +1079,7 @@ public class AgregarProducto extends AppCompatActivity
     private void mostrarGestionColores()
     {
         Intent c = new Intent(AgregarProducto.this, GestionColores.class);
-        c.putExtra("usuario",usuario);
+        c.putExtra("usuario", usuario);
         startActivity(c);
     }
 
@@ -1029,29 +1102,25 @@ public class AgregarProducto extends AppCompatActivity
         @Override
         protected String doInBackground(String... params)
         {
-            /*
-            talla=params[0];
-            tipo=params[1];
-            precio=params[2];
-            color=params[3];
-            modelo=params[4];
-            numeracion=params[5];
-            */
-
             try
             {
-                //enviamos y recibimos y analizamos los datos en segundo plano.
-                if (crearProducto(params))
+                long res = crearProducto(params);
+
+                if (res > 0)
                 {
-                    return "ok"; //login valido
+                    return "ok";
+                }
+                else if (res == -1)
+                {
+                    Log.d(TAG, "err");
+                    return "err";
                 }
                 else
                 {
-                    Log.d(TAG, "err");
-                    return "err"; //login invalido
+                    Log.d(TAG, "existe");
+                    return "existe";
                 }
             }
-
             catch (RuntimeException e)
             {
                 Log.d(TAG, "Error: " + e);
@@ -1064,23 +1133,27 @@ public class AgregarProducto extends AppCompatActivity
         {
             pDialog.dismiss();
 
-            if (result.equals("ok"))
+            switch (result)
             {
-                // Muestra al usuario un mensaje de operacion exitosa
-                Toast.makeText(contexto, "Producto agregado exitosamente!!", Toast.LENGTH_LONG).show();
+                case "ok":
+                    // Muestra al usuario un mensaje de operacion exitosa
+                    Toast.makeText(contexto, "Producto agregado exitosamente!!", Toast.LENGTH_LONG).show();
 
-                // Redirige a la pantalla de Home
-                Intent c = new Intent(AgregarProducto.this, ConsultarProductos.class);
-                c.putExtra("usuario", usuario);
-                startActivity(c);
-                ConsultarProductos.fa.finish();
+                    // Redirige
+                    Intent c = new Intent(AgregarProducto.this, ConsultarProductos.class);
+                    c.putExtra("usuario", usuario);
+                    startActivity(c);
+                    ConsultarProductos.fa.finish();
 
-                // Prevent the user to go back to this activity
-                finish();
-            }
-            else
-            {
-                Toast.makeText(contexto, "Hubo un error agregando el producto..", Toast.LENGTH_LONG).show();
+                    // Prevent the user to go back to this activity
+                    finish();
+                    break;
+                case "existe":
+                    Toast.makeText(contexto, "Ya existe un producto con dicho nombre..", Toast.LENGTH_LONG).show();
+                    break;
+                default:
+                    Toast.makeText(contexto, "Hubo un error agregando el producto..", Toast.LENGTH_LONG).show();
+                    break;
             }
         }
     }

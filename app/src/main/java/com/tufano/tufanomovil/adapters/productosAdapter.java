@@ -25,11 +25,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.tufano.tufanomovil.R;
-import com.tufano.tufanomovil.gestion.productos.EditarProductoDetalles;
+import com.tufano.tufanomovil.gestion.productos.EditarProducto;
 import com.tufano.tufanomovil.global.Constantes;
 import com.tufano.tufanomovil.global.Funciones;
 import com.tufano.tufanomovil.global.ImageLoader;
 import com.tufano.tufanomovil.global.TouchImageView;
+import com.tufano.tufanomovil.objetos.Producto;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -43,40 +44,27 @@ public class productosAdapter extends BaseAdapter
     private final  String         TAG      = "productosAdapter";
     public  ImageLoader imageLoader;
     private Context     contexto;
-    private List<List<String>> productos = new ArrayList<>();
+    private List<Producto> productos = new ArrayList<>();
     private Activity ac;
     private String   usuario;
 
-    public productosAdapter(Activity a, List<List<String>> datos, Context contexto, String usuario)
+    public productosAdapter(Activity a, List<Producto> datos, Context contexto, String usuario)
     {
         for (int i = 0; i < datos.size(); i++)
         {
-            List<String> p = new ArrayList<>();
-            p.add(datos.get(i).get(0)); // idProducto
-            p.add(datos.get(i).get(1)); // tallasData
-            p.add(datos.get(i).get(2)); // tiposData
-            p.add(datos.get(i).get(3)); // modelosData
-            p.add(datos.get(i).get(4)); // coloresData
-            p.add(datos.get(i).get(5)); // precioData
-            p.add(datos.get(i).get(6)); // numeracionData
-            p.add(datos.get(i).get(7)); // id_color
-            p.add(datos.get(i).get(8)); // estatus_producto
-            p.add(datos.get(i).get(9)); // paresxtalla
-
-            productos.add(p);
+            productos.add(datos.get(i));
         }
 
         ac = a;
-        //contexto = a.getApplicationContext();
         this.contexto = contexto;
         this.usuario = usuario;
         inflater = (LayoutInflater) a.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         imageLoader = new ImageLoader(contexto);
     }
 
-    public void add(List<String> producto)
+    public void add(Producto p)
     {
-        productos.add(producto);
+        productos.add(p);
         Log.i(TAG, "Producto agregado al adapter.");
     }
 
@@ -114,16 +102,16 @@ public class productosAdapter extends BaseAdapter
         final ImageView compartir  = (ImageView) vi.findViewById(R.id.compartir);
         //final ImageView imagen_full = (ImageView) vi.findViewById(R.id.photo_full);
 
-        final String id_producto         = productos.get(position).get(0);
-        final String talla_producto      = productos.get(position).get(1);
-        final String tipo_producto       = productos.get(position).get(2);
-        final String modelo_producto     = productos.get(position).get(3);
-        final String color_producto      = productos.get(position).get(4);
-        final String precio_producto     = productos.get(position).get(5);
-        final String numeracion_producto = productos.get(position).get(6);
-        final String id_color            = productos.get(position).get(7);
-        final String estatus_producto    = productos.get(position).get(8);
-        final String paresxtalla         = productos.get(position).get(9);
+        final String id_producto         = productos.get(position).getId_producto();
+        final String talla_producto      = productos.get(position).getNombreTalla();
+        final String tipo_producto       = productos.get(position).getNombreTipo();
+        final String modelo_producto     = productos.get(position).getModelo();
+        final String color_producto      = productos.get(position).getNombreColor();
+        final String precio_producto     = productos.get(position).getPrecio();
+        final String numeracion_producto = productos.get(position).getNumeracion();
+        final String id_color            = productos.get(position).getId_color();
+        final String estatus_producto    = productos.get(position).getEstatus();
+        final String paresxtalla         = productos.get(position).getPares_talla();
 
         //imageLoader.clearCache();
         imageLoader.DisplayImage(modelo_producto, imagen, 70, 70);
@@ -131,7 +119,7 @@ public class productosAdapter extends BaseAdapter
         tipo.setText(tipo_producto);
         modelo.setText(modelo_producto);
         color.setText(color_producto);
-        precio.setText(precio_producto);
+        precio.setText(Funciones.formatoPrecio(precio_producto));
         numeracion.setText(numeracion_producto);
 
         imagen.setOnClickListener(new View.OnClickListener()
@@ -203,7 +191,7 @@ public class productosAdapter extends BaseAdapter
                 /*dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT,
                         ViewGroup.LayoutParams.MATCH_PARENT);*/
 
-                dialog.getWindow().setLayout(800, 600);
+                dialog.getWindow().setLayout(800, 550);
                 /*WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
                 lp.copyFrom(dialog.getWindow().getAttributes());
                 lp.width = 800;
@@ -217,7 +205,7 @@ public class productosAdapter extends BaseAdapter
             @Override
             public void onClick(View v)
             {
-                Intent c = new Intent(ac, EditarProductoDetalles.class);
+                Intent c = new Intent(ac, EditarProducto.class);
                 c.putExtra("usuario", usuario);
                 c.putExtra("id_producto", id_producto);
                 c.putExtra("talla_producto", talla_producto);
@@ -439,11 +427,14 @@ public class productosAdapter extends BaseAdapter
 
             if (itemsSeleccionados.contains("Numeracion"))
             {
-                int pos = itemsSeleccionados.indexOf("Numeracion");
-                Log.d(TAG, "POS: " + pos);
-                int start = Funciones.buscarCaracter(datos.get(pos), '(');
+                int pos   = itemsSeleccionados.indexOf("Numeracion");
+                int start = Funciones.buscarCaracter(datos.get(pos), '(') + 1;
                 int end   = Funciones.buscarCaracter(datos.get(pos), ')');
-                datos.set(pos, datos.get(pos).substring(start + 1, end));
+
+                if (start == -1) start = 0;
+                if (end == -1) end = datos.get(pos).length();
+
+                datos.set(pos, datos.get(pos).substring(start, end));
             }
 
             for (int i = 0; i < itemsSeleccionados.size(); i++)
