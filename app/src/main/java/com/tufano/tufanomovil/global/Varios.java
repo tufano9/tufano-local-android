@@ -13,6 +13,7 @@ public class Varios
 {
     /**
      * Dialogo por defecto de base.
+     *
      * @param context Contexto de la clase.
      */
     @SuppressWarnings("unused")

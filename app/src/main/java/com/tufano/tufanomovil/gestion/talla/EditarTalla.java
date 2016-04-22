@@ -32,18 +32,18 @@ import com.tufano.tufanomovil.global.Funciones;
  */
 public class EditarTalla extends AppCompatActivity
 {
-    private Context contexto;
     private final String TAG = "EditarTalla";
-    private DBAdapter manager;
+    private Context        contexto;
+    private DBAdapter      manager;
     private ProgressDialog pDialog;
-    private String id_talla;
-    private String numeraciones, talla_producto;
-    private EditText talla;
+    private String         id_talla;
+    private String         numeraciones, talla_producto;
+    private EditText     talla;
     private NumberPicker lim_inf, lim_sup;
-    private String usuario;
+    private String  usuario;
     private boolean desdeProductos;
-    private String idTipoCreado;
-    private String idColorCreado;
+    private String  idTipoCreado;
+    private String  idColorCreado;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -104,13 +104,13 @@ public class EditarTalla extends AppCompatActivity
             {
                 if (source instanceof SpannableStringBuilder)
                 {
-                    SpannableStringBuilder sourceAsSpannableBuilder = (SpannableStringBuilder)source;
+                    SpannableStringBuilder sourceAsSpannableBuilder = (SpannableStringBuilder) source;
                     for (int i = end - 1; i >= start; i--)
                     {
                         char currentChar = source.charAt(i);
                         if (!Character.isLetterOrDigit(currentChar) && !Character.isSpaceChar(currentChar))
                         {
-                            sourceAsSpannableBuilder.delete(i, i+1);
+                            sourceAsSpannableBuilder.delete(i, i + 1);
                         }
                     }
                     return source;
@@ -148,12 +148,13 @@ public class EditarTalla extends AppCompatActivity
                 if (camposValidados())
                 {
                     talla.setError(null);
-                    final String newTalla = Funciones.capitalizeWords(talla.getText().toString().trim());
-                    AlertDialog.Builder dialog = new AlertDialog.Builder(EditarTalla.this);
+                    final String        newTalla = Funciones.capitalizeWords(talla.getText().toString().trim());
+                    AlertDialog.Builder dialog   = new AlertDialog.Builder(EditarTalla.this);
 
                     dialog.setMessage(R.string.confirmacion_editar_talla);
                     dialog.setCancelable(false);
-                    dialog.setPositiveButton("SI", new DialogInterface.OnClickListener() {
+                    dialog.setPositiveButton("SI", new DialogInterface.OnClickListener()
+                    {
                         @Override
                         public void onClick(DialogInterface dialog, int which)
                         {
@@ -202,7 +203,7 @@ public class EditarTalla extends AppCompatActivity
 
         if (numeraciones != null)
         {
-            numeraciones = numeraciones .replace("(", "") .replace(")", "");
+            numeraciones = numeraciones.replace("(", "").replace(")", "");
         }
     }
 
@@ -244,15 +245,16 @@ public class EditarTalla extends AppCompatActivity
     private void cargarValoresPrevios()
     {
         int posicion_guion = Funciones.buscarCaracter(numeraciones, '-');
-        int min = Integer.parseInt(numeraciones.substring(0, posicion_guion));
-        int max = Integer.parseInt(numeraciones.substring(posicion_guion+1));
-        talla.setText( talla_producto );
+        int min            = Integer.parseInt(numeraciones.substring(0, posicion_guion));
+        int max            = Integer.parseInt(numeraciones.substring(posicion_guion + 1));
+        talla.setText(talla_producto);
         lim_inf.setValue(min);
         lim_sup.setValue(max);
     }
 
     /**
      * Valida los campos introducidos por el usuario antes de la edicion.
+     *
      * @return True si los campos estan correctos, False en caso contrario.
      */
     private boolean camposValidados()
@@ -263,7 +265,7 @@ public class EditarTalla extends AppCompatActivity
     /**
      * Clase para editar una talla en BD bajo segundo plano.
      */
-    class async_editarTallaBD extends AsyncTask< String, String, String >
+    class async_editarTallaBD extends AsyncTask<String, String, String>
     {
         String id, nombre, numeracion;
 
@@ -292,7 +294,7 @@ public class EditarTalla extends AppCompatActivity
                 // Si el campo de la talla no cambio
                 boolean campo_cambio = !talla_producto.equals(obtenerTallaIngresada());
 
-                if ( result == 0 ) // No hubieron modificaciones
+                if (result == 0) // No hubieron modificaciones
                 {
                     Log.d(TAG, "err");
                     return "err";
@@ -300,7 +302,7 @@ public class EditarTalla extends AppCompatActivity
                 // Ya existe y el campo cambio, puede darse el caso de que exista pero el campo no
                 // cambio, es decir, cuando solo modifique la numeracion pero deje intacto el nombre
                 // de la talla..
-                else if ( result == -2 && campo_cambio)
+                else if (result == -2 && campo_cambio)
                 {
                     Log.d(TAG, "existente");
                     return "existente";
@@ -329,7 +331,7 @@ public class EditarTalla extends AppCompatActivity
                     // producto y necesite editar una talla, presione el boton y me redirigio a esta
                     // activity, la cual al acabar el proceso me devolvera a mi activity de productos
                     // con la nueva talla editada y seleccionada.
-                    if(desdeProductos)
+                    if (desdeProductos)
                     {
                         // Muestra al usuario un mensaje de operacion exitosa
                         Toast.makeText(contexto, "Talla editada exitosamente!!", Toast.LENGTH_LONG).show();
@@ -351,9 +353,9 @@ public class EditarTalla extends AppCompatActivity
                         Toast.makeText(contexto, "Talla editada exitosamente!!", Toast.LENGTH_LONG).show();
 
                         // Redirige
-                        Intent c = new Intent(EditarTalla.this, GestionTallas.class);
+                        Intent c = new Intent(EditarTalla.this, ConsultarTallas.class);
                         startActivity(c);
-                        GestionTallas.fa.finish();
+                        ConsultarTallas.fa.finish();
                     }
 
                     // Prevent the user to go back to this activity
@@ -375,15 +377,16 @@ public class EditarTalla extends AppCompatActivity
 
         /**
          * Funcion encargada de editar la talla en BD
-         * @param id ID de la talla a editar
-         * @param nombre Nombre de la talla con el cual se editara.
+         *
+         * @param id         ID de la talla a editar
+         * @param nombre     Nombre de la talla con el cual se editara.
          * @param numeracion Numeracion que sustituira a la antigua.
          * @return -2 si la talla ya existe, -1 si ocurrio un error, o un valor positivo si la
          * operacion fue exitosa.
          */
         private long editarTalla(String id, String nombre, String numeracion)
         {
-            if( !existeTalla(nombre, id))
+            if (!existeTalla(nombre, id))
             {
                 long id_talla = manager.editarTallas(id, nombre, numeracion);
                 Log.d(TAG, "Columnas modificadas: " + id_talla);
@@ -398,6 +401,7 @@ public class EditarTalla extends AppCompatActivity
 
         /**
          * Comprueba que la talla no exista en la BD.
+         *
          * @param nombre Talla que se quiere saber si existe
          * @return Devuelve true si la talla ya existe con el nombre ingresado y un ID distinto.
          * Es decir, no toma en cuenta la talla editada actualmente.

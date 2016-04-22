@@ -27,16 +27,16 @@ import com.tufano.tufanomovil.global.Funciones;
  */
 public class EditarColor extends AppCompatActivity
 {
-    private Context contexto;
     private final String TAG = "EditarColor";
-    private DBAdapter manager;
+    private Context        contexto;
+    private DBAdapter      manager;
     private ProgressDialog pDialog;
-    private EditText nombre_color_editar;
-    private String id_color, colores_producto;
-    private String usuario;
+    private EditText       nombre_color_editar;
+    private String         id_color, colores_producto;
+    private String  usuario;
     private boolean desdeProductos;
-    private String idTipoCreado;
-    private String idTallaCreado;
+    private String  idTipoCreado;
+    private String  idTallaCreado;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -60,7 +60,7 @@ public class EditarColor extends AppCompatActivity
      */
     private void obtenerNombreColor()
     {
-        Cursor cursor = manager.buscarColor_ID(id_color);
+        Cursor cursor = manager.buscarColorxID(id_color);
 
         if (cursor.moveToFirst())
         {
@@ -86,20 +86,22 @@ public class EditarColor extends AppCompatActivity
     private void initButtons()
     {
         Button btn_editar_color = (Button) findViewById(R.id.btn_editar_color);
-        btn_editar_color.setOnClickListener(new View.OnClickListener() {
+        btn_editar_color.setOnClickListener(new View.OnClickListener()
+        {
             @Override
             public void onClick(View v)
             {
                 if (camposValidados())
                 {
                     nombre_color_editar.setError(null);
-                    final String newColor = Funciones.capitalizeWords(nombre_color_editar.getText().toString().trim());
-                    AlertDialog.Builder dialog = new AlertDialog.Builder(EditarColor.this);
+                    final String        newColor = Funciones.capitalizeWords(nombre_color_editar.getText().toString().trim());
+                    AlertDialog.Builder dialog   = new AlertDialog.Builder(EditarColor.this);
 
                     dialog.setTitle(R.string.confirmacion_editar_color);
-                    dialog.setMessage("Se editara el color: \"" + colores_producto+"\" a: \"" + newColor+"\"");
+                    dialog.setMessage("Se editara el color: \"" + colores_producto + "\" a: \"" + newColor + "\"");
                     dialog.setCancelable(false);
-                    dialog.setPositiveButton("SI", new DialogInterface.OnClickListener() {
+                    dialog.setPositiveButton("SI", new DialogInterface.OnClickListener()
+                    {
                         @Override
                         public void onClick(DialogInterface dialog, int which)
                         {
@@ -160,6 +162,7 @@ public class EditarColor extends AppCompatActivity
 
     /**
      * Valida los campos antes de editar el color.
+     *
      * @return True si los campos son correctos, false en caso contrario.
      */
     private boolean camposValidados()
@@ -170,7 +173,7 @@ public class EditarColor extends AppCompatActivity
     /**
      * Clase para editar en segundo plano un color en la BD.
      */
-    class async_editarColorBD extends AsyncTask< String, String, String >
+    class async_editarColorBD extends AsyncTask<String, String, String>
     {
         String id, nombre;
 
@@ -197,12 +200,12 @@ public class EditarColor extends AppCompatActivity
 
                 //boolean campo_cambio = !talla_producto.equals(obtenerTipoIngresado());
 
-                if ( result == 0 ) // No hubieron modificaciones
+                if (result == 0) // No hubieron modificaciones
                 {
                     Log.d(TAG, "err");
                     return "err";
                 }
-                else if ( result == -2 )
+                else if (result == -2)
                 {
                     Log.d(TAG, "existente");
                     return "existente";
@@ -227,7 +230,7 @@ public class EditarColor extends AppCompatActivity
             switch (result)
             {
                 case "ok":
-                    if(desdeProductos)
+                    if (desdeProductos)
                     {
                         // Muestra al usuario un mensaje de operacion exitosa
                         Toast.makeText(contexto, "Color editado exitosamente!!", Toast.LENGTH_LONG).show();
@@ -248,9 +251,9 @@ public class EditarColor extends AppCompatActivity
                         Toast.makeText(contexto, "Color editado exitosamente!!", Toast.LENGTH_LONG).show();
 
                         // Redirige
-                        Intent c = new Intent(EditarColor.this, GestionColores.class);
+                        Intent c = new Intent(EditarColor.this, ConsultarColores.class);
                         startActivity(c);
-                        GestionColores.fa.finish();
+                        ConsultarColores.fa.finish();
                     }
 
                     // Prevent the user to go back to this activity
@@ -267,14 +270,15 @@ public class EditarColor extends AppCompatActivity
 
         /**
          * Edita un color en la BD.
-         * @param id ID del color a editar.
+         *
+         * @param id     ID del color a editar.
          * @param nombre Nombre del color que reemplazara el antiguo.
          * @return -1 si hubo un error, -2 si el color ya existe, un valor positivo (ID) en caso
          * de una operacion exitosa.
          */
         private long editarColor(String id, String nombre)
         {
-            if( !existeColor(nombre, id))
+            if (!existeColor(nombre, id))
             {
                 long id_color = manager.editarColores(id, nombre);
                 Log.d(TAG, "Columnas modificadas: " + id_color);
@@ -294,6 +298,7 @@ public class EditarColor extends AppCompatActivity
 
         /**
          * Verifica si existe el color en la base de datos, tomando en cuenta el nombre insertado.
+         *
          * @param nombre Color que se quiere saber si existe
          * @return Devuelve true si el color ya existe con el nombre ingresado
          */

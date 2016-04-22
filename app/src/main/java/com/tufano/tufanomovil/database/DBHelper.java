@@ -56,17 +56,16 @@ public class DBHelper extends SQLiteOpenHelper
 
     /**
      * Constructor
-     *
+     * <p>
      * Toma referencia hacia el contexto de la aplicación que lo invoca para poder acceder a los
      * 'assets' y 'resources' de la aplicación.
-     *
+     * <p>
      * Crea un objeto DBOpenHelper que nos permitirá controlar la apertura de la base de datos.
-     *
+     * <p>
      * Constructor should be private to prevent direct instantiation.
      * make call to static factory method "getInstance()" instead.
      *
      * @param context Contexto de la app
-     *
      */
     private DBHelper(Context context)
     {
@@ -116,7 +115,7 @@ public class DBHelper extends SQLiteOpenHelper
         try
         {
             // Crea un key aleatoriamente que sera usado para la encriptacion.
-            String key = Funciones.generateKey();
+            String key              = Funciones.generateKey();
             String default_password = "1234";
 
             //Encripta el password por defecto utilizando el key previamente generado.
@@ -133,7 +132,7 @@ public class DBHelper extends SQLiteOpenHelper
             valores.put(CN_ESTADO, "Carabobo");
             valores.put(CN_KEY, key);
 
-            if (db.insert(TABLA_USUARIO, null, valores)==-1)
+            if (db.insert(TABLA_USUARIO, null, valores) == -1)
                 Log.e(TAG, "El usuario por defecto no pudo ser creado..");
             else
                 Log.i(TAG, "El usuario por defecto fue creado exitosamente..");
@@ -148,12 +147,12 @@ public class DBHelper extends SQLiteOpenHelper
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion)
     {
         // Actualizar la base de datos (Tomando en cuenta la version)
-        Log.i("DBHelper", "Se actualizara la BD desde la version "+oldVersion+", a la version "+newVersion);
+        Log.i("DBHelper", "Se actualizara la BD desde la version " + oldVersion + ", a la version " + newVersion);
 
         int upgradeTo = oldVersion + 1;
         while (upgradeTo <= newVersion)
         {
-            Log.i("DBHelper", "Actualizando BD a la version "+upgradeTo);
+            Log.i("DBHelper", "Actualizando BD a la version " + upgradeTo);
             switch (upgradeTo)
             {
                 case 2:
@@ -171,14 +170,15 @@ public class DBHelper extends SQLiteOpenHelper
     /**
      * Crea una base de datos vacía en el sistema y la reescribe con nuestro fichero de base de datos.
      */
-    private void createDataBase() {
+    private void createDataBase()
+    {
         boolean dbExist = checkDataBase();
-        Log.i("DBHelper","createDataBase!");
+        Log.i("DBHelper", "createDataBase!");
 
         if (dbExist)
         {
             //la base de datos existe y no hacemos nada.
-            Log.i("DBHelper","dbExist!");
+            Log.i("DBHelper", "dbExist!");
         }
         else
         {
@@ -205,7 +205,7 @@ public class DBHelper extends SQLiteOpenHelper
      */
     private boolean checkDataBase()
     {
-        Log.i("checkDataBase","INTRO");
+        Log.i("checkDataBase", "INTRO");
         SQLiteDatabase checkDB = null;
 
         try
@@ -231,7 +231,7 @@ public class DBHelper extends SQLiteOpenHelper
      */
     private void copyDataBase() throws IOException
     {
-        Log.i("copyDataBase","INTRO");
+        Log.i("copyDataBase", "INTRO");
         //Abrimos el fichero de base de datos como entrada
         InputStream myInput = myContext.getAssets().open(DB_NAME);
 
@@ -243,7 +243,7 @@ public class DBHelper extends SQLiteOpenHelper
 
         //Transferimos los bytes desde el fichero de entrada al de salida
         byte[] buffer = new byte[1024];
-        int length;
+        int    length;
 
         while ((length = myInput.read(buffer)) > 0)
         {

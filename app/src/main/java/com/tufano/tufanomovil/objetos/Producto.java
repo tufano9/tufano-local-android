@@ -110,7 +110,7 @@ public class Producto
     {
         //Log.i(TAG, "Buscando color con id: "+id_color);
         DBAdapter manager = new DBAdapter(contexto);
-        Cursor    cursor  = manager.buscarColor_ID(id_color);
+        Cursor    cursor  = manager.buscarColorxID(id_color);
         for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor.moveToNext())
         {
 

@@ -79,13 +79,14 @@ public class AgregarColor extends AppCompatActivity
                 if (camposValidados())
                 {
                     color.setError(null);
-                    final String newColor = Funciones.capitalizeWords(color.getText().toString().trim());
-                    AlertDialog.Builder dialog = new AlertDialog.Builder(AgregarColor.this);
+                    final String        newColor = Funciones.capitalizeWords(color.getText().toString().trim());
+                    AlertDialog.Builder dialog   = new AlertDialog.Builder(AgregarColor.this);
 
                     dialog.setTitle(R.string.confirmacion_agregar_color);
                     dialog.setMessage("Se agregara el siguiente color: " + newColor);
                     dialog.setCancelable(false);
-                    dialog.setPositiveButton("SI", new DialogInterface.OnClickListener() {
+                    dialog.setPositiveButton("SI", new DialogInterface.OnClickListener()
+                    {
                         @Override
                         public void onClick(DialogInterface dialog, int which)
                         {
@@ -152,6 +153,7 @@ public class AgregarColor extends AppCompatActivity
 
     /**
      * Valida los campos antes de agregar el color.
+     *
      * @return True si los campos son correctos, false en caso contrario.
      */
     private boolean camposValidados()
@@ -162,7 +164,7 @@ public class AgregarColor extends AppCompatActivity
     /**
      * Clase para agregar en segundo plano un color a la BD.
      */
-    class async_agregarColorBD extends AsyncTask< String, String, String >
+    class async_agregarColorBD extends AsyncTask<String, String, String>
     {
         String color;
 
@@ -186,12 +188,12 @@ public class AgregarColor extends AppCompatActivity
             {
                 long result = agregarColor(color);
 
-                if ( result == -1 )
+                if (result == -1)
                 {
                     Log.d(TAG, "err");
                     return "err";
                 }
-                else if ( result == -2 )
+                else if (result == -2)
                 {
                     Log.d(TAG, "existente");
                     return "existente";
@@ -217,7 +219,7 @@ public class AgregarColor extends AppCompatActivity
             switch (result)
             {
                 case "ok":
-                    if(desdeProductos)
+                    if (desdeProductos)
                     {
                         // Muestra al usuario un mensaje de operacion exitosa
                         Toast.makeText(contexto, "Tipo agregado exitosamente!!", Toast.LENGTH_LONG).show();
@@ -238,10 +240,10 @@ public class AgregarColor extends AppCompatActivity
                         Toast.makeText(contexto, "Color agregado exitosamente!!", Toast.LENGTH_LONG).show();
 
                         // Redirige
-                        Intent c = new Intent(AgregarColor.this, GestionColores.class);
+                        Intent c = new Intent(AgregarColor.this, ConsultarColores.class);
                         c.putExtra("usuario", usuario);
                         startActivity(c);
-                        GestionColores.fa.finish();
+                        ConsultarColores.fa.finish();
                     }
 
                     // Prevent the user to go back to this activity
@@ -258,13 +260,14 @@ public class AgregarColor extends AppCompatActivity
 
         /**
          * Metodo para agregar un color en la BD.
+         *
          * @param nombre Nombre del color a agregar, por ej "Blanco Perlado".
          * @return -1 en caso de error, -2 en caso de que el color ya exista, un valor positivo (ID)
          * si la operacion fue exitosa.
          */
         private long agregarColor(String nombre)
         {
-            if( !existeColor(nombre))
+            if (!existeColor(nombre))
             {
                 // Agrega el color a la BD.
                 long id_talla = manager.agregarColores(nombre);
@@ -280,6 +283,7 @@ public class AgregarColor extends AppCompatActivity
 
         /**
          * Metodo encargado de verificar si existe un color dado en la BD, por medio de su nombre.
+         *
          * @param color Color que se quiere saber si existe
          * @return Devuelve true si el color ya existe con el nombre ingresado
          */

@@ -28,6 +28,8 @@ import com.tufano.tufanomovil.database.DBAdapter;
 import com.tufano.tufanomovil.gestion.pedidos.SeleccionarCliente;
 import com.tufano.tufanomovil.global.Funciones;
 
+import java.util.List;
+
 /**
  * Created por Usuario Tufano on 19/01/2016.
  */
@@ -35,10 +37,10 @@ public class EditarClienteDetalles extends AppCompatActivity
 {
     private final String TAG = "EditarClienteDetalles";
     private String usuario, id_cliente, rs, rif, estados, tlf, estatus, mail, dir;
-    private Context contexto;
+    private Context        contexto;
     private ProgressDialog pDialog;
-    private DBAdapter manager;
-    private Spinner sp_rif, sp_estado;
+    private DBAdapter      manager;
+    private Spinner        sp_rif, sp_estado;
     private EditText razon_social, rif1, rif2, telefono, email, direccion;
     private boolean desdePedidos;
 
@@ -66,9 +68,11 @@ public class EditarClienteDetalles extends AppCompatActivity
      */
     private void initListeners()
     {
-        rif1.addTextChangedListener(new TextWatcher() {
+        rif1.addTextChangedListener(new TextWatcher()
+        {
             @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            public void beforeTextChanged(CharSequence s, int start, int count, int after)
+            {
             }
 
             @Override
@@ -81,7 +85,8 @@ public class EditarClienteDetalles extends AppCompatActivity
             }
 
             @Override
-            public void afterTextChanged(Editable s) {
+            public void afterTextChanged(Editable s)
+            {
             }
         });
     }
@@ -92,25 +97,31 @@ public class EditarClienteDetalles extends AppCompatActivity
     private void initButtons()
     {
         Button editar = (Button) findViewById(R.id.btn_editar_cliente);
-        editar.setOnClickListener(new View.OnClickListener() {
+        editar.setOnClickListener(new View.OnClickListener()
+        {
             @Override
-            public void onClick(View v) {
+            public void onClick(View v)
+            {
                 if (camposValidados())
                 {
                     AlertDialog.Builder dialog = new AlertDialog.Builder(EditarClienteDetalles.this);
 
                     dialog.setMessage(R.string.confirmacion_editar_cliente);
                     dialog.setCancelable(false);
-                    dialog.setPositiveButton("Si", new DialogInterface.OnClickListener() {
+                    dialog.setPositiveButton("Si", new DialogInterface.OnClickListener()
+                    {
                         @Override
-                        public void onClick(DialogInterface dialog, int which) {
+                        public void onClick(DialogInterface dialog, int which)
+                        {
                             editarCliente();
                         }
                     });
 
-                    dialog.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    dialog.setNegativeButton("No", new DialogInterface.OnClickListener()
+                    {
                         @Override
-                        public void onClick(DialogInterface dialog, int which) {
+                        public void onClick(DialogInterface dialog, int which)
+                        {
                             dialog.cancel();
                         }
                     });
@@ -142,26 +153,21 @@ public class EditarClienteDetalles extends AppCompatActivity
     private void getExtrasVar()
     {
         Bundle bundle = getIntent().getExtras();
-        // Obtiene el usuario actualmente en el sistema
         usuario = bundle.getString("usuario");
-
-        // Obtiene el id del cliente a consultar
         id_cliente = bundle.getString("id_cliente");
 
         // Obtiene un valor booleano que indicara si este activity fue instanciado a traves del
         // activity de pedidos.
         desdePedidos = bundle.getBoolean("desdePedidos");
 
-        // TODO: USAR BD
-        /* Sacar esto de BD */
-        rs = bundle.getString("rs");
-        rif = bundle.getString("rif");
-        estados = bundle.getString("estados");
-        tlf = bundle.getString("tlf");
-        estatus = bundle.getString("estatus");
-        mail = bundle.getString("mail");
-        dir = bundle.getString("dir");
-        /* Sacar esto de BD */
+        List<String> datos = manager.cargarDatosClientes(id_cliente);
+        rs = datos.get(0);
+        rif = datos.get(1);
+        estados = datos.get(2);
+        tlf = datos.get(3);
+        mail = datos.get(4);
+        dir = datos.get(5);
+        estatus = datos.get(6);
     }
 
     /**
@@ -192,9 +198,9 @@ public class EditarClienteDetalles extends AppCompatActivity
         String rif = sp_rif.getSelectedItem().toString() + rif1.getText().toString().trim() + "-" +
                 rif2.getText().toString().trim();
         String estado = Funciones.capitalizeWords(sp_estado.getSelectedItem().toString().trim());
-        String tlf = telefono.getText().toString().trim();
-        String mail = email.getText().toString().trim();
-        String dir = Funciones.capitalizeWords(direccion.getText().toString().trim());
+        String tlf    = telefono.getText().toString().trim();
+        String mail   = email.getText().toString().trim();
+        String dir    = Funciones.capitalizeWords(direccion.getText().toString().trim());
         new async_editarClienteBD().execute(rs, rif, estado, tlf, mail, dir, estatus);
     }
 
@@ -309,7 +315,7 @@ public class EditarClienteDetalles extends AppCompatActivity
         direccion.setText(dir);
     }
 
-    class async_editarClienteBD extends AsyncTask< String, String, String >
+    class async_editarClienteBD extends AsyncTask<String, String, String>
     {
         @Override
         protected void onPreExecute()
@@ -362,7 +368,7 @@ public class EditarClienteDetalles extends AppCompatActivity
                     // Muestra al usuario un mensaje de operacion exitosa
                     Toast.makeText(contexto, "Cliente editado exitosamente!!", Toast.LENGTH_LONG).show();
 
-                    if(desdePedidos)
+                    if (desdePedidos)
                     {
                         // Redirige a la pantalla de Pedidos
                         Intent c = new Intent(EditarClienteDetalles.this, SeleccionarCliente.class);
@@ -395,7 +401,7 @@ public class EditarClienteDetalles extends AppCompatActivity
 
         private long editarCliente(String[] datos)
         {
-            if(!existeCliente( datos[0], datos[1], id_cliente) )
+            if (!existeCliente(datos[0], datos[1], id_cliente))
             {
                 // El cliente no existe, puedo continuar..
                 return manager.editarCliente(id_cliente, datos);
@@ -405,7 +411,7 @@ public class EditarClienteDetalles extends AppCompatActivity
                 String rifs = sp_rif.getSelectedItem().toString() + rif1.getText().toString().trim() + "-" +
                         rif2.getText().toString().trim();
                 // El cliente existe, valido si cambio el campo o se mantienen igual
-                if ( !razon_social.getText().toString().trim().equals(rs) || !rif.equals(rifs) )
+                if (!razon_social.getText().toString().trim().equals(rs) || !rif.equals(rifs))
                 {
                     Log.d(TAG, "El campo ingresado por el usuario cambio y por lo tanto ya tengo ese cliente");
                     //Log.d(TAG, "1-->"+razon_social.getText().toString().trim().equals(rs)+", 2-->"+rif.equals(rifs));
@@ -425,7 +431,7 @@ public class EditarClienteDetalles extends AppCompatActivity
         private boolean existeCliente(String rs, String rif, String id_cliente)
         {
             Cursor cursor = manager.cargarClientesNombre(rs, rif, id_cliente);
-            Log.d(TAG, "Existen "+cursor.getCount()+" clientes con esa razon social o rif..");
+            Log.d(TAG, "Existen " + cursor.getCount() + " clientes con esa razon social o rif..");
             return cursor.getCount() > 0;
         }
     }

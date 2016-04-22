@@ -39,18 +39,18 @@ import java.util.List;
  */
 public class EditarPerfil extends AppCompatActivity
 {
-    private String id_usuario;
-    private Context contexto;
-    private DBAdapter manager;
-    private final String TAG = "EditarPerfil";
     public static Activity fa;
-    private EditText nombre_usuario, apellido_usuario, email_usuario, telefono_usuario;
+    private final String TAG = "EditarPerfil";
+    private String    id_usuario;
+    private Context   contexto;
+    private DBAdapter manager;
+    private EditText  nombre_usuario, apellido_usuario, email_usuario, telefono_usuario;
     private EditText cedula_usuario, password, repassword;
-    private Spinner estado_usuario;
-    private Button editar_perfil;
+    private Spinner        estado_usuario;
+    private Button         editar_perfil;
     private ProgressDialog pDialog;
-    private CheckBox cb_cambiarPass;
-    private EditText newpassword_usuario;
+    private CheckBox       cb_cambiarPass;
+    private EditText       newpassword_usuario;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -117,31 +117,40 @@ public class EditarPerfil extends AppCompatActivity
      */
     private void initButtonAction()
     {
-        editar_perfil.setOnClickListener(new View.OnClickListener() {
+        editar_perfil.setOnClickListener(new View.OnClickListener()
+        {
             @Override
-            public void onClick(View v) {
-                if (camposValidados()) {
+            public void onClick(View v)
+            {
+                if (camposValidados())
+                {
                     AlertDialog.Builder dialog = new AlertDialog.Builder(EditarPerfil.this);
 
                     dialog.setTitle(R.string.confirmacion);
                     dialog.setMessage(R.string.confirmacion_editar_perfil);
                     dialog.setCancelable(false);
-                    dialog.setPositiveButton("SI", new DialogInterface.OnClickListener() {
+                    dialog.setPositiveButton("SI", new DialogInterface.OnClickListener()
+                    {
                         @Override
-                        public void onClick(DialogInterface dialog, int which) {
+                        public void onClick(DialogInterface dialog, int which)
+                        {
                             editarPerfil();
                         }
                     });
 
-                    dialog.setNegativeButton("NO", new DialogInterface.OnClickListener() {
+                    dialog.setNegativeButton("NO", new DialogInterface.OnClickListener()
+                    {
                         @Override
-                        public void onClick(DialogInterface dialog, int which) {
+                        public void onClick(DialogInterface dialog, int which)
+                        {
                             dialog.cancel();
                         }
                     });
 
                     dialog.show();
-                } else {
+                }
+                else
+                {
                     Toast.makeText(contexto, "¡Por favor ingrese todos los datos!", Toast.LENGTH_LONG).show();
                 }
             }
@@ -154,9 +163,11 @@ public class EditarPerfil extends AppCompatActivity
      */
     private void initCheckBoxAction()
     {
-        cb_cambiarPass.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+        cb_cambiarPass.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener()
+        {
             @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked)
+            {
                 if (isChecked)
                 {
                     repassword.setEnabled(true);
@@ -200,11 +211,11 @@ public class EditarPerfil extends AppCompatActivity
     private void loadData()
     {
         List<String> datosUsuario = manager.buscarUsuario_ID(id_usuario);
-        nombre_usuario.setText( datosUsuario.get(1) );
-        apellido_usuario.setText( datosUsuario.get(2) );
-        cedula_usuario.setText( datosUsuario.get(3) );
-        telefono_usuario.setText( datosUsuario.get(4) );
-        email_usuario.setText( datosUsuario.get(5) );
+        nombre_usuario.setText(datosUsuario.get(1));
+        apellido_usuario.setText(datosUsuario.get(2));
+        cedula_usuario.setText(datosUsuario.get(3));
+        telefono_usuario.setText(datosUsuario.get(4));
+        email_usuario.setText(datosUsuario.get(5));
         int pos = Funciones.buscarPosicionElemento(datosUsuario.get(6), estado_usuario);
         estado_usuario.setSelection(pos);
     }
@@ -221,6 +232,7 @@ public class EditarPerfil extends AppCompatActivity
 
     /**
      * Obtiene los datos del usuario que estan en los campos.
+     *
      * @return Lista con todos los datos.
      */
     private ArrayList<String> obtenerDatos()
@@ -239,16 +251,17 @@ public class EditarPerfil extends AppCompatActivity
 
     /**
      * Valida los campos para editar el perfil
+     *
      * @return True si los campos fueron validados correctamente, false en caso contrario.
      */
     private boolean camposValidados()
     {
-        if(nombre_usuario.getText().toString().trim().isEmpty())
+        if (nombre_usuario.getText().toString().trim().isEmpty())
         {
             nombre_usuario.setError("Campo obligatorio");
             return false;
         }
-        else if(apellido_usuario.getText().toString().trim().isEmpty())
+        else if (apellido_usuario.getText().toString().trim().isEmpty())
         {
             apellido_usuario.setError("Campo obligatorio");
             return false;
@@ -258,22 +271,22 @@ public class EditarPerfil extends AppCompatActivity
             email_usuario.setError("Por favor, ingrese un email valido!!");
             return false;
         }
-        else if(telefono_usuario.getText().toString().trim().isEmpty())
+        else if (telefono_usuario.getText().toString().trim().isEmpty())
         {
             telefono_usuario.setError("Campo obligatorio");
             return false;
         }
-        else if(cedula_usuario.getText().toString().trim().isEmpty())
+        else if (cedula_usuario.getText().toString().trim().isEmpty())
         {
             cedula_usuario.setError("Campo obligatorio");
             return false;
         }
-        else if(password.getText().toString().isEmpty())
+        else if (password.getText().toString().isEmpty())
         {
             password.setError("Campo obligatorio");
             return false;
         }
-        else if(estado_usuario.getSelectedItemPosition()==0)
+        else if (estado_usuario.getSelectedItemPosition() == 0)
         {
             TextView errorText = (TextView) estado_usuario.getSelectedView();
             errorText.setError("");
@@ -281,20 +294,20 @@ public class EditarPerfil extends AppCompatActivity
             errorText.setText(R.string.error_estado);//changes the selected item text to this
             return false;
         }
-        else if(newpassword_usuario.isEnabled())
+        else if (newpassword_usuario.isEnabled())
         {
             // Debo validar dichos campos
-            if(newpassword_usuario.getText().toString().trim().isEmpty())
+            if (newpassword_usuario.getText().toString().trim().isEmpty())
             {
                 newpassword_usuario.setError("Campo obligatorio");
                 return false;
             }
-            else if(repassword.getText().toString().trim().isEmpty())
+            else if (repassword.getText().toString().trim().isEmpty())
             {
                 repassword.setError("Campo obligatorio");
                 return false;
             }
-            else if( !newpassword_usuario.getText().toString().equals(repassword.getText().toString()) )
+            else if (!newpassword_usuario.getText().toString().equals(repassword.getText().toString()))
             {
                 newpassword_usuario.setError("¡Las contraseñas no coinciden!");
                 repassword.setError("¡Las contraseñas no coinciden!");
@@ -309,16 +322,17 @@ public class EditarPerfil extends AppCompatActivity
 
     /**
      * Verifica si ambas contraseñas coinciden (La del usuario y la de la BD)
+     *
      * @return True si coinciden, False en caso contrario.
      */
     private boolean passwordsCoinciden()
     {
         try
         {
-            String key = manager.getUserKey(id_usuario);
-            String passwordEditText = password.getText().toString().trim();
+            String key               = manager.getUserKey(id_usuario);
+            String passwordEditText  = password.getText().toString().trim();
             String encryptedPassword = new String(Funciones.encrypt(key, passwordEditText), "UTF-8");
-            String passwordBD = manager.obtenerPassword(id_usuario);
+            String passwordBD        = manager.obtenerPassword(id_usuario);
             return encryptedPassword.equals(passwordBD);
         }
         catch (UnsupportedEncodingException | GeneralSecurityException e)
@@ -331,7 +345,7 @@ public class EditarPerfil extends AppCompatActivity
     /**
      * Clase para editar en 2do plano el perfil del usuario actual.
      */
-    class editarPerfil extends AsyncTask< ArrayList<String>, Void, ArrayList<String> >
+    class editarPerfil extends AsyncTask<ArrayList<String>, Void, ArrayList<String>>
     {
         @Override
         protected void onPreExecute()
@@ -395,25 +409,6 @@ public class EditarPerfil extends AppCompatActivity
                     // Muestra al id_usuario un mensaje de operacion exitosa
                     Toast.makeText(contexto, "Perfil editado exitosamente!!", Toast.LENGTH_LONG).show();
 
-                    /*if(desdePedidos)
-                    {
-                        // Redirige a la pantalla de Pedidos
-                        Intent c = new Intent(EditarPerfil.this, SeleccionarCliente.class);
-                        c.putExtra("id_usuario", id_usuario);
-                        c.putExtra("desdeClientes", true);
-                        c.putExtra("idClienteCreado", id_cliente);
-                        startActivity(c);
-                        SeleccionarCliente.fa.finish();
-                    }
-                    else
-                    {
-                        // Redirige a la pantalla de Home
-                        Intent c = new Intent(EditarPerfil.this, EditarCliente.class);
-                        c.putExtra("id_usuario", id_usuario);
-                        startActivity(c);
-                        EditarCliente.fa.finish();
-                    }*/
-
                     // Redirige a la pantalla de Pedidos
                     Intent c = new Intent(EditarPerfil.this, Home.class);
                     c.putExtra("usuario", id_usuario);
@@ -437,11 +432,11 @@ public class EditarPerfil extends AppCompatActivity
 
         private long editarPerfilUsuario(ArrayList<String>[] datos)
         {
-            if(!existeCedula(datos[0].get(4), id_usuario) )
+            if (!existeCedula(datos[0].get(4), id_usuario))
             {
-                if(passwordsCoinciden())
+                if (passwordsCoinciden())
                 {
-                    if(cb_cambiarPass.isChecked())
+                    if (cb_cambiarPass.isChecked())
                     {
                         //Debo cambiar el password..
                         // El usuario no existe, puedo continuar..
@@ -488,7 +483,7 @@ public class EditarPerfil extends AppCompatActivity
         private boolean existeCedula(String cedula, String id_cliente)
         {
             Cursor cursor = manager.buscarUsuarioCedula_ID(cedula, id_cliente);
-            Log.d(TAG, "Existen "+cursor.getCount()+" usuarios con esa cedula..");
+            Log.d(TAG, "Existen " + cursor.getCount() + " usuarios con esa cedula..");
             return cursor.getCount() > 0;
         }
     }

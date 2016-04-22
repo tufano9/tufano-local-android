@@ -40,12 +40,6 @@
          <!-- ACTIVITIES PRODUCTOS -->
 
         <activity
-            android:name=".gestion.productos.GestionProductos"
-            android:label="@string/app_name"
-            android:theme="@style/AppTheme.NoActionBar">
-        </activity>
-
-        <activity
             android:name=".gestion.productos.ConsultarProductos"
             android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar">
@@ -66,7 +60,7 @@
         <!-- ACTIVITIES TALLAS -->
 
         <activity
-            android:name=".gestion.talla.GestionTallas"
+            android:name=".gestion.talla.ConsultarTallas"
             android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar">
         </activity>
@@ -86,7 +80,7 @@
         <!-- ACTIVITIES TIPOS -->
 
         <activity
-            android:name=".gestion.tipo.GestionTipos"
+            android:name=".gestion.tipo.ConsultarTipos"
             android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar">
         </activity>
@@ -106,7 +100,7 @@
         <!-- ACTIVITIES COLORES -->
 
         <activity
-            android:name=".gestion.colores.GestionColores"
+            android:name=".gestion.colores.ConsultarColores"
             android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar">
         </activity>
@@ -126,19 +120,7 @@
         <!-- ACTIVITIES CLIENTES -->
 
         <activity
-            android:name=".gestion.clientes.GestionClientes"
-            android:label="@string/app_name"
-            android:theme="@style/AppTheme.NoActionBar">
-        </activity>
-
-        <activity
             android:name=".gestion.clientes.AgregarCliente"
-            android:label="@string/app_name"
-            android:theme="@style/AppTheme.NoActionBar">
-        </activity>
-
-        <activity
-            android:name=".gestion.clientes.EditarCliente"
             android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar">
         </activity>

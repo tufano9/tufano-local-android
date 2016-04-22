@@ -103,8 +103,8 @@ public class AgregarTipo extends AppCompatActivity
                 if (camposValidados())
                 {
                     tipo.setError(null);
-                    final String newTipo = Funciones.capitalizeWords(tipo.getText().toString().trim());
-                    AlertDialog.Builder dialog = new AlertDialog.Builder(AgregarTipo.this);
+                    final String        newTipo = Funciones.capitalizeWords(tipo.getText().toString().trim());
+                    AlertDialog.Builder dialog  = new AlertDialog.Builder(AgregarTipo.this);
 
                     dialog.setTitle(R.string.confirmacion_agregar_tipo);
                     dialog.setMessage("Se agregara el siguiente tipo: " + newTipo);
@@ -140,6 +140,7 @@ public class AgregarTipo extends AppCompatActivity
 
     /**
      * Verifica que los campos introducidos por el usuario esten correctos.
+     *
      * @return True si los campos estan correctos, False en caso contrario.
      */
     private boolean camposValidados()
@@ -150,7 +151,7 @@ public class AgregarTipo extends AppCompatActivity
     /**
      * Clase para agregar en segundo plano un tipo de producto a la base de datos.
      */
-    class async_agregarTipoBD extends AsyncTask< String, String, String >
+    class async_agregarTipoBD extends AsyncTask<String, String, String>
     {
         String nombre;
 
@@ -174,12 +175,12 @@ public class AgregarTipo extends AppCompatActivity
             {
                 long result = agregarTipo(nombre);
 
-                if ( result == -1 )
+                if (result == -1)
                 {
                     Log.d(TAG, "err");
                     return "err";
                 }
-                else if ( result == -2 )
+                else if (result == -2)
                 {
                     Log.d(TAG, "existente");
                     return "existente";
@@ -210,7 +211,7 @@ public class AgregarTipo extends AppCompatActivity
                     // producto y necesite agregar un tipo, presione el boton y me redirigio a esta
                     // activity, la cual al acabar el proceso me devolvera a mi activity de productos
                     // con el nuevo tipo agregado y seleccionado.
-                    if(desdeProductos)
+                    if (desdeProductos)
                     {
                         // Muestra al usuario un mensaje de operacion exitosa
                         Toast.makeText(contexto, "Tipo agregado exitosamente!!", Toast.LENGTH_LONG).show();
@@ -232,10 +233,10 @@ public class AgregarTipo extends AppCompatActivity
                         Toast.makeText(contexto, "Tipo agregado exitosamente!!", Toast.LENGTH_LONG).show();
 
                         // Redirige al menu de tipos
-                        Intent c = new Intent(AgregarTipo.this, GestionTipos.class);
+                        Intent c = new Intent(AgregarTipo.this, ConsultarTipos.class);
                         c.putExtra("usuario", usuario);
                         startActivity(c);
-                        GestionTipos.fa.finish();
+                        ConsultarTipos.fa.finish();
                     }
 
                     // Prevent the user to go back to this activity
@@ -252,12 +253,13 @@ public class AgregarTipo extends AppCompatActivity
 
         /**
          * Funcion encargada de agregar un tipo de productos a la BD
+         *
          * @param nombre Nombre del tipo de producto. Por ej Torera
          * @return El ID del tipo de producto creado, -1 si ocurrio un error, -2 si ya existe el tipo.
          */
         private long agregarTipo(String nombre)
         {
-            if( !existeTipo(nombre))
+            if (!existeTipo(nombre))
             {
                 long id_talla = manager.agregarTipos(nombre);
                 Log.d(TAG, "id_talla: " + id_talla);
@@ -272,6 +274,7 @@ public class AgregarTipo extends AppCompatActivity
 
         /**
          * Verifica si el tipo de producto ya existe en la BD.
+         *
          * @param nombre Talla que se quiere saber si existe
          * @return Devuelve true si la tipo ya existe con el nombre ingresado.
          */

@@ -38,11 +38,11 @@ public class AgregarTalla extends AppCompatActivity
     private ProgressDialog pDialog;
     private EditText       talla;
     private NumberPicker   lim_inf, lim_sup;
-    private String usuario;
+    private String  usuario;
     private boolean desdeProductos;
-    private String idCreado;
-    private String idTipoCreado;
-    private String idColorCreado;
+    private String  idCreado;
+    private String  idTipoCreado;
+    private String  idColorCreado;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -105,12 +105,13 @@ public class AgregarTalla extends AppCompatActivity
                 if (camposValidados())
                 {
                     talla.setError(null);
-                    final String newTalla = Funciones.capitalizeWords(talla.getText().toString().trim());
-                    AlertDialog.Builder dialog = new AlertDialog.Builder(AgregarTalla.this);
+                    final String        newTalla = Funciones.capitalizeWords(talla.getText().toString().trim());
+                    AlertDialog.Builder dialog   = new AlertDialog.Builder(AgregarTalla.this);
 
                     dialog.setMessage(R.string.confirmacion_agregar_talla);
                     dialog.setCancelable(false);
-                    dialog.setPositiveButton("SI", new DialogInterface.OnClickListener() {
+                    dialog.setPositiveButton("SI", new DialogInterface.OnClickListener()
+                    {
                         @Override
                         public void onClick(DialogInterface dialog, int which)
                         {
@@ -159,13 +160,13 @@ public class AgregarTalla extends AppCompatActivity
             {
                 if (source instanceof SpannableStringBuilder)
                 {
-                    SpannableStringBuilder sourceAsSpannableBuilder = (SpannableStringBuilder)source;
+                    SpannableStringBuilder sourceAsSpannableBuilder = (SpannableStringBuilder) source;
                     for (int i = end - 1; i >= start; i--)
                     {
                         char currentChar = source.charAt(i);
                         if (!Character.isLetterOrDigit(currentChar) && !Character.isSpaceChar(currentChar))
                         {
-                            sourceAsSpannableBuilder.delete(i, i+1);
+                            sourceAsSpannableBuilder.delete(i, i + 1);
                         }
                     }
                     return source;
@@ -187,7 +188,7 @@ public class AgregarTalla extends AppCompatActivity
         };
 
         // Coloca un filtro que impide valores que no sean numericos, no permite simbolos.
-        talla.setFilters(new InputFilter[] { filter });
+        talla.setFilters(new InputFilter[]{filter});
 
         lim_inf.setMinValue(1);
         lim_inf.setMaxValue(49);
@@ -199,13 +200,14 @@ public class AgregarTalla extends AppCompatActivity
             @Override
             public void onValueChange(NumberPicker picker, int oldVal, int newVal)
             {
-                lim_sup.setMinValue(newVal+1);
+                lim_sup.setMinValue(newVal + 1);
             }
         });
     }
 
     /**
      * Funcion encargada de validar los datos introducidos por el usuario en el campo.
+     *
      * @return True si los campos estan correctos, False en caso contrario.
      */
     private boolean camposValidados()
@@ -216,7 +218,7 @@ public class AgregarTalla extends AppCompatActivity
     /**
      * Clase encargada de agregar en segundo plano la talla a la BD.
      */
-    class async_agregarTallaBD extends AsyncTask< String, String, String >
+    class async_agregarTallaBD extends AsyncTask<String, String, String>
     {
         String nombre, numeracion;
 
@@ -241,12 +243,12 @@ public class AgregarTalla extends AppCompatActivity
             {
                 long result = agregarTalla(nombre, numeracion);
 
-                if ( result == -1 )
+                if (result == -1)
                 {
                     Log.d(TAG, "err");
                     return "err";
                 }
-                else if ( result == -2 )
+                else if (result == -2)
                 {
                     Log.d(TAG, "existente");
                     return "existente";
@@ -276,7 +278,7 @@ public class AgregarTalla extends AppCompatActivity
                     // producto y necesite agregar una talla, presione el boton y me redirigio a esta
                     // activity, la cual al acabar el proceso me devolvera a mi activity de productos
                     // con la nueva talla agregada y seleccionada.
-                    if(desdeProductos)
+                    if (desdeProductos)
                     {
                         // Muestra al usuario un mensaje de operacion exitosa
                         Toast.makeText(contexto, "Tipo agregado exitosamente!!", Toast.LENGTH_LONG).show();
@@ -298,10 +300,10 @@ public class AgregarTalla extends AppCompatActivity
                         Toast.makeText(contexto, "Talla agregada exitosamente!!", Toast.LENGTH_LONG).show();
 
                         // Redirige
-                        Intent c = new Intent(AgregarTalla.this, GestionTallas.class);
+                        Intent c = new Intent(AgregarTalla.this, ConsultarTallas.class);
                         c.putExtra("usuario", usuario);
                         startActivity(c);
-                        GestionTallas.fa.finish();
+                        ConsultarTallas.fa.finish();
                     }
 
                     // Prevent the user to go back to this activity
@@ -318,7 +320,7 @@ public class AgregarTalla extends AppCompatActivity
 
         private long agregarTalla(String nombre, String numeracion)
         {
-            if( !existeTalla(nombre))
+            if (!existeTalla(nombre))
             {
                 long id_talla = manager.agregarTallas(nombre, numeracion);
                 Log.d(TAG, "id_talla: " + id_talla);
@@ -332,7 +334,6 @@ public class AgregarTalla extends AppCompatActivity
         }
 
         /**
-         *
          * @param nombre Talla que se quiere saber si existe
          * @return Devuelve true si la talla ya existe con el nombre ingresado
          */

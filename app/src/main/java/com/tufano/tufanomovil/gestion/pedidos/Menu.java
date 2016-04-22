@@ -59,7 +59,7 @@ public class Menu extends AppCompatActivity
     private void initImageViews()
     {
         ImageView agregar = (ImageView) findViewById(R.id.img_agregar);
-        ImageView editar = (ImageView) findViewById(R.id.img_editar);
+        ImageView editar  = (ImageView) findViewById(R.id.img_editar);
 
         agregar.setOnClickListener(new View.OnClickListener()
         {
@@ -91,14 +91,16 @@ public class Menu extends AppCompatActivity
     }
 
     @Override
-    public boolean onCreateOptionsMenu(android.view.Menu menu) {
+    public boolean onCreateOptionsMenu(android.view.Menu menu)
+    {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
+    public boolean onOptionsItemSelected(MenuItem item)
+    {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.

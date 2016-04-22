@@ -554,17 +554,35 @@ public class ConsultarPedidos extends AppCompatActivity
             }
             else
             {
-                Log.d(TAG, "Pero estoy filtrando...");
-                //ocultarTodo(tabla);
+                final Thread hilo = new Thread()
+                {
+                    @Override
+                    public void run()
+                    {
+                        synchronized (this)
+                        {
+                            runOnUiThread(new Runnable()
+                            {
+                                @Override
+                                public void run()
+                                {
+                                    Log.d(TAG, "Pero estoy filtrando...");
+                                    //ocultarTodo(tabla);
 
-                TextView mensaje = new TextView(contexto);
-                mensaje.setText(R.string.sin_resultados);
-                mensaje.setGravity(Gravity.CENTER);
-                mensaje.setTextSize(20f);
-                mensaje.setId(id_mensaje);
+                                    TextView mensaje = new TextView(contexto);
+                                    mensaje.setText(R.string.sin_resultados);
+                                    mensaje.setGravity(Gravity.CENTER);
+                                    mensaje.setTextSize(20f);
+                                    mensaje.setId(id_mensaje);
 
-                LinearLayout contenedor = (LinearLayout) findViewById(R.id.contenedor_base);
-                contenedor.addView(mensaje);
+                                    LinearLayout contenedor = (LinearLayout) findViewById(R.id.contenedor_base);
+                                    contenedor.addView(mensaje);
+                                }
+                            });
+                        }
+                    }
+                };
+                hilo.start();
             }
         }
         cursor.close();

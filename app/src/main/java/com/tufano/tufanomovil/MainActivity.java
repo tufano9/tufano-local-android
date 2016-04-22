@@ -23,11 +23,12 @@ import com.tufano.tufanomovil.global.Funciones;
 import java.io.UnsupportedEncodingException;
 import java.security.GeneralSecurityException;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity
+{
 
     private final String TAG = "MainActivity";
-    private Context contexto;
-    private DBAdapter manager;
+    private Context        contexto;
+    private DBAdapter      manager;
     private ProgressDialog pDialog;
 
     @Override
@@ -69,7 +70,8 @@ public class MainActivity extends AppCompatActivity {
     {
         Button btn_login = (Button) findViewById(R.id.btn_login);
 
-        btn_login.setOnClickListener(new View.OnClickListener() {
+        btn_login.setOnClickListener(new View.OnClickListener()
+        {
             @Override
             public void onClick(View view)
             {
@@ -103,14 +105,14 @@ public class MainActivity extends AppCompatActivity {
     private void validarLogin()
     {
         TextView usuario = (TextView) findViewById(R.id.usuario_login);
-        TextView pass = (TextView) findViewById(R.id.pass_login);
+        TextView pass    = (TextView) findViewById(R.id.pass_login);
 
-        if(usuario.getText().toString().isEmpty())
+        if (usuario.getText().toString().isEmpty())
         {
             usuario.setError("Este campo es obligatorio");
             Toast.makeText(contexto, "Por favor ingrese el usuario!", Toast.LENGTH_LONG).show();
         }
-        else if(pass.getText().toString().isEmpty())
+        else if (pass.getText().toString().isEmpty())
         {
             usuario.setError(null);
             pass.setError("Este campo es obligatorio");
@@ -132,32 +134,41 @@ public class MainActivity extends AppCompatActivity {
      * @param local_password Contraseña del usuario anteriormente descrito
      * @return True si el login fue realizado de forma correcta, False en caso contrario.
      */
-    private boolean doLogin(String nombre_usuario, String local_password) {
+    private boolean doLogin(String nombre_usuario, String local_password)
+    {
         Log.d(TAG, "doLogin");
         boolean bandera = false;
 
         Cursor cursor = manager.buscarUsuario(nombre_usuario);
 
-        for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor.moveToNext()) {
+        for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor.moveToNext())
+        {
             // Busco el usuario en la Base de datos..
-            if (cursor.getString(1).equals(nombre_usuario)) {
+            if (cursor.getString(1).equals(nombre_usuario))
+            {
                 // Al encontrarlo, extraigo la contraseña y el key (con lo que la encripto)
-                try {
+                try
+                {
                     String db_password = cursor.getString(7);
-                    String key = cursor.getString(10);
+                    String key         = cursor.getString(10);
 
                     // Encripto la password ingresada por el usuario utilizando el key de la BD
                     String local_encrypt_password = new String(Funciones.encrypt(key, local_password), "UTF-8");
 
                     // Si la contraseña local encriptada con el mismo key de la base de datos, es
                     // igual a mi contraseña encriptada de la BD, entonces la contraseña esta bien.
-                    if (db_password.equals(local_encrypt_password)) {
+                    if (db_password.equals(local_encrypt_password))
+                    {
                         Log.d(TAG, "Usuario y contraseña correctos!");
                         bandera = true;
-                    } else {
+                    }
+                    else
+                    {
                         Log.d(TAG, "Usuario y contraseña INCORRECTOS!");
                     }
-                } catch (GeneralSecurityException | UnsupportedEncodingException e) {
+                }
+                catch (GeneralSecurityException | UnsupportedEncodingException e)
+                {
                     e.printStackTrace();
                 }
 
@@ -173,13 +184,16 @@ public class MainActivity extends AppCompatActivity {
 
     /**
      * Metodo encargado de buscar el ID del username ingresado como parametro.
+     *
      * @param usuario Username al que se le buscara el ID.
      * @return El ID del usuario en cuestion, null en caso de no existir dicho usuario.
      */
-    private String buscarIDUsuario(String usuario) {
+    private String buscarIDUsuario(String usuario)
+    {
         Cursor cursor = manager.buscarUsuario(usuario);
 
-        if (cursor.moveToFirst()) {
+        if (cursor.moveToFirst())
+        {
             Log.d(TAG, "ID_USUARIO = " + cursor.getString(0));
             return cursor.getString(0);
         }
@@ -189,9 +203,11 @@ public class MainActivity extends AppCompatActivity {
 
     /**
      * Metodo para ingresar a la aplicacion luego de haber sido autentificado exitosamente.
+     *
      * @param usuario Usuario que inicio la sesion en la aplicacion.
      */
-    private void iniciarSesion(String usuario) {
+    private void iniciarSesion(String usuario)
+    {
         Log.d(TAG, "Successful Login");
 
         // Creo un activity nuevo con el Home de la app, pasando como parametro el id del usuario
@@ -205,7 +221,8 @@ public class MainActivity extends AppCompatActivity {
      * Con este metodo se crea el menu emergente que aparece al presionar sobre la tecla Menu.
      */
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
+    public boolean onCreateOptionsMenu(Menu menu)
+    {
         // Inflate the menu; this adds items to the action bar if it is present.
         //getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
@@ -216,14 +233,16 @@ public class MainActivity extends AppCompatActivity {
      * emergente.
      */
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
+    public boolean onOptionsItemSelected(MenuItem item)
+    {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+        if (id == R.id.action_settings)
+        {
             return true;
         }
 
@@ -233,11 +252,13 @@ public class MainActivity extends AppCompatActivity {
     /**
      * Hace un login en segundo plano usando la base de datos.
      */
-    class login_local extends AsyncTask<String, String, String> {
+    class login_local extends AsyncTask<String, String, String>
+    {
         String password, usuario;
 
         @Override
-        protected void onPreExecute() {
+        protected void onPreExecute()
+        {
             pDialog = new ProgressDialog(MainActivity.this);
             pDialog.setTitle("Por favor espere...");
             pDialog.setMessage("Verificando datos de forma local...");
@@ -247,36 +268,47 @@ public class MainActivity extends AppCompatActivity {
         }
 
         @Override
-        protected String doInBackground(String... params) {
+        protected String doInBackground(String... params)
+        {
             usuario = params[0];
             password = params[1];
 
-            try {
+            try
+            {
                 //enviamos y recibimos y analizamos los datos en segundo plano.
-                if (doLogin(usuario, password)) {
+                if (doLogin(usuario, password))
+                {
                     //login valido
                     return "ok";
-                } else {
+                }
+                else
+                {
                     Log.d("Loginstatuslocal", "err");
                     //login invalido
                     return "err";
                 }
-            } catch (RuntimeException e) {
+            }
+            catch (RuntimeException e)
+            {
                 Log.d("Loginstatuslocal", "err2: " + e);
                 return "err2";
             }
         }
 
         @Override
-        protected void onPostExecute(String result) {
+        protected void onPostExecute(String result)
+        {
             pDialog.dismiss();
 
-            if (result.equals("ok")) {
+            if (result.equals("ok"))
+            {
                 // El login fue correcto, busco el ID del usuario en la BD
                 String id_usuario = buscarIDUsuario(usuario);
                 // Inicio sesion
                 iniciarSesion(id_usuario);
-            } else {
+            }
+            else
+            {
                 Toast.makeText(contexto, "La combinacion de usuario y contraseña es erronea!", Toast.LENGTH_LONG).show();
             }
         }

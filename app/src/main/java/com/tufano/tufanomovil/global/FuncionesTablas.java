@@ -14,8 +14,8 @@ public class FuncionesTablas
 {
     public static ArrayList idsCargadosEdit(DBAdapter manager)
     {
-        Cursor cursor = manager.cargarPedidosDetallesEditar();
-        ArrayList<String> ids = new ArrayList<>();
+        Cursor            cursor = manager.cargarPedidosDetallesEditar();
+        ArrayList<String> ids    = new ArrayList<>();
 
         for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor.moveToNext())
         {
@@ -43,7 +43,7 @@ public class FuncionesTablas
         for (int i = 0; i < ids_productos_cargados.size(); i++)
         {
             Log.w(TAG, "Comparando " + modelo_producto + " con " + ids_productos_cargados.get(i));
-            if( ids_productos_cargados.get(i).equals(modelo_producto) )
+            if (ids_productos_cargados.get(i).equals(modelo_producto))
             {
                 Log.w(TAG, "Ya esta agregado, no lo agrego..");
                 return true;
@@ -62,7 +62,7 @@ public class FuncionesTablas
     {
         //Log.i(TAG, "Buscando color con id: "+id_color);
         String nombre_color = null;
-        Cursor cursor = manager.buscarColor_ID(id_color);
+        Cursor cursor       = manager.buscarColorxID(id_color);
         for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor.moveToNext())
         {
             nombre_color = String.valueOf(cursor.getString(0));
@@ -72,11 +72,25 @@ public class FuncionesTablas
         return nombre_color;
     }
 
+    public static String obtenerIDColor(String nombre_color, DBAdapter manager)
+    {
+        //Log.i(TAG, "Buscando color con id: "+id_color);
+        String id     = null;
+        Cursor cursor = manager.buscarColorxNombre(nombre_color);
+        for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor.moveToNext())
+        {
+            id = String.valueOf(cursor.getString(0));
+            //Log.i(TAG, "Color encontrado: "+id);
+        }
+        cursor.close();
+        return id;
+    }
+
     public static String obtenerNombreTalla(String id_talla, DBAdapter manager)
     {
         //Log.i(TAG, "Buscando talla con id: " + id_talla);
         String nombre_talla = null;
-        Cursor cursor = manager.buscarTalla_ID(id_talla);
+        Cursor cursor       = manager.buscarTalla_ID(id_talla);
         for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor.moveToNext())
         {
             nombre_talla = String.valueOf(cursor.getString(0));
@@ -90,7 +104,7 @@ public class FuncionesTablas
     {
         //Log.i(TAG, "Buscando tipo con id: " + id_tipo);
         String nombre_tipo = null;
-        Cursor cursor = manager.buscarTipo_ID(id_tipo);
+        Cursor cursor      = manager.buscarTipo_ID(id_tipo);
         for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor.moveToNext())
         {
             nombre_tipo = String.valueOf(cursor.getString(0));
@@ -102,6 +116,7 @@ public class FuncionesTablas
 
     /**
      * Verifica si el producto esta habilitado.
+     *
      * @param estatus Estatus del producto.
      * @return True si el producto esta habilitado, False en caso contrario
      */
@@ -109,7 +124,7 @@ public class FuncionesTablas
     {
         //Log.d(TAG, "Verificando si el producto esta deshabilitado..");
 
-        if(estatus.equals("1"))
+        if (estatus.equals("1"))
         {
             //Log.i(TAG, "El producto esta habilitado..");
             return true;
@@ -123,12 +138,13 @@ public class FuncionesTablas
 
     /**
      * Calcula el numero total de pares por talla.
+     *
      * @param paresxtalla Pares por talla en el siguiente formato separado por comas: 2,2,3,2,2,1
      * @return Numero total de pares para la talla en cuestion.
      */
     public static String calcularPares(String paresxtalla)
     {
-        int total = 0;
+        int      total   = 0;
         String[] numeros = paresxtalla.split(",");
 
         for (String numero : numeros)

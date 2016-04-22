@@ -1,12 +1,14 @@
 package com.tufano.tufanomovil.gestion.productos;
 
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
@@ -22,15 +24,18 @@ import android.support.v7.widget.Toolbar;
 import android.text.InputType;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.Switch;
 import android.widget.TableRow;
@@ -39,9 +44,9 @@ import android.widget.Toast;
 
 import com.tufano.tufanomovil.R;
 import com.tufano.tufanomovil.database.DBAdapter;
-import com.tufano.tufanomovil.gestion.colores.GestionColores;
-import com.tufano.tufanomovil.gestion.talla.GestionTallas;
-import com.tufano.tufanomovil.gestion.tipo.GestionTipos;
+import com.tufano.tufanomovil.gestion.colores.ConsultarColores;
+import com.tufano.tufanomovil.gestion.talla.ConsultarTallas;
+import com.tufano.tufanomovil.gestion.tipo.ConsultarTipos;
 import com.tufano.tufanomovil.global.Constantes;
 import com.tufano.tufanomovil.global.Funciones;
 import com.tufano.tufanomovil.global.FuncionesTablas;
@@ -70,10 +75,15 @@ public class EditarProducto extends AppCompatActivity
             destacado_producto;
     private EditText modelo_seleccionado, precio_seleccionado;
     private Switch estatus_seleccionado, destacado_seleccionado;
-    private Spinner sp_color, sp_tipo, sp_talla;
+    private Spinner            sp_tipo;
+    private Spinner            sp_talla;
     private List<List<String>> contenedor_colores, contenedor_tipos, contenedor_tallas;
     private ArrayList<Integer> ids_tabla;
     private boolean primeraEjecucion = true;
+    private String       selected_cb;
+    private LinearLayout layout;
+    private String name_selected_color = "Seleccione un color..";
+    private Button btn_color;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -164,6 +174,72 @@ public class EditarProducto extends AppCompatActivity
      */
     private void initButtons()
     {
+        btn_color.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+                final Dialog dialog = new Dialog(EditarProducto.this);
+                dialog.setContentView(R.layout.custom_dialog_colores);
+                dialog.setTitle("Por favor, seleccione un color.");
+                dialog.setCanceledOnTouchOutside(true);
+
+                AutoCompleteTextView autoComplete = (AutoCompleteTextView) dialog.findViewById(R.id.autoComplete);
+                final ListView       list_data    = (ListView) dialog.findViewById(R.id.list_data);
+
+                contenedor_colores = manager.cargarListaColores();
+
+                ArrayAdapter<String> adapter = new ArrayAdapter<>(contexto,
+                        R.layout.simple_list1, contenedor_colores.get(1));
+
+                adapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
+
+                list_data.setAdapter(adapter);
+                list_data.setOnItemClickListener(new AdapterView.OnItemClickListener()
+                {
+                    @Override
+                    public void onItemClick(AdapterView<?> parent, View view, int position, long id)
+                    {
+                        Log.i(TAG, "Has seleccionado: " + list_data.getItemAtPosition(position));
+                        //Toast.makeText(contexto, "Has seleccionado: " + list_data.getItemAtPosition(position), Toast.LENGTH_LONG).show();
+                        EditText selected_color = (EditText) findViewById(R.id.selected_color);
+                        selected_color.setText(list_data.getItemAtPosition(position).toString());
+                        name_selected_color = list_data.getItemAtPosition(position).toString();
+                        dialog.dismiss();
+                    }
+                });
+
+                autoComplete.setAdapter(adapter);
+                autoComplete.setThreshold(1);
+                autoComplete.setOnKeyListener(new View.OnKeyListener()
+                {
+                    @Override
+                    public boolean onKey(View v, int keyCode, KeyEvent event)
+                    {
+                        if (keyCode == 66)
+                        {
+                            layout.requestFocus();
+                            //gestionarFiltrado();
+                            return true;
+                        }
+                        return false;
+                    }
+                });
+
+                autoComplete.setOnItemClickListener(new AdapterView.OnItemClickListener()
+                {
+                    @Override
+                    public void onItemClick(AdapterView<?> parent, View view, int position, long id)
+                    {
+                        //gestionarFiltrado();
+                    }
+                });
+
+                dialog.show();
+                noInitialFocus();
+            }
+        });
+
         Button btn_editar_producto = (Button) findViewById(R.id.btn_editar_producto);
         btn_editar_producto.setOnClickListener(new View.OnClickListener()
         {
@@ -196,9 +272,9 @@ public class EditarProducto extends AppCompatActivity
                                     String.valueOf(idTalla), String.valueOf(idTipo),
                                     modelo_seleccionado.getText().toString().trim(),
                                     String.valueOf(color_id),
-                                    precio_seleccionado.getText().toString().trim(), numeracion,
-                                    estatus_seleccionado.isChecked() ? "1" : "0", paresxtalla,
-                                    destacado_seleccionado.isChecked() ? "1" : "0");
+                                    precio_seleccionado.getText().toString().trim().replace(".", ""),
+                                    numeracion, estatus_seleccionado.isChecked() ? "1" : "0",
+                                    paresxtalla, destacado_seleccionado.isChecked() ? "1" : "0");
 
                         }
                     });
@@ -252,7 +328,8 @@ public class EditarProducto extends AppCompatActivity
         /* Spinner Talla */
         sp_talla = (Spinner) findViewById(R.id.talla_producto_editar);
         /* Spinner Color */
-        sp_color = (Spinner) findViewById(R.id.color_producto);
+        //sp_color = (Spinner) findViewById(R.id.color_producto);
+        btn_color = (Button) findViewById(R.id.btn_search_color);
     }
 
     /**
@@ -263,6 +340,7 @@ public class EditarProducto extends AppCompatActivity
         Bundle bundle = getIntent().getExtras();
         usuario = bundle.getString("usuario");
         id_producto = bundle.getString("id_producto");
+        selected_cb = bundle.getString("selected_cb");
 
         Cursor cursor = manager.cargarProductosId(id_producto);
 
@@ -306,7 +384,7 @@ public class EditarProducto extends AppCompatActivity
      */
     private void noInitialFocus()
     {
-        LinearLayout layout = (LinearLayout) findViewById(R.id.LinearLayout_MainActivity);
+        layout = (LinearLayout) findViewById(R.id.LinearLayout_MainActivity);
         layout.requestFocus();
     }
 
@@ -317,8 +395,8 @@ public class EditarProducto extends AppCompatActivity
      */
     private int obtenerIDColor()
     {
-        int actual_position = sp_color.getSelectedItemPosition();
-        return Integer.parseInt(contenedor_colores.get(0).get(actual_position - 1));
+        //int actual_position = sp_color.getSelectedItemPosition();
+        return Integer.parseInt(FuncionesTablas.obtenerIDColor(name_selected_color, manager));
     }
 
     /**
@@ -399,6 +477,10 @@ public class EditarProducto extends AppCompatActivity
 
         loadSpinnerData();
         selectSpinnerData();
+
+        name_selected_color = color_producto;
+        EditText selected_color = (EditText) findViewById(R.id.selected_color);
+        selected_color.setText(name_selected_color);
 
         EditText modelo = (EditText) findViewById(R.id.modelo_producto);
         modelo.setText(modelo_producto);
@@ -544,9 +626,9 @@ public class EditarProducto extends AppCompatActivity
      */
     private void selectSpinnerData()
     {
-        int position = Funciones.buscarPosicionElemento(color_producto, sp_color);
-        sp_color.setSelection(position);
-        position = Funciones.buscarPosicionElemento(tipo_producto, sp_tipo);
+        //int position = Funciones.buscarPosicionElemento(color_producto, sp_color);
+        //sp_color.setSelection(position);
+        int position = Funciones.buscarPosicionElemento(tipo_producto, sp_tipo);
         sp_tipo.setSelection(position);
         position = Funciones.buscarPosicionElemento(talla_producto + "(" + numeracion_producto + ")", sp_talla);
         sp_talla.setSelection(position);
@@ -557,13 +639,13 @@ public class EditarProducto extends AppCompatActivity
      */
     private void loadSpinnerData()
     {
-        contenedor_colores = manager.cargarListaColores();
+        /*contenedor_colores = manager.cargarListaColores();
         ArrayAdapter<String> dataAdapter = new ArrayAdapter<>(this, R.layout.spinner_item, contenedor_colores.get(1));
         dataAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
-        sp_color.setAdapter(dataAdapter);
+        sp_color.setAdapter(dataAdapter);*/
 
         contenedor_tipos = manager.cargarListaTipos();
-        dataAdapter = new ArrayAdapter<>(this, R.layout.spinner_item, contenedor_tipos.get(1));
+        ArrayAdapter<String> dataAdapter = new ArrayAdapter<>(this, R.layout.spinner_item, contenedor_tipos.get(1));
         dataAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
         sp_tipo.setAdapter(dataAdapter);
 
@@ -582,12 +664,15 @@ public class EditarProducto extends AppCompatActivity
             modelo_seleccionado.setError("Inserte un modelo!");
             return false;
         }
-        else if (sp_color.getSelectedItemPosition() == 0)
+        else if (name_selected_color.equals("Seleccione un color.."))
         {
+            /*
             TextView errorText = (TextView) sp_color.getSelectedView();
             errorText.setError("");
             errorText.setTextColor(Color.RED);//just to highlight that this is an error
             errorText.setText(R.string.error_color);//changes the selected item text to this
+            */
+            Toast.makeText(contexto, "Por favor indique un color!", Toast.LENGTH_LONG).show();
             return false;
         }
         else if (precio_seleccionado.getText().toString().trim().equals(""))
@@ -661,6 +746,11 @@ public class EditarProducto extends AppCompatActivity
             {
                 // Cargamos en memoria la imagen seleccionada por el usuario.
                 imagen_cargada = MediaStore.Images.Media.getBitmap(getContentResolver(), selectedImageUri);
+                ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+                imagen_cargada.compress(Bitmap.CompressFormat.JPEG, 80, bytes);
+                byte[] bitmapdata = bytes.toByteArray();
+                imagen_cargada = BitmapFactory.decodeByteArray(bitmapdata, 0, bitmapdata.length);
+                imagen_cargada = Funciones.resize(imagen_cargada, 2048, 2048);
 
                 // Buscamos la ruta de la imagen en cuestion.
                 //String selectedImagePath = getPath(selectedImageUri);
@@ -740,7 +830,7 @@ public class EditarProducto extends AppCompatActivity
      */
     private void mostrarGestionTipos()
     {
-        Intent c = new Intent(EditarProducto.this, GestionTipos.class);
+        Intent c = new Intent(EditarProducto.this, ConsultarTipos.class);
         c.putExtra("usuario", usuario);
         startActivity(c);
     }
@@ -750,7 +840,7 @@ public class EditarProducto extends AppCompatActivity
      */
     private void mostrarGestionTallas()
     {
-        Intent c = new Intent(EditarProducto.this, GestionTallas.class);
+        Intent c = new Intent(EditarProducto.this, ConsultarTallas.class);
         c.putExtra("usuario", usuario);
         startActivity(c);
     }
@@ -760,7 +850,7 @@ public class EditarProducto extends AppCompatActivity
      */
     private void mostrarGestionColores()
     {
-        Intent c = new Intent(EditarProducto.this, GestionColores.class);
+        Intent c = new Intent(EditarProducto.this, ConsultarColores.class);
         c.putExtra("usuario", usuario);
         startActivity(c);
     }
@@ -832,6 +922,7 @@ public class EditarProducto extends AppCompatActivity
                 // Redirige a la pantalla de Home
                 Intent c = new Intent(EditarProducto.this, ConsultarProductos.class);
                 c.putExtra("usuario", usuario);
+                c.putExtra("selected_cb", selected_cb);
                 startActivity(c);
 
                 // Prevent the user to go back to this activity

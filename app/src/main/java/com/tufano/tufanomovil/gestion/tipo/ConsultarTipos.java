@@ -1,4 +1,4 @@
-package com.tufano.tufanomovil.gestion.colores;
+package com.tufano.tufanomovil.gestion.tipo;
 
 import android.app.Activity;
 import android.content.Context;
@@ -26,20 +26,18 @@ import com.tufano.tufanomovil.global.Funciones;
 /**
  * Created por Usuario Tufano on 15/01/2016.
  */
-public class GestionColores extends AppCompatActivity
+public class ConsultarTipos extends AppCompatActivity
 {
-    //private ProgressDialog pDialog;
-    public static Activity fa;
-    private final String TAG = "GestionColores";
-    private Context   contexto;
-    private DBAdapter manager;
-    private String    usuario;
+    public static Activity  fa;
+    private       Context   contexto;
+    private       DBAdapter manager;
+    private       String    usuario;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_gestion_colores);
+        setContentView(R.layout.activity_gestion_tipos);
 
         fa = this;
         contexto = getApplicationContext();
@@ -47,7 +45,7 @@ public class GestionColores extends AppCompatActivity
 
         getExtrasVar();
         createToolBar();
-        initButtons();
+        initComponents();
         inicializarTabla();
     }
 
@@ -61,19 +59,20 @@ public class GestionColores extends AppCompatActivity
     }
 
     /**
-     * Crea la barra superior con un subtitulo.
+     * Crea una barra de herramientas superior con un subtitulo definido.
      */
     private void createToolBar()
     {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        toolbar.setSubtitle(R.string.gestion_color_subtitulo);
+        toolbar.setSubtitle(R.string.gestion_tipo_subtitulo);
         setSupportActionBar(toolbar);
     }
 
     /**
-     * Inicializa los botones
+     * Inicializa los componentes primarios de la activity. En este caso el boton flotante para
+     * agregar un tipo de producto.
      */
-    private void initButtons()
+    private void initComponents()
     {
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener()
@@ -81,7 +80,7 @@ public class GestionColores extends AppCompatActivity
             @Override
             public void onClick(View view)
             {
-                Intent c = new Intent(GestionColores.this, AgregarColor.class);
+                Intent c = new Intent(ConsultarTipos.this, AgregarTipo.class);
                 c.putExtra("usuario", usuario);
                 startActivity(c);
             }
@@ -89,18 +88,19 @@ public class GestionColores extends AppCompatActivity
     }
 
     /**
-     * Metodo principal para gestionar la tabla de colores.
+     * Funcion encargada de inicializar y llenar de data la tabla generada dinamicamente.
      */
     private void inicializarTabla()
     {
+        String TAG = "ConsultarTipos";
         Log.i(TAG, "Inicializando tabla..");
-        final TableLayout tabla = (TableLayout) findViewById(R.id.table_gestion_colores);
+        final TableLayout tabla = (TableLayout) findViewById(R.id.table_gestion_tipos);
 
         TableRow.LayoutParams params = new TableRow.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.MATCH_PARENT, 1f);
 
         // Llenando la tabla de forma iterativa
-        Cursor cursor = manager.cargarColores();
-        if(cursor.getCount()>0)
+        Cursor cursor = manager.cargarTipos();
+        if (cursor.getCount() > 0)
         {
             mostrarTodo(tabla);
 
@@ -109,50 +109,31 @@ public class GestionColores extends AppCompatActivity
                 Log.i(TAG, "Agregando fila..");
                 TableRow fila = new TableRow(contexto);
 
-                final String id_color = String.valueOf(cursor.getInt(0));
-                final String nombre_color = cursor.getString(1);
+                final String id_tipo        = String.valueOf(cursor.getInt(0));
+                final String tipos_producto = cursor.getString(1);
 
                 /* Tipos */
-                TextView color = new TextView(contexto);
-                color.setText(nombre_color);
-                color.setTextColor(Color.DKGRAY);
-                color.setGravity(Gravity.CENTER);
-                color.setLayoutParams(params);
-                color.setTextSize(16f);
+                TextView tipos = generarTextViewTipo(contexto, tipos_producto, params);
 
                 /* Opciones */
-                Button editar = new Button(contexto);
-                editar.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v)
-                    {
-                        Intent c = new Intent(GestionColores.this, EditarColor.class);
-                        c.putExtra("id_color", id_color);
-                        c.putExtra("nombre_color", nombre_color);
-                        startActivity(c);
-                    }
-                });
-                editar.setBackgroundResource(R.drawable.icn_edit);
-                int edit_image_width = 70;
-                int edit_image_height = 70;
-                LinearLayout.LayoutParams parms = new LinearLayout.LayoutParams(edit_image_width, edit_image_height);
-                editar.setLayoutParams(parms);
-                editar.setPadding(2, 10, 2, 10);
+                Button editar = generarButtonOpciones(contexto, id_tipo, tipos_producto);
+
                 /*final Button eliminar = new Button(contexto);
 
                 eliminar.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v)
                     {
-                        AlertDialog.Builder dialog = new AlertDialog.Builder(GestionColores.this);
+                        Log.i(TAG, "Eliminar presionado");
+                        AlertDialog.Builder dialog = new AlertDialog.Builder(ConsultarTipos.this);
 
-                        dialog.setTitle(R.string.confirmacion_eliminar_color);
-                        dialog.setMessage("Se eliminará el siguiente color: " + nombre_color);
+                        dialog.setTitle(R.string.confirmacion_eliminar_tipo);
+                        dialog.setMessage("Se eliminará el siguiente tipo: " + tipos_producto);
                         dialog.setCancelable(false);
                         dialog.setPositiveButton("Si", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                new async_eliminarColorBD().execute(id_color);
+                                new async_eliminarTipoBD().execute(id_tipo);
                             }
                         });
 
@@ -179,7 +160,7 @@ public class GestionColores extends AppCompatActivity
 
                 // Llenando la fila con data
                 fila.setBackgroundColor(Color.WHITE);
-                fila.addView(color);
+                fila.addView(tipos);
                 fila.addView(opciones);
 
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN)
@@ -209,7 +190,7 @@ public class GestionColores extends AppCompatActivity
                                 ocultarTodo(tabla);
 
                                 TextView mensaje = new TextView(contexto);
-                                mensaje.setText(R.string.msj_color_vacio);
+                                mensaje.setText(R.string.msj_tipo_vacio);
                                 mensaje.setGravity(Gravity.CENTER);
                                 mensaje.setTextSize(20f);
 
@@ -227,8 +208,59 @@ public class GestionColores extends AppCompatActivity
     }
 
     /**
-     * Muestra todos los componentes de la tabla.
-     * @param tabla Tabla a la cual se le haran visibles los componentes
+     * Genera el boton de opciones que se incluira en la tabla.
+     *
+     * @param contexto       Contexto de la aplicacion.
+     * @param id_tipo        ID del tipo actual.
+     * @param tipos_producto Tipo de producto.
+     * @return Boton con la accion correspondiente.
+     */
+    private Button generarButtonOpciones(Context contexto, final String id_tipo, final String tipos_producto)
+    {
+        Button editar = new Button(contexto);
+        editar.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+                Intent c = new Intent(ConsultarTipos.this, EditarTipo.class);
+                c.putExtra("id_tipo", id_tipo);
+                c.putExtra("tipos_producto", tipos_producto);
+                startActivity(c);
+            }
+        });
+        editar.setBackgroundResource(R.drawable.icn_edit);
+        int                       edit_image_width  = 70;
+        int                       edit_image_height = 70;
+        LinearLayout.LayoutParams parms             = new LinearLayout.LayoutParams(edit_image_width, edit_image_height);
+        editar.setLayoutParams(parms);
+        editar.setPadding(2, 10, 2, 10);
+        return editar;
+    }
+
+    /**
+     * Genera un textView con el tipo de producto actual.
+     *
+     * @param contexto       Contexto de la aplicacion.
+     * @param tipos_producto Tipo de producto.
+     * @param params         Parametros de la tabla.
+     * @return TextView armado con el tipo de producto actual.
+     */
+    private TextView generarTextViewTipo(Context contexto, String tipos_producto, TableRow.LayoutParams params)
+    {
+        TextView tipos = new TextView(contexto);
+        tipos.setText(tipos_producto);
+        tipos.setTextColor(Color.DKGRAY);
+        tipos.setGravity(Gravity.CENTER);
+        tipos.setLayoutParams(params);
+        tipos.setTextSize(16f);
+        return tipos;
+    }
+
+    /**
+     * Muestra la tabla
+     *
+     * @param tabla Tabla a mostrar.
      */
     private void mostrarTodo(TableLayout tabla)
     {
@@ -236,8 +268,9 @@ public class GestionColores extends AppCompatActivity
     }
 
     /**
-     * Oculta todos los componentes de la tabla.
-     * @param tabla Tabla a la cual se le haran invisibles los componentes
+     * Oculta la tabla para mostrar algun mensaje.
+     *
+     * @param tabla Tabla a ocultar.
      */
     private void ocultarTodo(TableLayout tabla)
     {
@@ -245,17 +278,16 @@ public class GestionColores extends AppCompatActivity
     }
 
     /*
-
-    class async_eliminarColorBD extends AsyncTask< String, String, String >
+    class async_eliminarTipoBD extends AsyncTask< String, String, String >
     {
         String id;
 
         @Override
         protected void onPreExecute()
         {
-            pDialog = new ProgressDialog(GestionColores.this);
+            pDialog = new ProgressDialog(ConsultarTipos.this);
             pDialog.setTitle("Por favor espere...");
-            pDialog.setMessage("Eliminando el color...");
+            pDialog.setMessage("Eliminando el tipo...");
             pDialog.setIndeterminate(true);
             pDialog.setCancelable(false);
             pDialog.show();
@@ -269,7 +301,7 @@ public class GestionColores extends AppCompatActivity
             try
             {
                 //enviamos y recibimos y analizamos los datos en segundo plano.
-                if (eliminarColor(id))
+                if (eliminarTipo(id))
                 {
                     return "ok";
                 }
@@ -294,10 +326,10 @@ public class GestionColores extends AppCompatActivity
             if (result.equals("ok"))
             {
                 // Muestra al usuario un mensaje de operacion exitosa
-                Toast.makeText(contexto, "Color eliminado exitosamente!!", Toast.LENGTH_LONG).show();
+                Toast.makeText(contexto, "Tipo eliminado exitosamente!!", Toast.LENGTH_LONG).show();
 
                 // Redirige
-                Intent c = new Intent(GestionColores.this, GestionColores.class);
+                Intent c = new Intent(ConsultarTipos.this, ConsultarTipos.class);
                 startActivity(c);
 
                 // Prevent the user to go back to this activity
@@ -305,14 +337,14 @@ public class GestionColores extends AppCompatActivity
             }
             else
             {
-                Toast.makeText(contexto, "Hubo un error eliminando el color..", Toast.LENGTH_LONG).show();
+                Toast.makeText(contexto, "Hubo un error eliminando el tipo..", Toast.LENGTH_LONG).show();
             }
         }
 
-        private boolean eliminarColor(String id)
+        private boolean eliminarTipo(String id)
         {
-            Log.d(TAG, "Eliminar color con id: " + id);
-            long filas_afectadas = manager.eliminarColor(id);
+            Log.d(TAG, "Eliminar tipo con id: " + id);
+            long filas_afectadas = manager.eliminarTipo(id);
             return filas_afectadas != 0;
         }
     }

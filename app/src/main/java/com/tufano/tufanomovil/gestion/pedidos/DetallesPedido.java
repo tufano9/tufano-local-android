@@ -179,8 +179,8 @@ public class DetallesPedido extends AppCompatActivity
      */
     private void cargarDatosCliente()
     {
-        TextView razonSocial = (TextView) findViewById(R.id.rs_cliente_pedido);
-        TextView rifCliente = (TextView) findViewById(R.id.rif_cliente_pedido);
+        TextView razonSocial   = (TextView) findViewById(R.id.rs_cliente_pedido);
+        TextView rifCliente    = (TextView) findViewById(R.id.rif_cliente_pedido);
         TextView estadoCliente = (TextView) findViewById(R.id.estado_cliente_pedido);
 
         // Obtiene los datos del cliente del pedido actual
@@ -194,13 +194,14 @@ public class DetallesPedido extends AppCompatActivity
 
     /**
      * Se obtienen los datos del cliente mediante un id proporcionado.
+     *
      * @param id ID del cliente.
      * @return Lista con los datos del cliente. (Razon social, Rif y Estado)
      */
     private List<String> obtenerDatosCliente(String id)
     {
         List<String> datos_clientes = new ArrayList<>();
-        Cursor cursor = manager.cargarIDClientePedido(id);
+        Cursor       cursor         = manager.cargarIDClientePedido(id);
         for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor.moveToNext())
         {
             datos_clientes.add(cursor.getString(0));
@@ -212,6 +213,7 @@ public class DetallesPedido extends AppCompatActivity
 
     /**
      * Cancela el pedido
+     *
      * @return True si el pedido fue cancelado exitosamente, false en caso contrario.
      */
     private boolean cancelarPedido()
@@ -232,7 +234,7 @@ public class DetallesPedido extends AppCompatActivity
     /**
      * Clase encargada de realizar la carga en 2do plano de los datos del pedido.
      */
-    class cargarDatos extends AsyncTask< String, String, String >
+    class cargarDatos extends AsyncTask<String, String, String>
     {
         @Override
         protected void onPreExecute()
@@ -267,16 +269,16 @@ public class DetallesPedido extends AppCompatActivity
          */
         private void bloquearBotones()
         {
-            Cursor cursor = manager.cargarIDClientePedido(id_pedido);
+            Cursor cursor  = manager.cargarIDClientePedido(id_pedido);
             String estatus = "1";
 
             for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor.moveToNext())
             {
                 estatus = cursor.getString(4); // id_pedido
-                Log.d(TAG, "estatus: "+estatus);
+                Log.d(TAG, "estatus: " + estatus);
             }
 
-            if(! estatus.equals("1") )
+            if (!estatus.equals("1"))
             {
                 cancelar.setEnabled(false);
                 aprobar.setEnabled(false);
@@ -302,11 +304,11 @@ public class DetallesPedido extends AppCompatActivity
                             public void run()
                             {
                                 Log.i(TAG, "Inicializando tabla..");
-                                final TableLayout tabla = (TableLayout) findViewById(R.id.table_editar_pedidos);
-                                final TableLayout contenido = (TableLayout) findViewById(R.id.tabla_contenido);
-                                Double precio_total = 0.0;
+                                final TableLayout tabla        = (TableLayout) findViewById(R.id.table_editar_pedidos);
+                                final TableLayout contenido    = (TableLayout) findViewById(R.id.tabla_contenido);
+                                Double            precio_total = 0.0;
 
-                                int total_pares = 0;
+                                int total_pares  = 0;
                                 int total_bultos = 0;
 
                                 final TableRow.LayoutParams params = new TableRow.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.MATCH_PARENT, 1f);
@@ -335,20 +337,20 @@ public class DetallesPedido extends AppCompatActivity
                                         Log.i(TAG, "Agregando fila..");
 
 
-                                        final TableRow fila = new TableRow(contexto);
-                                        final String nombre_modelo = String.valueOf(cursor.getString(2));
+                                        final TableRow fila          = new TableRow(contexto);
+                                        final String   nombre_modelo = String.valueOf(cursor.getString(2));
                                         //final String talla = String.valueOf(cursor.getString(4));
                                         final String numeracion = cursor.getString(5);
-                                        final String pares = cursor.getString(6);
-                                        final String bultos = cursor.getString(7);
-                                        final String precio = cursor.getString(8);
-                                        final String subtotal = cursor.getString(9);
+                                        final String pares      = cursor.getString(6);
+                                        final String bultos     = cursor.getString(7);
+                                        final String precio     = cursor.getString(8);
+                                        final String subtotal   = cursor.getString(9);
 
                                         precio_total += Double.parseDouble(precio) * Integer.parseInt(pares) * Integer.parseInt(bultos);
                                         total_pares += Integer.parseInt(pares);
                                         total_bultos += Integer.parseInt(bultos);
 
-                                        Log.i(TAG, "Producto: " + nombre_modelo + " Precio: " + Double.parseDouble(precio) + "*" + Integer.parseInt(pares) + "*" + Integer.parseInt(bultos) + " = "+Double.parseDouble(precio)*Integer.parseInt(pares)*Integer.parseInt(bultos));
+                                        Log.i(TAG, "Producto: " + nombre_modelo + " Precio: " + Double.parseDouble(precio) + "*" + Integer.parseInt(pares) + "*" + Integer.parseInt(bultos) + " = " + Double.parseDouble(precio) * Integer.parseInt(pares) * Integer.parseInt(bultos));
 
                                         ImageView imagen = new ImageView(contexto);
 
@@ -374,8 +376,8 @@ public class DetallesPedido extends AppCompatActivity
                                         {
                                             Log.e(TAG, "La imagen no pudo ser localizada..");
                                             Drawable drawable = ContextCompat.getDrawable(getApplicationContext(), R.drawable.img_notfound);
-                                            Bitmap bitmap = ((BitmapDrawable) drawable).getBitmap();
-                                            Drawable d = new BitmapDrawable(getResources(), Bitmap.createScaledBitmap(bitmap, IMG_WIDTH, IMG_HEIGHT, true));
+                                            Bitmap   bitmap   = ((BitmapDrawable) drawable).getBitmap();
+                                            Drawable d        = new BitmapDrawable(getResources(), Bitmap.createScaledBitmap(bitmap, IMG_WIDTH, IMG_HEIGHT, true));
                                             imagen.setImageDrawable(d);
                                             imagen.setScaleType(ESCALADO);
                                             imagen.setLayoutParams(params);
@@ -407,9 +409,9 @@ public class DetallesPedido extends AppCompatActivity
                                         pares_producto.setTextSize(16f);
 
                                         /* Precio */
-                                        TextView precio_producto = new TextView(contexto);
-                                        DecimalFormat priceFormat = new DecimalFormat("###,###.##");
-                                        String output = priceFormat.format(Double.parseDouble(precio));
+                                        TextView      precio_producto = new TextView(contexto);
+                                        DecimalFormat priceFormat     = new DecimalFormat("###,###.##");
+                                        String        output          = priceFormat.format(Double.parseDouble(precio));
                                         precio_producto.setText(output);
                                         precio_producto.setTextColor(Color.DKGRAY);
                                         precio_producto.setGravity(Gravity.CENTER);
@@ -432,7 +434,7 @@ public class DetallesPedido extends AppCompatActivity
                                         sub_total.setLayoutParams(params);
                                         sub_total.setTextSize(16f);
 
-                                        TableRow.LayoutParams layout = new TableRow.LayoutParams(0,TableRow.LayoutParams.MATCH_PARENT);
+                                        TableRow.LayoutParams layout = new TableRow.LayoutParams(0, TableRow.LayoutParams.MATCH_PARENT);
                                         imagen.setLayoutParams(layout);
                                         modelo.setLayoutParams(layout);
                                         pares_producto.setLayoutParams(layout);
@@ -449,7 +451,7 @@ public class DetallesPedido extends AppCompatActivity
                                         fila.addView(precio_producto);
                                         fila.addView(cantidad_bultos);
                                         fila.addView(sub_total);
-                                        fila.setPadding(0, 2 , 0, 0);
+                                        fila.setPadding(0, 2, 0, 0);
 
                                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN)
                                             fila.setBackground(Funciones.intToDrawable(contexto, R.drawable.table_border));
@@ -457,11 +459,15 @@ public class DetallesPedido extends AppCompatActivity
                                             //noinspection deprecation
                                             fila.setBackgroundDrawable(Funciones.intToDrawable(contexto, R.drawable.table_border));
 
-                                        final Thread hilo1 = new Thread() {
+                                        final Thread hilo1 = new Thread()
+                                        {
                                             @Override
-                                            public void run() {
-                                                synchronized (this) {
-                                                    runOnUiThread(new Runnable() {
+                                            public void run()
+                                            {
+                                                synchronized (this)
+                                                {
+                                                    runOnUiThread(new Runnable()
+                                                    {
                                                         @Override
                                                         public void run()
                                                         {
@@ -495,8 +501,8 @@ public class DetallesPedido extends AppCompatActivity
 
                                                         ocultarTodo(contenido, tabla);
 
-                                                        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.MATCH_PARENT, 1f);
-                                                        TextView mensaje = new TextView(contexto);
+                                                        LinearLayout.LayoutParams params  = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.MATCH_PARENT, 1f);
+                                                        TextView                  mensaje = new TextView(contexto);
                                                         mensaje.setText(R.string.msj_pedido_vacio);
                                                         mensaje.setGravity(Gravity.CENTER);
                                                         mensaje.setTextSize(20f);
@@ -577,12 +583,12 @@ public class DetallesPedido extends AppCompatActivity
                             public void run()
                             {
                                 TextView cantidadProductos = (TextView) findViewById(R.id.cantidadFinal);
-                                TextView precioFinal = (TextView) findViewById(R.id.precioFinal);
-                                TextView cantidadBultos = (TextView) findViewById(R.id.cantidad_bultos);
-                                TextView cantidadPares = (TextView) findViewById(R.id.cantidad_pares);
+                                TextView precioFinal       = (TextView) findViewById(R.id.precioFinal);
+                                TextView cantidadBultos    = (TextView) findViewById(R.id.cantidad_bultos);
+                                TextView cantidadPares     = (TextView) findViewById(R.id.cantidad_pares);
 
                                 DecimalFormat priceFormat = new DecimalFormat("###,###.##");
-                                String output = priceFormat.format(precio_total);
+                                String        output      = priceFormat.format(precio_total);
                                 cantidadProductos.setText(String.valueOf(cantidad_productos));
                                 precioFinal.setText(output);
                                 cantidadBultos.setText(String.valueOf(cantidad_bultos));
@@ -623,7 +629,7 @@ public class DetallesPedido extends AppCompatActivity
         private void mostrarTodo(TableLayout tabla, TableLayout tab)
         {
             LinearLayout botones_opciones = (LinearLayout) findViewById(R.id.botones_opciones);
-            LinearLayout datos_pedido = (LinearLayout) findViewById(R.id.datos_pedido);
+            LinearLayout datos_pedido     = (LinearLayout) findViewById(R.id.datos_pedido);
 
             datos_pedido.setVisibility(View.VISIBLE);
             botones_opciones.setVisibility(View.VISIBLE);
@@ -634,7 +640,7 @@ public class DetallesPedido extends AppCompatActivity
         private void ocultarTodo(TableLayout tabla, TableLayout tab)
         {
             LinearLayout botones_opciones = (LinearLayout) findViewById(R.id.botones_opciones);
-            LinearLayout datos_pedido = (LinearLayout) findViewById(R.id.datos_pedido);
+            LinearLayout datos_pedido     = (LinearLayout) findViewById(R.id.datos_pedido);
 
             datos_pedido.setVisibility(View.INVISIBLE);
             botones_opciones.setVisibility(View.INVISIBLE);
@@ -646,7 +652,7 @@ public class DetallesPedido extends AppCompatActivity
     /**
      * Clase encargada de cancelar un pedido.
      */
-    private class async_cancelarPedido extends AsyncTask< String, String, String >
+    private class async_cancelarPedido extends AsyncTask<String, String, String>
     {
         @Override
         protected void onPreExecute()
@@ -694,7 +700,7 @@ public class DetallesPedido extends AppCompatActivity
 
                 // Redirige a la pantalla de Home
                 Intent c = new Intent(DetallesPedido.this, ConsultarPedidos.class);
-                c.putExtra("usuario",usuario);
+                c.putExtra("usuario", usuario);
                 startActivity(c);
 
                 ConsultarPedidos.fa.finish();
@@ -714,7 +720,7 @@ public class DetallesPedido extends AppCompatActivity
     /**
      * Clase encargada de aprobar un pedido.
      */
-    private class async_aprobarPedido extends AsyncTask< String, String, String >
+    private class async_aprobarPedido extends AsyncTask<String, String, String>
     {
         @Override
         protected void onPreExecute()
@@ -762,7 +768,7 @@ public class DetallesPedido extends AppCompatActivity
 
                 // Redirige a la pantalla de Home
                 Intent c = new Intent(DetallesPedido.this, ConsultarPedidos.class);
-                c.putExtra("usuario",usuario);
+                c.putExtra("usuario", usuario);
                 startActivity(c);
 
                 ConsultarPedidos.fa.finish();

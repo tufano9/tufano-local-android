@@ -23,6 +23,7 @@ import android.widget.AutoCompleteTextView;
 import android.widget.BaseAdapter;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -46,29 +47,31 @@ public class ConsultarProductos extends AppCompatActivity
     private static final int CANT_DATOS_MOSTRAR_INICIALMENTE = 5;
     private static final int CANT_DATOS_CARGAR               = 3;
     public static  Activity       fa;
-    private static ProgressDialog pDialog;
-    private final String TAG        = "ConsultarProductos";
-    private final int    id_mensaje = Funciones.generateViewId();
+    public static String destacado_filtrado = "1";
+    private final String TAG                = "ConsultarProductos";
+    private final int    id_mensaje         = Funciones.generateViewId();
     private Context          contexto;
     private DBAdapter        manager;
     private ListView         list;
     private productosAdapter adapter;
     private int              limit; // Numero total de elementos
     private String usuario, columna_ordenada, orden, tipo_filtrado, color_filtrado,
-            talla_filtrado, modelo_filtrado, destacado_filtrado = "1";
-
+            talla_filtrado, modelo_filtrado;
     private boolean primerInicio1 = true, primerInicio2 = true, primerInicio3 = true;
     private AutoCompleteTextView modelo_autoComplete;
     private LinearLayout         layout;
     private List<List<String>>   contenedor_colores, contenedor_tipos, contenedor_tallas;
     private Spinner tipo, talla, color;
     private TextView cabecera_1, cabecera_2, cabecera_3, cabecera_4, cabecera_5, cabecera_6;
+    private boolean rotate;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_producto_consultar);
+
+        rotate = savedInstanceState != null;
 
         contexto = getApplicationContext();
         manager = new DBAdapter(contexto);
@@ -91,6 +94,7 @@ public class ConsultarProductos extends AppCompatActivity
 
     private void initRadioButton()
     {
+        selectDefaultRB();
         final RadioGroup rg = (RadioGroup) findViewById(R.id.radio_group_producto);
         rg.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener()
         {
@@ -116,9 +120,46 @@ public class ConsultarProductos extends AppCompatActivity
 
                 new reCargarDatos().execute(tipo_filtrado, talla_filtrado, color_filtrado,
                         modelo_filtrado);
+
+                /*if(!rotate)
+                {
+                    Log.i(TAG, "Rotate.. reloading");
+                    new reCargarDatos().execute(tipo_filtrado, talla_filtrado, color_filtrado,
+                            modelo_filtrado);
+                }
+                else
+                {
+                    rotate = false;
+                }*/
             }
         });
-        //radio_group_producto
+    }
+
+    private void selectDefaultRB()
+    {
+        // Selecciona por defecto el rb_new (Solo en el primer inicio)..
+        switch (destacado_filtrado)
+        {
+            case "0":
+            {
+                Log.i(TAG, "SetDefaultChecked rb_old");
+                ((RadioButton) findViewById(R.id.rb_old)).setChecked(true);
+            }
+            break;
+            case "1":
+            {
+                Log.i(TAG, "SetDefaultChecked rb_new");
+                ((RadioButton) findViewById(R.id.rb_new)).setChecked(true);
+            }
+            break;
+            case "2":
+            {
+                Log.i(TAG, "SetDefaultChecked rb_all");
+                ((RadioButton) findViewById(R.id.rb_all)).setChecked(true);
+            }
+            break;
+
+        }
     }
 
     /**
@@ -146,6 +187,11 @@ public class ConsultarProductos extends AppCompatActivity
     {
         Bundle bundle = getIntent().getExtras();
         usuario = bundle.getString("usuario");
+        if (bundle.getString("selected_cb") != null)
+        {
+            Log.i(TAG, "getExtrasVar - destacado_filtrado: " + destacado_filtrado);
+            destacado_filtrado = bundle.getString("selected_cb");
+        }
     }
 
     /**
@@ -242,6 +288,7 @@ public class ConsultarProductos extends AppCompatActivity
      */
     private void gestionarFiltrado()
     {
+        Log.i(TAG, "Gestionando el filtrado");
         cerrarTeclado();
         String tipoFunction, tallaFunction, colorFunction, modeloFunction;
         String defaultValueTipo  = tipo.getItemAtPosition(0).toString();
@@ -455,7 +502,7 @@ public class ConsultarProductos extends AppCompatActivity
      */
     private void initSpinners()
     {
-        Log.w(TAG, "initSpinners");
+        Log.w(TAG, "initSpinners.. primerInicio1 " + primerInicio1);
         tipo = (Spinner) findViewById(R.id.spTipo_editar_producto);
         talla = (Spinner) findViewById(R.id.spTalla_editar_producto);
         color = (Spinner) findViewById(R.id.spColor_editar_producto);
@@ -587,6 +634,25 @@ public class ConsultarProductos extends AppCompatActivity
      */
     private void loadSpinnerData()
     {
+        /*final Thread hilo = new Thread()
+        {
+            @Override
+            public void run()
+            {
+                synchronized (this)
+                {
+                    runOnUiThread(new Runnable()
+                    {
+                        @Override
+                        public void run()
+                        {
+                        }
+                    });
+                }
+            }
+        };
+        hilo.start();*/
+
         Log.w(TAG, "loadSpinnerData");
         contenedor_colores = manager.cargarListaColores();
         ArrayAdapter<String> dataAdapter = new ArrayAdapter<>(this, R.layout.spinner_item, contenedor_colores.get(1));
@@ -831,11 +897,13 @@ public class ConsultarProductos extends AppCompatActivity
      */
     private class cargarDatos extends AsyncTask<String, String, String>
     {
+        ProgressDialog pDialog;
         @Override
         protected void onPreExecute()
         {
+            Log.d(TAG, "Cargando informacion");
             pDialog = new ProgressDialog(ConsultarProductos.this);
-            pDialog.setTitle("Por favor espere...");
+            pDialog.setTitle("Por favor espere..");
             pDialog.setMessage("Cargando informacion...");
             pDialog.setIndeterminate(true);
             pDialog.setCancelable(false);
@@ -854,6 +922,7 @@ public class ConsultarProductos extends AppCompatActivity
         protected void onPostExecute(String result)
         {
             pDialog.dismiss();
+            Log.d(TAG, "Dismiss Dialog");
         }
     }
 
@@ -862,12 +931,14 @@ public class ConsultarProductos extends AppCompatActivity
      */
     private class reCargarDatos extends AsyncTask<String, String, String>
     {
+        ProgressDialog pDialog;
         @Override
         protected void onPreExecute()
         {
+            Log.d(TAG, "Recargando informacion");
             pDialog = new ProgressDialog(ConsultarProductos.this);
             pDialog.setTitle("Por favor espere...");
-            pDialog.setMessage("Cargando informacion...");
+            pDialog.setMessage("Recargando informacion...");
             pDialog.setIndeterminate(true);
             pDialog.setCancelable(false);
             pDialog.show();
@@ -876,7 +947,6 @@ public class ConsultarProductos extends AppCompatActivity
         @Override
         protected String doInBackground(String... params)
         {
-            //CANT_DATOS_MOSTRAR_INICIALMENTE = CANT_DATOS_ACTUALES; // Cant.datos que tengo actualmente..
             loadData(params[0], params[1], params[2], params[3], true);
             return null;
         }
@@ -885,6 +955,7 @@ public class ConsultarProductos extends AppCompatActivity
         protected void onPostExecute(String result)
         {
             pDialog.dismiss();
+            Log.d(TAG, "Dismiss Dialog");
         }
     }
 }

@@ -52,10 +52,10 @@ public class ArmarPedido extends AppCompatActivity
     public static Activity fa;
     private final String TAG = "ArmarPedido";
     private String usuario, id_cliente;
-    private Context contexto;
+    private Context        contexto;
     private ProgressDialog pDialog;
-    private DBAdapter manager;
-    private TextView cabecera_1, cabecera_2, cabecera_3, cabecera_4, cabecera_5, cabecera_6, cabecera_7;
+    private DBAdapter      manager;
+    private TextView       cabecera_1, cabecera_2, cabecera_3, cabecera_4, cabecera_5, cabecera_6, cabecera_7;
     private String columna_ordenada, orden;
     private ArrayList<View> filas;
 
@@ -116,25 +116,31 @@ public class ArmarPedido extends AppCompatActivity
         });
 
         cabecera_2 = (TextView) findViewById(R.id.cabecera_2);
-        cabecera_2.setOnClickListener(new View.OnClickListener() {
+        cabecera_2.setOnClickListener(new View.OnClickListener()
+        {
             @Override
-            public void onClick(View v) {
+            public void onClick(View v)
+            {
                 cabeceraPresionada(cabecera_2, "producto_color");
             }
         });
 
         cabecera_3 = (TextView) findViewById(R.id.cabecera_3);
-        cabecera_3.setOnClickListener(new View.OnClickListener() {
+        cabecera_3.setOnClickListener(new View.OnClickListener()
+        {
             @Override
-            public void onClick(View v) {
+            public void onClick(View v)
+            {
                 cabeceraPresionada(cabecera_3, "numeracion");
             }
         });
 
         cabecera_4 = (TextView) findViewById(R.id.cabecera_4);
-        cabecera_4.setOnClickListener(new View.OnClickListener() {
+        cabecera_4.setOnClickListener(new View.OnClickListener()
+        {
             @Override
-            public void onClick(View v) {
+            public void onClick(View v)
+            {
                 cabeceraPresionada(cabecera_4, "cantidad_pares");
             }
         });
@@ -150,9 +156,11 @@ public class ArmarPedido extends AppCompatActivity
         });
 
         cabecera_6 = (TextView) findViewById(R.id.cabecera_6);
-        cabecera_6.setOnClickListener(new View.OnClickListener() {
+        cabecera_6.setOnClickListener(new View.OnClickListener()
+        {
             @Override
-            public void onClick(View v) {
+            public void onClick(View v)
+            {
                 cabeceraPresionada(cabecera_6, "cantidad_bultos");
             }
         });
@@ -169,14 +177,13 @@ public class ArmarPedido extends AppCompatActivity
     }
 
     /**
-     *
-     * @param cabecera TextView sobre la cual se le aplicara el CompoundDrawable resultante
+     * @param cabecera  TextView sobre la cual se le aplicara el CompoundDrawable resultante
      * @param columnaBD Nombre de la columna en Base de Datos sobre la cual se ordenara..
      */
     private void cabeceraPresionada(TextView cabecera, String columnaBD)
     {
-        Drawable[] cd = cabecera.getCompoundDrawables();
-        boolean lleno = false;
+        Drawable[] cd    = cabecera.getCompoundDrawables();
+        boolean    lleno = false;
 
         for (Drawable aCd : cd)
         {
@@ -187,7 +194,7 @@ public class ArmarPedido extends AppCompatActivity
             }
         }
 
-        if(lleno)
+        if (lleno)
         {
             // Invertir orden.. (Si estaba ordenando en ASC, ahora lo ahora DESC
             invertirCompoundDrawable(cabecera, columnaBD);
@@ -212,6 +219,7 @@ public class ArmarPedido extends AppCompatActivity
 
     /**
      * Coloca el drawable sobre la cabecera presionada (Icono)
+     *
      * @param cabecera Cabecera presionada.
      */
     private void colocarCompoundDrawable(TextView cabecera)
@@ -224,8 +232,9 @@ public class ArmarPedido extends AppCompatActivity
 
     /**
      * Funcion que prepara el ordenamiento de la tabla, segun parametros de entrada.
+     *
      * @param cabecera Cabebera de la tabla que sera ordenada.
-     * @param orden Orden en el cual estara (ASC o DESC)
+     * @param orden    Orden en el cual estara (ASC o DESC)
      */
     private void ordenarTabla(String cabecera, String orden)
     {
@@ -240,11 +249,11 @@ public class ArmarPedido extends AppCompatActivity
      */
     private void limpiarTabla()
     {
-        Log.d(TAG, "Limpiando Tabla.. ("+filas.size()+" filas)");
+        Log.d(TAG, "Limpiando Tabla.. (" + filas.size() + " filas)");
         final TableLayout tabla = (TableLayout) findViewById(R.id.tabla_contenido);
         for (int i = 0; i < filas.size(); i++)
         {
-            Log.d(TAG, "Limpiando Tabla.. ("+(i+1)+"/"+filas.size()+" filas)");
+            Log.d(TAG, "Limpiando Tabla.. (" + (i + 1) + "/" + filas.size() + " filas)");
             tabla.removeView(filas.get(i));
         }
     }
@@ -252,7 +261,8 @@ public class ArmarPedido extends AppCompatActivity
     /**
      * Invierte el drawable que exista actualmente en la cabecera de la tabla, es decir, si esta en
      * forma ASC, cambia a forma DESC y viceversa.
-     * @param cabecera Cabecera afectada por la operacion.
+     *
+     * @param cabecera  Cabecera afectada por la operacion.
      * @param columnaBD Columna de la base de datos que sera afectada (Orden).
      */
     private void invertirCompoundDrawable(TextView cabecera, String columnaBD)
@@ -265,12 +275,12 @@ public class ArmarPedido extends AppCompatActivity
         }*/
 
         Drawable draw = ResourcesCompat.getDrawable(getResources(), R.drawable.arrow_up, null);
-        if(draw!=null)
+        if (draw != null)
         {
             Drawable.ConstantState upArrow = draw.getConstantState();
             //Log.d(TAG, "if: " + upArrow);
 
-            if( d[2].getConstantState().equals( upArrow ) )
+            if (d[2].getConstantState().equals(upArrow))
             {
                 Log.d(TAG, "Colocare DESC..");
                 int drawable = Funciones.getDescDrawable();
@@ -307,8 +317,8 @@ public class ArmarPedido extends AppCompatActivity
      */
     private void cargarDatosCliente()
     {
-        TextView razonSocial = (TextView) findViewById(R.id.rs_cliente_pedido);
-        TextView rifCliente = (TextView) findViewById(R.id.rif_cliente_pedido);
+        TextView razonSocial   = (TextView) findViewById(R.id.rs_cliente_pedido);
+        TextView rifCliente    = (TextView) findViewById(R.id.rif_cliente_pedido);
         TextView estadoCliente = (TextView) findViewById(R.id.estado_cliente_pedido);
 
         List<String> datos_clientes = obtenerDatosCliente(id_cliente);
@@ -320,6 +330,7 @@ public class ArmarPedido extends AppCompatActivity
 
     /**
      * Obtiene los datos del cliente de la BD.
+     *
      * @param id ID del cliente a consultar.
      * @return Lista con los datos del cliente. (Razon social, Rif, Estado, Telefono, Email,
      * Direccion, Estatus)
@@ -331,6 +342,7 @@ public class ArmarPedido extends AppCompatActivity
 
     /**
      * Obtiene del vendedor (usuario actual) de la BD.
+     *
      * @param usuario ID del usuario a consultar.
      * @return Lista con los datos del vendedor. (Cedula, Nombre, Apellido, Email, Telefono, Estado)
      */
@@ -381,7 +393,8 @@ public class ArmarPedido extends AppCompatActivity
         });
 
         Button btn_continuar_agregar_pedido = (Button) findViewById(R.id.btn_continuar_agregar_pedido);
-        btn_continuar_agregar_pedido.setOnClickListener(new View.OnClickListener() {
+        btn_continuar_agregar_pedido.setOnClickListener(new View.OnClickListener()
+        {
             @Override
             public void onClick(View v)
             {
@@ -454,12 +467,12 @@ public class ArmarPedido extends AppCompatActivity
                         public void run()
                         {
 
-                            Log.i(TAG, "Inicializando tabla.. Ordenando por: "+columna_ordenada+", orden: "+orden);
-                            final TableLayout tabla = (TableLayout) findViewById(R.id.table_crear_pedidos);
-                            final TableLayout contenido = (TableLayout) findViewById(R.id.tabla_contenido);
-                            Double precio_total = 0.0;
+                            Log.i(TAG, "Inicializando tabla.. Ordenando por: " + columna_ordenada + ", orden: " + orden);
+                            final TableLayout tabla        = (TableLayout) findViewById(R.id.table_crear_pedidos);
+                            final TableLayout contenido    = (TableLayout) findViewById(R.id.tabla_contenido);
+                            Double            precio_total = 0.0;
 
-                            int total_pares = 0;
+                            int total_pares  = 0;
                             int total_bultos = 0;
 
                             final TableRow.LayoutParams params = new TableRow.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.MATCH_PARENT, 1f);
@@ -480,10 +493,10 @@ public class ArmarPedido extends AppCompatActivity
                                     final String id_producto = String.valueOf(cursor.getInt(1));
                                     //final String talla = String.valueOf(cursor.getString(2));
                                     final String numeracion = cursor.getString(3);
-                                    final String pares = cursor.getString(4);
-                                    final String bultos = cursor.getString(5);
-                                    final String precio = cursor.getString(6);
-                                    final String subtotal = cursor.getString(7);
+                                    final String pares      = cursor.getString(4);
+                                    final String bultos     = cursor.getString(5);
+                                    final String precio     = cursor.getString(6);
+                                    final String subtotal   = cursor.getString(7);
                                     //final String tipo = cursor.getString(8);
                                     //final String nombre_modelo = cursor.getString(9);
                                     final String color = cursor.getString(10);
@@ -520,15 +533,16 @@ public class ArmarPedido extends AppCompatActivity
                                     {
                                         Log.e(TAG, "La imagen no pudo ser localizada..");
                                         Drawable drawable = ContextCompat.getDrawable(getApplicationContext(), R.drawable.img_notfound);
-                                        Bitmap bitmap = ((BitmapDrawable) drawable).getBitmap();
-                                        Drawable d = new BitmapDrawable(getResources(), Bitmap.createScaledBitmap(bitmap, IMG_WIDTH, IMG_HEIGHT, true));
+                                        Bitmap   bitmap   = ((BitmapDrawable) drawable).getBitmap();
+                                        Drawable d        = new BitmapDrawable(getResources(), Bitmap.createScaledBitmap(bitmap, IMG_WIDTH, IMG_HEIGHT, true));
                                         imagen.setImageDrawable(d);
                                         imagen.setScaleType(ESCALADO);
                                         imagen.setLayoutParams(params);
                                         imagen.setPadding(2, 2, 2, 2);
                                     }
 
-                                    imagen.setOnClickListener(new View.OnClickListener() {
+                                    imagen.setOnClickListener(new View.OnClickListener()
+                                    {
                                         @Override
                                         public void onClick(View v)
                                         {
@@ -537,16 +551,20 @@ public class ArmarPedido extends AppCompatActivity
                                             dialog.setTitle(R.string.confirmacion_eliminar_producto_pedido);
                                             dialog.setMessage("Producto seleccionado: " + nombre_modelo);
                                             dialog.setCancelable(false);
-                                            dialog.setPositiveButton("Si", new DialogInterface.OnClickListener() {
+                                            dialog.setPositiveButton("Si", new DialogInterface.OnClickListener()
+                                            {
                                                 @Override
-                                                public void onClick(DialogInterface dialog, int which) {
+                                                public void onClick(DialogInterface dialog, int which)
+                                                {
                                                     eliminarProductoPedido(id_producto);
                                                 }
                                             });
 
-                                            dialog.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                                            dialog.setNegativeButton("No", new DialogInterface.OnClickListener()
+                                            {
                                                 @Override
-                                                public void onClick(DialogInterface dialog, int which) {
+                                                public void onClick(DialogInterface dialog, int which)
+                                                {
                                                     dialog.cancel();
                                                 }
                                             });
@@ -597,7 +615,7 @@ public class ArmarPedido extends AppCompatActivity
 
                                         /* Precio */
                                     TextView precio_producto = new TextView(contexto);
-                                    precio_producto.setText( Funciones.formatoPrecio(precio) );
+                                    precio_producto.setText(Funciones.formatoPrecio(precio));
                                     precio_producto.setTextColor(Color.DKGRAY);
                                     precio_producto.setGravity(Gravity.CENTER);
                                     precio_producto.setLayoutParams(params);
@@ -618,20 +636,25 @@ public class ArmarPedido extends AppCompatActivity
                                     sub_total.setLayoutParams(params);
                                     sub_total.setTextSize(16f);
 
-                                    cantidad_bultos.setOnValueChangedListener(new NumberPicker.OnValueChangeListener() {
+                                    cantidad_bultos.setOnValueChangedListener(new NumberPicker.OnValueChangeListener()
+                                    {
 
                                         @Override
-                                        public void onValueChange(NumberPicker picker, int cantBultosViejos, int cantBultosNuevos) {
+                                        public void onValueChange(NumberPicker picker, int cantBultosViejos, int cantBultosNuevos)
+                                        {
                                             // Actualizar BD
 
                                             String nuevo_subtotal = String.valueOf(Double.parseDouble(precio) * Integer.parseInt(pares) * cantBultosNuevos);
 
-                                            if (manager.actualizarBultosBDTemporal(id_producto, cantBultosNuevos, nuevo_subtotal) > 0) {
+                                            if (manager.actualizarBultosBDTemporal(id_producto, cantBultosNuevos, nuevo_subtotal) > 0)
+                                            {
                                                 // Actualizar Cant.Bultos / Pares y Total Bs.F (Parte Inf)
                                                 ArrayList<String> datosNuevos = manager.calcularTotalesNuevosPedidoTemp();
                                                 actualizarInformacionInferior(Double.parseDouble(datosNuevos.get(0)), datosNuevos.get(1), datosNuevos.get(2));
                                                 sub_total.setText(Funciones.formatoPrecio(nuevo_subtotal));
-                                            } else {
+                                            }
+                                            else
+                                            {
                                                 Log.i(TAG, "BD NO ACTUALIZADA ( NUMBER PICKER BULTOS )");
                                             }
                                         }
@@ -676,7 +699,7 @@ public class ArmarPedido extends AppCompatActivity
                                     //opciones.setLayoutParams(params);
                                     //opciones.addView(eliminar);
 
-                                    TableRow.LayoutParams layout = new TableRow.LayoutParams(0,TableRow.LayoutParams.MATCH_PARENT);
+                                    TableRow.LayoutParams layout = new TableRow.LayoutParams(0, TableRow.LayoutParams.MATCH_PARENT);
                                     imagen.setLayoutParams(layout);
                                     modelo.setLayoutParams(layout);
                                     color_producto.setLayoutParams(layout);
@@ -697,7 +720,7 @@ public class ArmarPedido extends AppCompatActivity
                                     fila.addView(cantidad_bultos);
                                     fila.addView(sub_total);
                                     //fila.addView(opciones);
-                                    fila.setPadding(0, 2 , 0, 0);
+                                    fila.setPadding(0, 2, 0, 0);
 
                                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN)
                                         fila.setBackground(Funciones.intToDrawable(contexto, R.drawable.table_border));
@@ -708,11 +731,15 @@ public class ArmarPedido extends AppCompatActivity
                                     Log.d(TAG, "FILA ADD..");
                                     filas.add(fila);
 
-                                    final Thread hilo1 = new Thread() {
+                                    final Thread hilo1 = new Thread()
+                                    {
                                         @Override
-                                        public void run() {
-                                            synchronized (this) {
-                                                runOnUiThread(new Runnable() {
+                                        public void run()
+                                        {
+                                            synchronized (this)
+                                            {
+                                                runOnUiThread(new Runnable()
+                                                {
                                                     @Override
                                                     public void run()
                                                     {
@@ -747,8 +774,8 @@ public class ArmarPedido extends AppCompatActivity
 
                                                     ocultarTodo(contenido, tabla);
 
-                                                    LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.MATCH_PARENT, 1f);
-                                                    TextView mensaje = new TextView(contexto);
+                                                    LinearLayout.LayoutParams params  = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.MATCH_PARENT, 1f);
+                                                    TextView                  mensaje = new TextView(contexto);
                                                     mensaje.setText(R.string.msj_pedido_vacio);
                                                     mensaje.setGravity(Gravity.CENTER);
                                                     mensaje.setTextSize(20f);
@@ -780,13 +807,14 @@ public class ArmarPedido extends AppCompatActivity
 
     /**
      * Elimina un producto del pedido.
+     *
      * @param id_producto ID del producto a eliminar.
      */
     private void eliminarProductoPedido(String id_producto)
     {
         int filas_afectadas = manager.eliminarProductoPedidoTemporal(id_producto);
 
-        if(filas_afectadas>0)
+        if (filas_afectadas > 0)
         {
             Toast.makeText(contexto, "¡Se ha eliminado correctamente el producto del pedido!", Toast.LENGTH_LONG).show();
             Intent c = new Intent(ArmarPedido.this, ArmarPedido.class);
@@ -804,13 +832,14 @@ public class ArmarPedido extends AppCompatActivity
 
     /**
      * Muestra todos los componentes de la tabla.
+     *
      * @param tabla Tabla 1
-     * @param tab Tabla 2
+     * @param tab   Tabla 2
      */
     private void mostrarTodo(TableLayout tabla, TableLayout tab)
     {
         LinearLayout botones_opciones = (LinearLayout) findViewById(R.id.botones_opciones);
-        LinearLayout datos_pedido = (LinearLayout) findViewById(R.id.datos_pedido);
+        LinearLayout datos_pedido     = (LinearLayout) findViewById(R.id.datos_pedido);
 
         datos_pedido.setVisibility(View.VISIBLE);
         botones_opciones.setVisibility(View.VISIBLE);
@@ -820,13 +849,14 @@ public class ArmarPedido extends AppCompatActivity
 
     /**
      * Oculta todos los componentes de la tabla.
+     *
      * @param tabla Tabla 1
-     * @param tab Tabla 2
+     * @param tab   Tabla 2
      */
     private void ocultarTodo(TableLayout tabla, TableLayout tab)
     {
         LinearLayout botones_opciones = (LinearLayout) findViewById(R.id.botones_opciones);
-        LinearLayout datos_pedido = (LinearLayout) findViewById(R.id.datos_pedido);
+        LinearLayout datos_pedido     = (LinearLayout) findViewById(R.id.datos_pedido);
 
         datos_pedido.setVisibility(View.INVISIBLE);
         botones_opciones.setVisibility(View.INVISIBLE);
@@ -836,13 +866,14 @@ public class ArmarPedido extends AppCompatActivity
 
     /**
      * Obtiene el nombre del producto a traves de su ID.
+     *
      * @param id ID del producto a consultar.
      * @return Nombre del producto.
      */
     private String obtenerNombreProducto(String id)
     {
         Cursor cursor = manager.cargarProductosId(id);
-        if(cursor.moveToFirst())
+        if (cursor.moveToFirst())
             return cursor.getString(0);
         cursor.close();
         return null;
@@ -850,9 +881,10 @@ public class ArmarPedido extends AppCompatActivity
 
     /**
      * Actualiza la informacion en la parte inferior de la tabla.
+     *
      * @param precio_total Precio total del pedido.
-     * @param cant_bultos Cantidad total de bultos del pedido.
-     * @param cant_pares Cantidad de pares total del pedido.
+     * @param cant_bultos  Cantidad total de bultos del pedido.
+     * @param cant_pares   Cantidad de pares total del pedido.
      */
     private void actualizarInformacionInferior(final Double precio_total, final String cant_bultos, final String cant_pares)
     {
@@ -868,13 +900,13 @@ public class ArmarPedido extends AppCompatActivity
                         @Override
                         public void run()
                         {
-                            TextView precioFinal = (TextView) findViewById(R.id.precioFinal);
+                            TextView precioFinal    = (TextView) findViewById(R.id.precioFinal);
                             TextView cantidadBultos = (TextView) findViewById(R.id.cantidad_bultos);
-                            TextView cantidadPares = (TextView) findViewById(R.id.cantidad_pares);
+                            TextView cantidadPares  = (TextView) findViewById(R.id.cantidad_pares);
 
-                            precioFinal.setText( Funciones.formatoPrecio(String.valueOf(precio_total)) );
+                            precioFinal.setText(Funciones.formatoPrecio(String.valueOf(precio_total)));
                             cantidadBultos.setText(cant_bultos);
-                            cantidadPares.setText( Funciones.formatoPrecio(cant_pares) );
+                            cantidadPares.setText(Funciones.formatoPrecio(cant_pares));
                         }
                     });
 
@@ -886,10 +918,11 @@ public class ArmarPedido extends AppCompatActivity
 
     /**
      * Actualiza la informacion en la parte inferior de la tabla.
-     * @param precio_total Precio total del pedido.
+     *
+     * @param precio_total       Precio total del pedido.
      * @param cantidad_productos Cantidad total de productos del pedido.
-     * @param cantidad_bultos Cantidad total de bultos del pedido.
-     * @param cantidad_pares Cantidad de pares total del pedido.
+     * @param cantidad_bultos    Cantidad total de bultos del pedido.
+     * @param cantidad_pares     Cantidad de pares total del pedido.
      */
     private void actualizarInformacionInferior(final Double precio_total, final int cantidad_productos, final int cantidad_bultos, final int cantidad_pares)
     {
@@ -906,14 +939,14 @@ public class ArmarPedido extends AppCompatActivity
                         public void run()
                         {
                             TextView cantidadProductos = (TextView) findViewById(R.id.cantidadFinal);
-                            TextView precioFinal = (TextView) findViewById(R.id.precioFinal);
-                            TextView cantidadBultos = (TextView) findViewById(R.id.cantidad_bultos);
-                            TextView cantidadPares = (TextView) findViewById(R.id.cantidad_pares);
+                            TextView precioFinal       = (TextView) findViewById(R.id.precioFinal);
+                            TextView cantidadBultos    = (TextView) findViewById(R.id.cantidad_bultos);
+                            TextView cantidadPares     = (TextView) findViewById(R.id.cantidad_pares);
 
                             cantidadProductos.setText(String.valueOf(cantidad_productos));
-                            precioFinal.setText( Funciones.formatoPrecio(String.valueOf(precio_total)) );
-                            cantidadBultos.setText( String.valueOf(cantidad_bultos) );
-                            cantidadPares.setText( Funciones.formatoPrecio(String.valueOf(cantidad_pares)) );
+                            precioFinal.setText(Funciones.formatoPrecio(String.valueOf(precio_total)));
+                            cantidadBultos.setText(String.valueOf(cantidad_bultos));
+                            cantidadPares.setText(Funciones.formatoPrecio(String.valueOf(cantidad_pares)));
                         }
                     });
 
@@ -925,6 +958,7 @@ public class ArmarPedido extends AppCompatActivity
 
     /**
      * Realiza el pedido al cliente indicado.
+     *
      * @param id_cliente ID del cliente al que se le realizara el pedido.
      * @return Id del pedido (de haberse realizado), -1 en caso contrario.
      */
@@ -1025,7 +1059,7 @@ public class ArmarPedido extends AppCompatActivity
     /**
      * Clase para cancelar en segundo plano un pedido temporal.
      */
-    private class async_cancelarPedidoTemporal extends AsyncTask< String, String, String >
+    private class async_cancelarPedidoTemporal extends AsyncTask<String, String, String>
     {
         @Override
         protected void onPreExecute()
@@ -1073,7 +1107,7 @@ public class ArmarPedido extends AppCompatActivity
 
                 // Redirige a la pantalla de Home
                 Intent c = new Intent(ArmarPedido.this, ConsultarPedidos.class);
-                c.putExtra("usuario",usuario);
+                c.putExtra("usuario", usuario);
                 startActivity(c);
 
                 ConsultarPedidos.fa.finish();
@@ -1093,7 +1127,7 @@ public class ArmarPedido extends AppCompatActivity
     /**
      * Clase para realizar el pedido en segundo plano.
      */
-    private class realizarPedido extends AsyncTask <String, String, String>
+    private class realizarPedido extends AsyncTask<String, String, String>
     {
         @Override
         protected void onPreExecute()
@@ -1125,7 +1159,7 @@ public class ArmarPedido extends AppCompatActivity
         @Override
         protected void onPostExecute(String result)
         {
-            if(result.equals("ok"))
+            if (result.equals("ok"))
             {
                 if (cancelarPedidoTemporal())
                 {

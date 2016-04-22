@@ -917,11 +917,18 @@ public class DBAdapter
         return contenedor;
     }
 
-    public Cursor buscarColor_ID(String id_color)
+    public Cursor buscarColorxID(String id_color)
     {
         String[] columnas = new String[]{CN_NOMBRE_COLOR};
         String[] args     = {id_color};
         return db.query(TABLA_COLORES, columnas, CN_ID_COLOR + "=?", args, null, null, null);
+    }
+
+    public Cursor buscarColorxNombre(String nombre_color)
+    {
+        String[] columnas = new String[]{CN_ID_COLOR};
+        String[] args     = {nombre_color};
+        return db.query(TABLA_COLORES, columnas, CN_NOMBRE_COLOR + "=?", args, null, null, null);
     }
 
     public Cursor cargarColores()

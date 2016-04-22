@@ -49,10 +49,10 @@ public class EditarPedido extends AppCompatActivity
     public static Activity fa;
     private final String TAG = "EditarPedido";
     private String usuario, id_pedido;
-    private Context contexto;
+    private Context        contexto;
     private ProgressDialog pDialog;
-    private DBAdapter manager;
-    private boolean borre_producto;
+    private DBAdapter      manager;
+    private boolean        borre_producto;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -104,23 +104,27 @@ public class EditarPedido extends AppCompatActivity
             @Override
             public void onClick(View v)
             {
-                if( !PedidoEditarVacio() )
+                if (!PedidoEditarVacio())
                 {
                     AlertDialog.Builder dialog = new AlertDialog.Builder(EditarPedido.this);
 
                     dialog.setTitle(R.string.confirmacion);
                     dialog.setMessage(R.string.confirmacion_editar_pedido);
                     dialog.setCancelable(false);
-                    dialog.setPositiveButton("SI", new DialogInterface.OnClickListener() {
+                    dialog.setPositiveButton("SI", new DialogInterface.OnClickListener()
+                    {
                         @Override
-                        public void onClick(DialogInterface dialog, int which) {
+                        public void onClick(DialogInterface dialog, int which)
+                        {
                             new async_editarPedido().execute();
                         }
                     });
 
-                    dialog.setNegativeButton("NO", new DialogInterface.OnClickListener() {
+                    dialog.setNegativeButton("NO", new DialogInterface.OnClickListener()
+                    {
                         @Override
-                        public void onClick(DialogInterface dialog, int which) {
+                        public void onClick(DialogInterface dialog, int which)
+                        {
                             dialog.cancel();
                         }
                     });
@@ -135,9 +139,11 @@ public class EditarPedido extends AppCompatActivity
         });
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
+        fab.setOnClickListener(new View.OnClickListener()
+        {
             @Override
-            public void onClick(View view) {
+            public void onClick(View view)
+            {
                 Intent c = new Intent(EditarPedido.this, AgregarProductoPedidoEditar.class);
                 c.putExtra("usuario", usuario);
                 c.putExtra("id_pedido", id_pedido);
@@ -148,13 +154,14 @@ public class EditarPedido extends AppCompatActivity
 
     /**
      * Indica si el la tabla pedidoEditar esta vacia.
+     *
      * @return True si esta vacia, false en caso contrario.
      */
     private boolean PedidoEditarVacio()
     {
         Cursor c = manager.cargarPedidosDetallesEditar();
         Log.d(TAG, "Productos pedido editar: " + c.getCount());
-        return c.getCount()<=0;
+        return c.getCount() <= 0;
     }
 
     /**
@@ -162,8 +169,8 @@ public class EditarPedido extends AppCompatActivity
      */
     private void cargarDatosCliente()
     {
-        TextView razonSocial = (TextView) findViewById(R.id.rs_cliente_pedido);
-        TextView rifCliente = (TextView) findViewById(R.id.rif_cliente_pedido);
+        TextView razonSocial   = (TextView) findViewById(R.id.rs_cliente_pedido);
+        TextView rifCliente    = (TextView) findViewById(R.id.rif_cliente_pedido);
         TextView estadoCliente = (TextView) findViewById(R.id.estado_cliente_pedido);
 
         List<String> datos_clientes = obtenerDatosCliente(id_pedido);
@@ -175,13 +182,14 @@ public class EditarPedido extends AppCompatActivity
 
     /**
      * Obtiene los datos del cliente indicado
+     *
      * @param id ID del cliente a consultar
      * @return List con los datos del cliente.
      */
     private List<String> obtenerDatosCliente(String id)
     {
         List<String> datos_clientes = new ArrayList<>();
-        Cursor cursor = manager.cargarIDClientePedido(id);
+        Cursor       cursor         = manager.cargarIDClientePedido(id);
         for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor.moveToNext())
         {
             datos_clientes.add(cursor.getString(0));
@@ -196,6 +204,7 @@ public class EditarPedido extends AppCompatActivity
 
     /**
      * Obtiene los datos del vendedor (usuario)
+     *
      * @param usuario ID del usuario a consultar
      * @return Lista con los datos del vendedor.
      */
@@ -467,7 +476,7 @@ public class EditarPedido extends AppCompatActivity
         return manager.editarPedido(id_pedido) > 0;
     }
 
-    class cargarDatos extends AsyncTask< String, String, String >
+    class cargarDatos extends AsyncTask<String, String, String>
     {
         @Override
         protected void onPreExecute()
@@ -497,11 +506,11 @@ public class EditarPedido extends AppCompatActivity
         {
             // Se copiara la informacion del pedido actual, en la tabla nueva pedido_editar
             Cursor cursor = manager.cargarPedidosDetalles(id_pedido);
-            Double monto = 0.00;
+            Double monto  = 0.00;
 
             for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor.moveToNext())
             {
-                final String pares = cursor.getString(6);
+                final String pares  = cursor.getString(6);
                 final String bultos = cursor.getString(7);
                 final String precio = cursor.getString(8);
 
@@ -511,19 +520,19 @@ public class EditarPedido extends AppCompatActivity
             cursor.close();
             String observaciones = "Prueba de una observacion..";
 
-            ArrayList<String> datos = new ArrayList<>();
-            List<String> datos_cliente = obtenerDatosCliente(id_pedido);
-            List<String> datos_vendedor = obtenerDatosVendedor(usuario);
+            ArrayList<String> datos          = new ArrayList<>();
+            List<String>      datos_cliente  = obtenerDatosCliente(id_pedido);
+            List<String>      datos_vendedor = obtenerDatosVendedor(usuario);
 
-            for (int i = 0; i <datos_cliente.size(); i++)
+            for (int i = 0; i < datos_cliente.size(); i++)
             {
-                Log.d(TAG, "Agregando 1: "+datos_cliente.get(i));
+                Log.d(TAG, "Agregando 1: " + datos_cliente.get(i));
                 datos.add(datos_cliente.get(i));
             }
 
-            for (int i = 0; i <datos_vendedor.size(); i++)
+            for (int i = 0; i < datos_vendedor.size(); i++)
             {
-                Log.d(TAG, "Agregando 2: "+datos_vendedor.get(i));
+                Log.d(TAG, "Agregando 2: " + datos_vendedor.get(i));
                 datos.add(datos_vendedor.get(i));
             }
 
@@ -531,7 +540,7 @@ public class EditarPedido extends AppCompatActivity
             datos.add("1");
             datos.add(observaciones);
             long res = manager.agregarPedidoEditado(datos, id_pedido);
-            Log.d(TAG, "res: "+res);
+            Log.d(TAG, "res: " + res);
         }
 
         @Override
@@ -555,11 +564,11 @@ public class EditarPedido extends AppCompatActivity
                             public void run()
                             {
                                 Log.i(TAG, "Inicializando tabla..");
-                                final TableLayout tabla = (TableLayout) findViewById(R.id.table_editar_pedidos);
-                                final TableLayout contenido = (TableLayout) findViewById(R.id.tabla_contenido);
-                                Double precio_total = 0.0;
+                                final TableLayout tabla        = (TableLayout) findViewById(R.id.table_editar_pedidos);
+                                final TableLayout contenido    = (TableLayout) findViewById(R.id.tabla_contenido);
+                                Double            precio_total = 0.0;
 
-                                int total_pares = 0;
+                                int total_pares  = 0;
                                 int total_bultos = 0;
 
                                 final TableRow.LayoutParams params = new TableRow.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.MATCH_PARENT, 1f);
@@ -594,10 +603,10 @@ public class EditarPedido extends AppCompatActivity
                                         final String nombre_modelo = String.valueOf(cursor.getString(2));
                                         //final String talla = String.valueOf(cursor.getString(4));
                                         final String numeracion = cursor.getString(5);
-                                        final String pares = cursor.getString(6);
-                                        final String bultos = cursor.getString(7);
-                                        final String precio = cursor.getString(8);
-                                        final String subtotal = cursor.getString(9);
+                                        final String pares      = cursor.getString(6);
+                                        final String bultos     = cursor.getString(7);
+                                        final String precio     = cursor.getString(8);
+                                        final String subtotal   = cursor.getString(9);
 
                                         precio_total += Double.parseDouble(precio) * Integer.parseInt(pares) * Integer.parseInt(bultos);
                                         total_pares += Integer.parseInt(pares);
@@ -605,13 +614,13 @@ public class EditarPedido extends AppCompatActivity
 
                                         Log.i(TAG, "Producto: " + nombre_modelo + " Precio: " + Double.parseDouble(precio) + "*" + Integer.parseInt(pares) + "*" + Integer.parseInt(bultos) + " = " + Double.parseDouble(precio) * Integer.parseInt(pares) * Integer.parseInt(bultos));
 
-                                        ImageView imagen  = generarImageViewTabla(nombre_modelo, params, contexto);
-                                        TextView modelo = generarTextViewModeloTabla(nombre_modelo, params, contexto);
-                                        TextView numeracion_producto = generarTextViewNumeracionTabla(numeracion, params, contexto);
-                                        TextView pares_producto = generarTextViewParesTabla(pares, params, contexto);
-                                        TextView precio_producto = generarTextViewPrecioTabla(precio, params, contexto);
-                                        final TextView sub_total = generarTextViewSubTotalTabla(subtotal, params, contexto);
-                                        final NumberPicker cantidad_bultos = generarNumberPickerBultosTabla(sub_total, bultos, precio, pares, nombre_modelo, cantidad_productos, params, contexto);
+                                        ImageView          imagen              = generarImageViewTabla(nombre_modelo, params, contexto);
+                                        TextView           modelo              = generarTextViewModeloTabla(nombre_modelo, params, contexto);
+                                        TextView           numeracion_producto = generarTextViewNumeracionTabla(numeracion, params, contexto);
+                                        TextView           pares_producto      = generarTextViewParesTabla(pares, params, contexto);
+                                        TextView           precio_producto     = generarTextViewPrecioTabla(precio, params, contexto);
+                                        final TextView     sub_total           = generarTextViewSubTotalTabla(subtotal, params, contexto);
+                                        final NumberPicker cantidad_bultos     = generarNumberPickerBultosTabla(sub_total, bultos, precio, pares, nombre_modelo, cantidad_productos, params, contexto);
 
                                         TableRow.LayoutParams layout = new TableRow.LayoutParams(0, TableRow.LayoutParams.MATCH_PARENT);
                                         imagen.setLayoutParams(layout);
@@ -630,7 +639,7 @@ public class EditarPedido extends AppCompatActivity
                                         fila.addView(precio_producto);
                                         fila.addView(cantidad_bultos);
                                         fila.addView(sub_total);
-                                        fila.setPadding(0, 2 , 0, 0);
+                                        fila.setPadding(0, 2, 0, 0);
 
                                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN)
                                             fila.setBackground(Funciones.intToDrawable(contexto, R.drawable.table_border));
@@ -638,11 +647,15 @@ public class EditarPedido extends AppCompatActivity
                                             //noinspection deprecation
                                             fila.setBackgroundDrawable(Funciones.intToDrawable(contexto, R.drawable.table_border));
 
-                                        final Thread hilo1 = new Thread() {
+                                        final Thread hilo1 = new Thread()
+                                        {
                                             @Override
-                                            public void run() {
-                                                synchronized (this) {
-                                                    runOnUiThread(new Runnable() {
+                                            public void run()
+                                            {
+                                                synchronized (this)
+                                                {
+                                                    runOnUiThread(new Runnable()
+                                                    {
                                                         @Override
                                                         public void run()
                                                         {
@@ -676,8 +689,8 @@ public class EditarPedido extends AppCompatActivity
 
                                                         ocultarTodo(contenido, tabla);
 
-                                                        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.MATCH_PARENT, 1f);
-                                                        TextView mensaje = new TextView(contexto);
+                                                        LinearLayout.LayoutParams params  = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.MATCH_PARENT, 1f);
+                                                        TextView                  mensaje = new TextView(contexto);
                                                         mensaje.setText(R.string.msj_pedido_vacio);
                                                         mensaje.setGravity(Gravity.CENTER);
                                                         mensaje.setTextSize(20f);
@@ -709,7 +722,7 @@ public class EditarPedido extends AppCompatActivity
         private void mostrarTodo(TableLayout tabla, TableLayout tab)
         {
             LinearLayout botones_opciones = (LinearLayout) findViewById(R.id.botones_opciones);
-            LinearLayout datos_pedido = (LinearLayout) findViewById(R.id.datos_pedido);
+            LinearLayout datos_pedido     = (LinearLayout) findViewById(R.id.datos_pedido);
 
             datos_pedido.setVisibility(View.VISIBLE);
             botones_opciones.setVisibility(View.VISIBLE);
@@ -720,7 +733,7 @@ public class EditarPedido extends AppCompatActivity
         private void ocultarTodo(TableLayout tabla, TableLayout tab)
         {
             LinearLayout botones_opciones = (LinearLayout) findViewById(R.id.botones_opciones);
-            LinearLayout datos_pedido = (LinearLayout) findViewById(R.id.datos_pedido);
+            LinearLayout datos_pedido     = (LinearLayout) findViewById(R.id.datos_pedido);
 
             datos_pedido.setVisibility(View.INVISIBLE);
             botones_opciones.setVisibility(View.INVISIBLE);
@@ -729,7 +742,7 @@ public class EditarPedido extends AppCompatActivity
         }
     }
 
-    private class async_editarPedido extends AsyncTask< String, String, String >
+    private class async_editarPedido extends AsyncTask<String, String, String>
     {
         @Override
         protected void onPreExecute()
@@ -777,7 +790,8 @@ public class EditarPedido extends AppCompatActivity
                 dialog.setTitle(R.string.confirmacion);
                 dialog.setMessage("¿Desea aprobar el pedido recien editado?");
                 dialog.setCancelable(false);
-                dialog.setPositiveButton("SI", new DialogInterface.OnClickListener() {
+                dialog.setPositiveButton("SI", new DialogInterface.OnClickListener()
+                {
                     @Override
                     public void onClick(DialogInterface dialog, int which)
                     {
@@ -789,7 +803,7 @@ public class EditarPedido extends AppCompatActivity
 
                         // Redirige a la pantalla de Home
                         Intent c = new Intent(EditarPedido.this, ConsultarPedidos.class);
-                        c.putExtra("usuario",usuario);
+                        c.putExtra("usuario", usuario);
                         startActivity(c);
 
                         ConsultarPedidos.fa.finish();
@@ -799,9 +813,11 @@ public class EditarPedido extends AppCompatActivity
                     }
                 });
 
-                dialog.setNegativeButton("NO", new DialogInterface.OnClickListener() {
+                dialog.setNegativeButton("NO", new DialogInterface.OnClickListener()
+                {
                     @Override
-                    public void onClick(DialogInterface dialog, int which) {
+                    public void onClick(DialogInterface dialog, int which)
+                    {
 
 
                         // Muestra al usuario un mensaje de operacion exitosa

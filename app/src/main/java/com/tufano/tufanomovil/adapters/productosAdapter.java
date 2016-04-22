@@ -25,6 +25,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.tufano.tufanomovil.R;
+import com.tufano.tufanomovil.gestion.productos.ConsultarProductos;
 import com.tufano.tufanomovil.gestion.productos.EditarProducto;
 import com.tufano.tufanomovil.global.Constantes;
 import com.tufano.tufanomovil.global.Funciones;
@@ -217,6 +218,7 @@ public class productosAdapter extends BaseAdapter
                 c.putExtra("numeracion_producto", numeracion_producto);
                 c.putExtra("estatus_producto", estatus_producto);
                 c.putExtra("paresxtalla", paresxtalla);
+                c.putExtra("selected_cb", ConsultarProductos.destacado_filtrado);
                 c.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 contexto.startActivity(c);
             }

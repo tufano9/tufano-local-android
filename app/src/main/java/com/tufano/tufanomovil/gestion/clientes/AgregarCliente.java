@@ -36,12 +36,12 @@ import com.tufano.tufanomovil.global.Funciones;
 public class AgregarCliente extends AppCompatActivity
 {
     private final String TAG = "AgregarProductoPedido";
-    private String usuario;
-    private boolean desdePedidos;
-    private Context contexto;
+    private String         usuario;
+    private boolean        desdePedidos;
+    private Context        contexto;
     private ProgressDialog pDialog;
-    private DBAdapter manager;
-    private Spinner sp_rif, sp_estado;
+    private DBAdapter      manager;
+    private Spinner        sp_rif, sp_estado;
     private EditText razon_social, rif1, rif2, telefono, email, direccion;
     private String idCreado;
 
@@ -189,9 +189,9 @@ public class AgregarCliente extends AppCompatActivity
         String rif = sp_rif.getSelectedItem().toString() + rif1.getText().toString().trim() + "-" +
                 rif2.getText().toString().trim();
         String estado = Funciones.capitalizeWords(sp_estado.getSelectedItem().toString().trim());
-        String tlf = telefono.getText().toString().trim();
-        String mail = email.getText().toString().trim();
-        String dir = Funciones.capitalizeWords(direccion.getText().toString().trim());
+        String tlf    = telefono.getText().toString().trim();
+        String mail   = email.getText().toString().trim();
+        String dir    = Funciones.capitalizeWords(direccion.getText().toString().trim());
         new async_crearClienteBD().execute(rs, rif, estado, tlf, mail, dir);
     }
 

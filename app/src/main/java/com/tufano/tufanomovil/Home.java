@@ -158,7 +158,7 @@ public class Home extends AppCompatActivity
     {
         Log.w(TAG, "Has presionado sobre Gestion de Clientes");
         Intent c = new Intent(Home.this, ConsultarCliente.class);
-        c.putExtra("usuario",usuario);
+        c.putExtra("usuario", usuario);
         startActivity(c);
     }
 
@@ -169,7 +169,7 @@ public class Home extends AppCompatActivity
     {
         Log.w(TAG, "Has presionado sobre Gestion de Pedidos");
         Intent c = new Intent(Home.this, ConsultarPedidos.class);
-        c.putExtra("usuario",usuario);
+        c.putExtra("usuario", usuario);
         startActivity(c);
     }
 
@@ -192,14 +192,16 @@ public class Home extends AppCompatActivity
     }
 
     @Override
-    public boolean onCreateOptionsMenu(android.view.Menu menu) {
+    public boolean onCreateOptionsMenu(android.view.Menu menu)
+    {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
+    public boolean onOptionsItemSelected(MenuItem item)
+    {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
@@ -255,7 +257,8 @@ public class Home extends AppCompatActivity
             {
 
                 @Override
-                public void onClick(DialogInterface dialog, int which) {
+                public void onClick(DialogInterface dialog, int which)
+                {
                     dialog.cancel();
                 }
             });

@@ -2,7 +2,7 @@ package com.tufano.tufanomovil.database.tables;
 
 /**
  * @author Gerson Figuera
- * Clase que contiene todos los campos de la tabla productos.
+ *         Clase que contiene todos los campos de la tabla productos.
  */
 public class Productos
 {

@@ -19,9 +19,9 @@ public class FullScreenImage extends AppCompatActivity
         setContentView(R.layout.fullscreenimages);
 
         // Obtiene el path de la imagen
-        Bundle bundle = getIntent().getExtras();
-        final String img_path = bundle.getString("img_path");
-        final ImageView photo = (ImageView) findViewById(R.id.fullscreenphoto);
+        Bundle          bundle   = getIntent().getExtras();
+        final String    img_path = bundle.getString("img_path");
+        final ImageView photo    = (ImageView) findViewById(R.id.fullscreenphoto);
 
         if (img_path != null)
         {
@@ -32,7 +32,8 @@ public class FullScreenImage extends AppCompatActivity
                 {
                     synchronized (this)
                     {
-                        runOnUiThread(new Runnable() {
+                        runOnUiThread(new Runnable()
+                        {
                             @Override
                             public void run()
                             {

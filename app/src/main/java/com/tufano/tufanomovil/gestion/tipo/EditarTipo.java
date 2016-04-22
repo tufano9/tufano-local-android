@@ -27,16 +27,16 @@ import com.tufano.tufanomovil.global.Funciones;
  */
 public class EditarTipo extends AppCompatActivity
 {
-    private Context contexto;
     private final String TAG = "EditarTipo";
-    private DBAdapter manager;
+    private Context        contexto;
+    private DBAdapter      manager;
     private ProgressDialog pDialog;
-    private String id_tipo, tipos_producto;
+    private String         id_tipo, tipos_producto;
     private EditText nombre_tipo_editar;
-    private boolean desdeProductos;
-    private String usuario;
-    private String idTallaCreado;
-    private String idColorCreado;
+    private boolean  desdeProductos;
+    private String   usuario;
+    private String   idTallaCreado;
+    private String   idColorCreado;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -108,20 +108,22 @@ public class EditarTipo extends AppCompatActivity
     private void initButtons()
     {
         Button btn_editar_tipo = (Button) findViewById(R.id.btn_editar_tipo);
-        btn_editar_tipo.setOnClickListener(new View.OnClickListener() {
+        btn_editar_tipo.setOnClickListener(new View.OnClickListener()
+        {
             @Override
             public void onClick(View v)
             {
                 if (camposValidados())
                 {
                     nombre_tipo_editar.setError(null);
-                    final String newTipo = Funciones.capitalizeWords(nombre_tipo_editar.getText().toString().trim());
-                    AlertDialog.Builder dialog = new AlertDialog.Builder(EditarTipo.this);
+                    final String        newTipo = Funciones.capitalizeWords(nombre_tipo_editar.getText().toString().trim());
+                    AlertDialog.Builder dialog  = new AlertDialog.Builder(EditarTipo.this);
 
                     dialog.setTitle(R.string.confirmacion_editar_tipo);
                     dialog.setMessage("Se editara el tipo: \"" + tipos_producto + "\" a: \"" + newTipo + "\"");
                     dialog.setCancelable(false);
-                    dialog.setPositiveButton("SI", new DialogInterface.OnClickListener() {
+                    dialog.setPositiveButton("SI", new DialogInterface.OnClickListener()
+                    {
                         @Override
                         public void onClick(DialogInterface dialog, int which)
                         {
@@ -159,6 +161,7 @@ public class EditarTipo extends AppCompatActivity
 
     /**
      * Verifica que los campos introducidos por el usuario esten validados
+     *
      * @return True si los datos fueron validados exitosamente, False en caso contrario.
      */
     private boolean camposValidados()
@@ -169,7 +172,7 @@ public class EditarTipo extends AppCompatActivity
     /**
      * Clase para editar en segundo plano un tipo de productos
      */
-    class async_editarTipoBD extends AsyncTask< String, String, String >
+    class async_editarTipoBD extends AsyncTask<String, String, String>
     {
         String id, nombre;
 
@@ -196,12 +199,12 @@ public class EditarTipo extends AppCompatActivity
 
                 //boolean campo_cambio = !talla_producto.equals(obtenerTipoIngresado());
 
-                if ( result == 0 ) // No hubieron modificaciones
+                if (result == 0) // No hubieron modificaciones
                 {
                     Log.d(TAG, "err");
                     return "err";
                 }
-                else if ( result == -2 )
+                else if (result == -2)
                 {
                     Log.d(TAG, "existente");
                     return "existente";
@@ -230,7 +233,7 @@ public class EditarTipo extends AppCompatActivity
                     // producto y necesite editar un tipo, presione el boton y me redirigio a esta
                     // activity, la cual al acabar el proceso me devolvera a mi activity de productos
                     // con el nuevo tipo editado y seleccionado.
-                    if(desdeProductos)
+                    if (desdeProductos)
                     {
                         // Muestra al usuario un mensaje de operacion exitosa
                         Toast.makeText(contexto, "Tipo editado exitosamente!!", Toast.LENGTH_LONG).show();
@@ -252,9 +255,9 @@ public class EditarTipo extends AppCompatActivity
                         Toast.makeText(contexto, "Tipo editado exitosamente!!", Toast.LENGTH_LONG).show();
 
                         // Redirige al menu de gestion de tipos
-                        Intent c = new Intent(EditarTipo.this, GestionTipos.class);
+                        Intent c = new Intent(EditarTipo.this, ConsultarTipos.class);
                         startActivity(c);
-                        GestionTipos.fa.finish();
+                        ConsultarTipos.fa.finish();
                     }
 
                     // Prevent the user to go back to this activity
@@ -271,13 +274,14 @@ public class EditarTipo extends AppCompatActivity
 
         /**
          * Edita el tipo indicado bajo los parametros.
-         * @param id ID del tipo de producto a editar.
+         *
+         * @param id     ID del tipo de producto a editar.
          * @param nombre Nombre con el cual se quiere editar el tipo de producto.
          * @return -1 si ocurrio un error, -2 si ya existe el tipo, valor positivo en caso exitoso.
          */
         private long editarTipo(String id, String nombre)
         {
-            if( !existeTipo(nombre, id))
+            if (!existeTipo(nombre, id))
             {
                 long id_talla = manager.editarTipos(id, nombre);
                 Log.d(TAG, "Columnas modificadas: " + id_talla);
@@ -297,6 +301,7 @@ public class EditarTipo extends AppCompatActivity
 
         /**
          * Verifica si el tipo de producto ya existe con el nombre indicado y con un id distinto.
+         *
          * @param nombre Talla que se quiere saber si existe
          * @return Devuelve true si la talla ya existe con el nombre ingresado y un id distinto al
          * señalado.

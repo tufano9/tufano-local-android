@@ -3,28 +3,28 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     android:paddingBottom="@dimen/activity_vertical_margin"
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context=".gestion.talla.GestionTallas"
+    tools:context=".gestion.talla.ConsultarTallas"
     tools:showIn="@layout/activity_gestion_tallas">
 
     <LinearLayout
-        android:orientation="vertical"
+        android:id="@+id/contenedor"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/contenedor">
+        android:orientation="vertical">
 
         <TableLayout
+            android:id="@+id/table_gestion_tallas"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:stretchColumns="*"
-            android:id="@+id/table_gestion_tallas"
             android:visibility="invisible">
 
             <TableRow
@@ -35,26 +35,26 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textSize="18sp"
                     android:gravity="center"
                     android:text="@string/cabecera_tabla_gestionTallas_1"
-                    android:textColor="@drawable/table_header_text" />
+                    android:textColor="@drawable/table_header_text"
+                    android:textSize="18sp"/>
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textSize="18sp"
                     android:gravity="center"
                     android:text="@string/cabecera_tabla_gestionTallas_2"
-                    android:textColor="@drawable/table_header_text" />
+                    android:textColor="@drawable/table_header_text"
+                    android:textSize="18sp"/>
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textSize="18sp"
                     android:gravity="center"
                     android:text="@string/cabecera_tabla_gestionTallas_3"
-                    android:textColor="@drawable/table_header_text" />
+                    android:textColor="@drawable/table_header_text"
+                    android:textSize="18sp"/>
             </TableRow>
         </TableLayout>
     </LinearLayout>

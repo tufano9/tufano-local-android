@@ -1,4 +1,4 @@
-package com.tufano.tufanomovil.gestion.talla;
+package com.tufano.tufanomovil.gestion.colores;
 
 import android.app.Activity;
 import android.content.Context;
@@ -24,20 +24,22 @@ import com.tufano.tufanomovil.database.DBAdapter;
 import com.tufano.tufanomovil.global.Funciones;
 
 /**
- * Created por Usuario Tufano on 14/01/2016.
+ * Created por Usuario Tufano on 15/01/2016.
  */
-public class GestionTallas extends AppCompatActivity
+public class ConsultarColores extends AppCompatActivity
 {
-    public static Activity  fa;
-    private       Context   contexto;
-    private       DBAdapter manager;
-    private       String    usuario;
+    //private ProgressDialog pDialog;
+    public static Activity fa;
+    private final String TAG = "ConsultarColores";
+    private Context   contexto;
+    private DBAdapter manager;
+    private String    usuario;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_gestion_tallas);
+        setContentView(R.layout.activity_gestion_colores);
 
         fa = this;
         contexto = getApplicationContext();
@@ -45,7 +47,7 @@ public class GestionTallas extends AppCompatActivity
 
         getExtrasVar();
         createToolBar();
-        initComponents();
+        initButtons();
         inicializarTabla();
     }
 
@@ -64,14 +66,14 @@ public class GestionTallas extends AppCompatActivity
     private void createToolBar()
     {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        toolbar.setSubtitle(R.string.gestion_talla_subtitulo);
+        toolbar.setSubtitle(R.string.gestion_color_subtitulo);
         setSupportActionBar(toolbar);
     }
 
     /**
-     * Inicializa los componentes. En este caso el Boton flotante para agregar tallas.
+     * Inicializa los botones
      */
-    private void initComponents()
+    private void initButtons()
     {
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener()
@@ -79,7 +81,7 @@ public class GestionTallas extends AppCompatActivity
             @Override
             public void onClick(View view)
             {
-                Intent c = new Intent(GestionTallas.this, AgregarTalla.class);
+                Intent c = new Intent(ConsultarColores.this, AgregarColor.class);
                 c.putExtra("usuario", usuario);
                 startActivity(c);
             }
@@ -87,65 +89,77 @@ public class GestionTallas extends AppCompatActivity
     }
 
     /**
-     * Inicializa la tabla que contiene las tallas de la BD
+     * Metodo principal para gestionar la tabla de colores.
      */
     private void inicializarTabla()
     {
-        String TAG = "GestionTallas";
         Log.i(TAG, "Inicializando tabla..");
-        final TableLayout tabla = (TableLayout) findViewById(R.id.table_gestion_tallas);
+        final TableLayout tabla = (TableLayout) findViewById(R.id.table_gestion_colores);
 
         TableRow.LayoutParams params = new TableRow.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.MATCH_PARENT, 1f);
 
         // Llenando la tabla de forma iterativa
-        Cursor cursor = manager.cargarTallas();
-        if(cursor.getCount()>0)
+        Cursor cursor = manager.cargarColores();
+        if (cursor.getCount() > 0)
         {
             mostrarTodo(tabla);
+
             for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor.moveToNext())
             {
                 Log.i(TAG, "Agregando fila..");
                 TableRow fila = new TableRow(contexto);
 
-                final String id_tallas = String.valueOf(cursor.getInt(0));
-                final String talla_producto = cursor.getString(1);
-                final String numeraciones = cursor.getString(2);
+                final String id_color     = String.valueOf(cursor.getInt(0));
+                final String nombre_color = cursor.getString(1);
 
-                /* Talla */
-                TextView talla = generarTextViewTalla(contexto, talla_producto, params);
+                /* Tipos */
+                TextView color = new TextView(contexto);
+                color.setText(nombre_color);
+                color.setTextColor(Color.DKGRAY);
+                color.setGravity(Gravity.CENTER);
+                color.setLayoutParams(params);
+                color.setTextSize(16f);
 
-                /* Numeracion */
-                TextView numeracion = generarTextViewNumeracion(contexto, numeraciones, params);
-
-                /* Editar */
-                Button editar = generarButtonEditar(contexto, id_tallas, talla_producto, numeraciones);
-
-                /*
-
-                final Button eliminar = new Button(contexto);
+                /* Opciones */
+                Button editar = new Button(contexto);
+                editar.setOnClickListener(new View.OnClickListener()
+                {
+                    @Override
+                    public void onClick(View v)
+                    {
+                        Intent c = new Intent(ConsultarColores.this, EditarColor.class);
+                        c.putExtra("id_color", id_color);
+                        c.putExtra("nombre_color", nombre_color);
+                        startActivity(c);
+                    }
+                });
+                editar.setBackgroundResource(R.drawable.icn_edit);
+                int                       edit_image_width  = 70;
+                int                       edit_image_height = 70;
+                LinearLayout.LayoutParams parms             = new LinearLayout.LayoutParams(edit_image_width, edit_image_height);
+                editar.setLayoutParams(parms);
+                editar.setPadding(2, 10, 2, 10);
+                /*final Button eliminar = new Button(contexto);
 
                 eliminar.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v)
                     {
-                        Log.i(TAG, "Eliminar presionado");
-                        AlertDialog.Builder dialog = new AlertDialog.Builder(GestionTallas.this);
+                        AlertDialog.Builder dialog = new AlertDialog.Builder(ConsultarColores.this);
 
-                        dialog.setMessage(R.string.confirmacion_eliminar_talla);
+                        dialog.setTitle(R.string.confirmacion_eliminar_color);
+                        dialog.setMessage("Se eliminará el siguiente color: " + nombre_color);
                         dialog.setCancelable(false);
                         dialog.setPositiveButton("Si", new DialogInterface.OnClickListener() {
                             @Override
-                            public void onClick(DialogInterface dialog, int which)
-                            {
-                                new async_eliminarTallaBD().execute(id_tallas);
+                            public void onClick(DialogInterface dialog, int which) {
+                                new async_eliminarColorBD().execute(id_color);
                             }
                         });
 
-                        dialog.setNegativeButton("No", new DialogInterface.OnClickListener()
-                        {
+                        dialog.setNegativeButton("No", new DialogInterface.OnClickListener() {
                             @Override
-                            public void onClick(DialogInterface dialog, int which)
-                            {
+                            public void onClick(DialogInterface dialog, int which) {
                                 dialog.cancel();
                             }
                         });
@@ -164,9 +178,9 @@ public class GestionTallas extends AppCompatActivity
                 opciones.addView(editar);
                 //opciones.addView(eliminar);
 
+                // Llenando la fila con data
                 fila.setBackgroundColor(Color.WHITE);
-                fila.addView(talla);
-                fila.addView(numeracion);
+                fila.addView(color);
                 fila.addView(opciones);
 
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN)
@@ -196,7 +210,7 @@ public class GestionTallas extends AppCompatActivity
                                 ocultarTodo(tabla);
 
                                 TextView mensaje = new TextView(contexto);
-                                mensaje.setText(R.string.msj_talla_vacio);
+                                mensaje.setText(R.string.msj_color_vacio);
                                 mensaje.setGravity(Gravity.CENTER);
                                 mensaje.setTextSize(20f);
 
@@ -214,76 +228,9 @@ public class GestionTallas extends AppCompatActivity
     }
 
     /**
-     * Boton para la edicion de la talla presionada.
-     * @param contexto Contexto de la aplicacion.
-     * @param id_tallas ID de la talla a editar.
-     * @param talla_producto Nombre de la talla.
-     * @param numeraciones Numeracion de la talla.
-     * @return Boton generado para la edicion de la talla.
-     */
-    private Button generarButtonEditar(Context contexto, final String id_tallas, final String talla_producto, final String numeraciones)
-    {
-        Button editar = new Button(contexto);
-        editar.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v)
-            {
-                Intent c = new Intent(GestionTallas.this, EditarTalla.class);
-                c.putExtra("id_talla", id_tallas);
-                c.putExtra("talla_producto", talla_producto);
-                c.putExtra("numeraciones", numeraciones);
-                startActivity(c);
-            }
-        });
-        editar.setBackgroundResource(R.drawable.icn_edit);
-        int edit_image_width = 70;
-        int edit_image_height = 70;
-        LinearLayout.LayoutParams parms = new LinearLayout.LayoutParams(edit_image_width, edit_image_height);
-        editar.setLayoutParams(parms);
-        editar.setPadding(2, 10, 2, 10);
-
-        return editar;
-    }
-
-    /**
-     * Generar TextView que contiene la numeracion de la talla.
-     * @param contexto Contexto de la aplicacion.
-     * @param numeraciones Numeracion de la aplicacion.
-     * @param params Parametros de la tabla.
-     * @return TextView generado con la numeracion.
-     */
-    private TextView generarTextViewNumeracion(Context contexto, String numeraciones, TableRow.LayoutParams params)
-    {
-        TextView numeracion = new TextView(contexto);
-        numeracion.setText( numeraciones .replace("(", "") .replace(")", "") );
-        numeracion.setTextColor(Color.DKGRAY);
-        numeracion.setGravity(Gravity.CENTER);
-        numeracion.setLayoutParams(params);
-        numeracion.setTextSize(16f);
-        return numeracion;
-    }
-
-    /**
-     * Generar TextView que contiene el nombre de la talla.
-     * @param contexto Contexto de la aplicacion.
-     * @param talla_producto Talla del producto.
-     * @param params Parametros de la tabla
-     * @return TextView generado con la talla.
-     */
-    private TextView generarTextViewTalla(Context contexto, String talla_producto, TableRow.LayoutParams params)
-    {
-        TextView talla = new TextView(contexto);
-        talla.setText(talla_producto);
-        talla.setTextColor(Color.DKGRAY);
-        talla.setGravity(Gravity.CENTER);
-        talla.setLayoutParams(params);
-        talla.setTextSize(16f);
-        return talla;
-    }
-
-    /**
-     * Muestra la tabla.
-     * @param tabla Layout de la tabla.
+     * Muestra todos los componentes de la tabla.
+     *
+     * @param tabla Tabla a la cual se le haran visibles los componentes
      */
     private void mostrarTodo(TableLayout tabla)
     {
@@ -291,8 +238,9 @@ public class GestionTallas extends AppCompatActivity
     }
 
     /**
-     * Oculta la tabla.
-     * @param tabla Layout de la tabla.
+     * Oculta todos los componentes de la tabla.
+     *
+     * @param tabla Tabla a la cual se le haran invisibles los componentes
      */
     private void ocultarTodo(TableLayout tabla)
     {
@@ -300,16 +248,17 @@ public class GestionTallas extends AppCompatActivity
     }
 
     /*
-    class async_eliminarTallaBD extends AsyncTask< String, String, String >
+
+    class async_eliminarColorBD extends AsyncTask< String, String, String >
     {
         String id;
 
         @Override
         protected void onPreExecute()
         {
-            pDialog = new ProgressDialog(GestionTallas.this);
+            pDialog = new ProgressDialog(ConsultarColores.this);
             pDialog.setTitle("Por favor espere...");
-            pDialog.setMessage("Eliminando la talla...");
+            pDialog.setMessage("Eliminando el color...");
             pDialog.setIndeterminate(true);
             pDialog.setCancelable(false);
             pDialog.show();
@@ -323,7 +272,7 @@ public class GestionTallas extends AppCompatActivity
             try
             {
                 //enviamos y recibimos y analizamos los datos en segundo plano.
-                if (eliminarTalla(id))
+                if (eliminarColor(id))
                 {
                     return "ok";
                 }
@@ -348,11 +297,10 @@ public class GestionTallas extends AppCompatActivity
             if (result.equals("ok"))
             {
                 // Muestra al usuario un mensaje de operacion exitosa
-                Toast.makeText(contexto, "Talla eliminada exitosamente!!", Toast.LENGTH_LONG).show();
+                Toast.makeText(contexto, "Color eliminado exitosamente!!", Toast.LENGTH_LONG).show();
 
                 // Redirige
-                Intent c = new Intent(GestionTallas.this, GestionTallas.class);
-                //c.putExtra("usuario",usuario);
+                Intent c = new Intent(ConsultarColores.this, ConsultarColores.class);
                 startActivity(c);
 
                 // Prevent the user to go back to this activity
@@ -360,16 +308,17 @@ public class GestionTallas extends AppCompatActivity
             }
             else
             {
-                Toast.makeText(contexto, "Hubo un error eliminando la talla..", Toast.LENGTH_LONG).show();
+                Toast.makeText(contexto, "Hubo un error eliminando el color..", Toast.LENGTH_LONG).show();
             }
         }
 
-        private boolean eliminarTalla(String id)
+        private boolean eliminarColor(String id)
         {
-            Log.d(TAG, "Eliminar talla con id_talla: " + id);
-            long id_talla = manager.eliminarTalla(id);
-            return id_talla != -1;
+            Log.d(TAG, "Eliminar color con id: " + id);
+            long filas_afectadas = manager.eliminarColor(id);
+            return filas_afectadas != 0;
         }
     }
+
     */
 }

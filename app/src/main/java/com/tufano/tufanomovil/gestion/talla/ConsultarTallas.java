@@ -1,4 +1,4 @@
-package com.tufano.tufanomovil.gestion.tipo;
+package com.tufano.tufanomovil.gestion.talla;
 
 import android.app.Activity;
 import android.content.Context;
@@ -24,9 +24,9 @@ import com.tufano.tufanomovil.database.DBAdapter;
 import com.tufano.tufanomovil.global.Funciones;
 
 /**
- * Created por Usuario Tufano on 15/01/2016.
+ * Created por Usuario Tufano on 14/01/2016.
  */
-public class GestionTipos extends AppCompatActivity
+public class ConsultarTallas extends AppCompatActivity
 {
     public static Activity  fa;
     private       Context   contexto;
@@ -37,7 +37,7 @@ public class GestionTipos extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_gestion_tipos);
+        setContentView(R.layout.activity_gestion_tallas);
 
         fa = this;
         contexto = getApplicationContext();
@@ -59,18 +59,17 @@ public class GestionTipos extends AppCompatActivity
     }
 
     /**
-     * Crea una barra de herramientas superior con un subtitulo definido.
+     * Crea la barra superior con un subtitulo.
      */
     private void createToolBar()
     {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        toolbar.setSubtitle(R.string.gestion_tipo_subtitulo);
+        toolbar.setSubtitle(R.string.gestion_talla_subtitulo);
         setSupportActionBar(toolbar);
     }
 
     /**
-     * Inicializa los componentes primarios de la activity. En este caso el boton flotante para
-     * agregar un tipo de producto.
+     * Inicializa los componentes. En este caso el Boton flotante para agregar tallas.
      */
     private void initComponents()
     {
@@ -80,7 +79,7 @@ public class GestionTipos extends AppCompatActivity
             @Override
             public void onClick(View view)
             {
-                Intent c = new Intent(GestionTipos.this, AgregarTipo.class);
+                Intent c = new Intent(ConsultarTallas.this, AgregarTalla.class);
                 c.putExtra("usuario", usuario);
                 startActivity(c);
             }
@@ -88,58 +87,65 @@ public class GestionTipos extends AppCompatActivity
     }
 
     /**
-     * Funcion encargada de inicializar y llenar de data la tabla generada dinamicamente.
+     * Inicializa la tabla que contiene las tallas de la BD
      */
     private void inicializarTabla()
     {
-        String TAG = "GestionTipos";
+        String TAG = "ConsultarTallas";
         Log.i(TAG, "Inicializando tabla..");
-        final TableLayout tabla = (TableLayout) findViewById(R.id.table_gestion_tipos);
+        final TableLayout tabla = (TableLayout) findViewById(R.id.table_gestion_tallas);
 
         TableRow.LayoutParams params = new TableRow.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.MATCH_PARENT, 1f);
 
         // Llenando la tabla de forma iterativa
-        Cursor cursor = manager.cargarTipos();
-        if(cursor.getCount()>0)
+        Cursor cursor = manager.cargarTallas();
+        if (cursor.getCount() > 0)
         {
             mostrarTodo(tabla);
-
             for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor.moveToNext())
             {
                 Log.i(TAG, "Agregando fila..");
                 TableRow fila = new TableRow(contexto);
 
-                final String id_tipo = String.valueOf(cursor.getInt(0));
-                final String tipos_producto = cursor.getString(1);
+                final String id_tallas      = String.valueOf(cursor.getInt(0));
+                final String talla_producto = cursor.getString(1);
+                final String numeraciones   = cursor.getString(2);
 
-                /* Tipos */
-                TextView tipos = generarTextViewTipo(contexto, tipos_producto, params);
+                /* Talla */
+                TextView talla = generarTextViewTalla(contexto, talla_producto, params);
 
-                /* Opciones */
-                Button editar = generarButtonOpciones(contexto, id_tipo, tipos_producto);
+                /* Numeracion */
+                TextView numeracion = generarTextViewNumeracion(contexto, numeraciones, params);
 
-                /*final Button eliminar = new Button(contexto);
+                /* Editar */
+                Button editar = generarButtonEditar(contexto, id_tallas, talla_producto, numeraciones);
+
+                /*
+
+                final Button eliminar = new Button(contexto);
 
                 eliminar.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v)
                     {
                         Log.i(TAG, "Eliminar presionado");
-                        AlertDialog.Builder dialog = new AlertDialog.Builder(GestionTipos.this);
+                        AlertDialog.Builder dialog = new AlertDialog.Builder(ConsultarTallas.this);
 
-                        dialog.setTitle(R.string.confirmacion_eliminar_tipo);
-                        dialog.setMessage("Se eliminará el siguiente tipo: " + tipos_producto);
+                        dialog.setMessage(R.string.confirmacion_eliminar_talla);
                         dialog.setCancelable(false);
                         dialog.setPositiveButton("Si", new DialogInterface.OnClickListener() {
                             @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                new async_eliminarTipoBD().execute(id_tipo);
+                            public void onClick(DialogInterface dialog, int which)
+                            {
+                                new async_eliminarTallaBD().execute(id_tallas);
                             }
                         });
 
-                        dialog.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                        dialog.setNegativeButton("No", new DialogInterface.OnClickListener()
+                        {
                             @Override
-                            public void onClick(DialogInterface dialog, int which) {
+                            public void onClick(DialogInterface dialog, int which)
+                            {
                                 dialog.cancel();
                             }
                         });
@@ -158,9 +164,9 @@ public class GestionTipos extends AppCompatActivity
                 opciones.addView(editar);
                 //opciones.addView(eliminar);
 
-                // Llenando la fila con data
                 fila.setBackgroundColor(Color.WHITE);
-                fila.addView(tipos);
+                fila.addView(talla);
+                fila.addView(numeracion);
                 fila.addView(opciones);
 
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN)
@@ -190,7 +196,7 @@ public class GestionTipos extends AppCompatActivity
                                 ocultarTodo(tabla);
 
                                 TextView mensaje = new TextView(contexto);
-                                mensaje.setText(R.string.msj_tipo_vacio);
+                                mensaje.setText(R.string.msj_talla_vacio);
                                 mensaje.setGravity(Gravity.CENTER);
                                 mensaje.setTextSize(20f);
 
@@ -208,54 +214,81 @@ public class GestionTipos extends AppCompatActivity
     }
 
     /**
-     * Genera el boton de opciones que se incluira en la tabla.
-     * @param contexto Contexto de la aplicacion.
-     * @param id_tipo ID del tipo actual.
-     * @param tipos_producto Tipo de producto.
-     * @return Boton con la accion correspondiente.
+     * Boton para la edicion de la talla presionada.
+     *
+     * @param contexto       Contexto de la aplicacion.
+     * @param id_tallas      ID de la talla a editar.
+     * @param talla_producto Nombre de la talla.
+     * @param numeraciones   Numeracion de la talla.
+     * @return Boton generado para la edicion de la talla.
      */
-    private Button generarButtonOpciones(Context contexto, final String id_tipo, final String tipos_producto)
+    private Button generarButtonEditar(Context contexto, final String id_tallas, final String talla_producto, final String numeraciones)
     {
         Button editar = new Button(contexto);
-        editar.setOnClickListener(new View.OnClickListener() {
+        editar.setOnClickListener(new View.OnClickListener()
+        {
             @Override
-            public void onClick(View v) {
-                Intent c = new Intent(GestionTipos.this, EditarTipo.class);
-                c.putExtra("id_tipo", id_tipo);
-                c.putExtra("tipos_producto", tipos_producto);
+            public void onClick(View v)
+            {
+                Intent c = new Intent(ConsultarTallas.this, EditarTalla.class);
+                c.putExtra("id_talla", id_tallas);
+                c.putExtra("talla_producto", talla_producto);
+                c.putExtra("numeraciones", numeraciones);
                 startActivity(c);
             }
         });
         editar.setBackgroundResource(R.drawable.icn_edit);
-        int edit_image_width = 70;
-        int edit_image_height = 70;
-        LinearLayout.LayoutParams parms = new LinearLayout.LayoutParams(edit_image_width, edit_image_height);
+        int                       edit_image_width  = 70;
+        int                       edit_image_height = 70;
+        LinearLayout.LayoutParams parms             = new LinearLayout.LayoutParams(edit_image_width, edit_image_height);
         editar.setLayoutParams(parms);
         editar.setPadding(2, 10, 2, 10);
+
         return editar;
     }
 
     /**
-     * Genera un textView con el tipo de producto actual.
-     * @param contexto Contexto de la aplicacion.
-     * @param tipos_producto Tipo de producto.
-     * @param params Parametros de la tabla.
-     * @return TextView armado con el tipo de producto actual.
+     * Generar TextView que contiene la numeracion de la talla.
+     *
+     * @param contexto     Contexto de la aplicacion.
+     * @param numeraciones Numeracion de la aplicacion.
+     * @param params       Parametros de la tabla.
+     * @return TextView generado con la numeracion.
      */
-    private TextView generarTextViewTipo(Context contexto, String tipos_producto, TableRow.LayoutParams params)
+    private TextView generarTextViewNumeracion(Context contexto, String numeraciones, TableRow.LayoutParams params)
     {
-        TextView tipos = new TextView(contexto);
-        tipos.setText(tipos_producto);
-        tipos.setTextColor(Color.DKGRAY);
-        tipos.setGravity(Gravity.CENTER);
-        tipos.setLayoutParams(params);
-        tipos.setTextSize(16f);
-        return tipos;
+        TextView numeracion = new TextView(contexto);
+        numeracion.setText(numeraciones.replace("(", "").replace(")", ""));
+        numeracion.setTextColor(Color.DKGRAY);
+        numeracion.setGravity(Gravity.CENTER);
+        numeracion.setLayoutParams(params);
+        numeracion.setTextSize(16f);
+        return numeracion;
     }
 
     /**
-     * Muestra la tabla
-     * @param tabla Tabla a mostrar.
+     * Generar TextView que contiene el nombre de la talla.
+     *
+     * @param contexto       Contexto de la aplicacion.
+     * @param talla_producto Talla del producto.
+     * @param params         Parametros de la tabla
+     * @return TextView generado con la talla.
+     */
+    private TextView generarTextViewTalla(Context contexto, String talla_producto, TableRow.LayoutParams params)
+    {
+        TextView talla = new TextView(contexto);
+        talla.setText(talla_producto);
+        talla.setTextColor(Color.DKGRAY);
+        talla.setGravity(Gravity.CENTER);
+        talla.setLayoutParams(params);
+        talla.setTextSize(16f);
+        return talla;
+    }
+
+    /**
+     * Muestra la tabla.
+     *
+     * @param tabla Layout de la tabla.
      */
     private void mostrarTodo(TableLayout tabla)
     {
@@ -263,8 +296,9 @@ public class GestionTipos extends AppCompatActivity
     }
 
     /**
-     * Oculta la tabla para mostrar algun mensaje.
-     * @param tabla Tabla a ocultar.
+     * Oculta la tabla.
+     *
+     * @param tabla Layout de la tabla.
      */
     private void ocultarTodo(TableLayout tabla)
     {
@@ -272,16 +306,16 @@ public class GestionTipos extends AppCompatActivity
     }
 
     /*
-    class async_eliminarTipoBD extends AsyncTask< String, String, String >
+    class async_eliminarTallaBD extends AsyncTask< String, String, String >
     {
         String id;
 
         @Override
         protected void onPreExecute()
         {
-            pDialog = new ProgressDialog(GestionTipos.this);
+            pDialog = new ProgressDialog(ConsultarTallas.this);
             pDialog.setTitle("Por favor espere...");
-            pDialog.setMessage("Eliminando el tipo...");
+            pDialog.setMessage("Eliminando la talla...");
             pDialog.setIndeterminate(true);
             pDialog.setCancelable(false);
             pDialog.show();
@@ -295,7 +329,7 @@ public class GestionTipos extends AppCompatActivity
             try
             {
                 //enviamos y recibimos y analizamos los datos en segundo plano.
-                if (eliminarTipo(id))
+                if (eliminarTalla(id))
                 {
                     return "ok";
                 }
@@ -320,10 +354,11 @@ public class GestionTipos extends AppCompatActivity
             if (result.equals("ok"))
             {
                 // Muestra al usuario un mensaje de operacion exitosa
-                Toast.makeText(contexto, "Tipo eliminado exitosamente!!", Toast.LENGTH_LONG).show();
+                Toast.makeText(contexto, "Talla eliminada exitosamente!!", Toast.LENGTH_LONG).show();
 
                 // Redirige
-                Intent c = new Intent(GestionTipos.this, GestionTipos.class);
+                Intent c = new Intent(ConsultarTallas.this, ConsultarTallas.class);
+                //c.putExtra("usuario",usuario);
                 startActivity(c);
 
                 // Prevent the user to go back to this activity
@@ -331,17 +366,16 @@ public class GestionTipos extends AppCompatActivity
             }
             else
             {
-                Toast.makeText(contexto, "Hubo un error eliminando el tipo..", Toast.LENGTH_LONG).show();
+                Toast.makeText(contexto, "Hubo un error eliminando la talla..", Toast.LENGTH_LONG).show();
             }
         }
 
-        private boolean eliminarTipo(String id)
+        private boolean eliminarTalla(String id)
         {
-            Log.d(TAG, "Eliminar tipo con id: " + id);
-            long filas_afectadas = manager.eliminarTipo(id);
-            return filas_afectadas != 0;
+            Log.d(TAG, "Eliminar talla con id_talla: " + id);
+            long id_talla = manager.eliminarTalla(id);
+            return id_talla != -1;
         }
     }
-
     */
 }

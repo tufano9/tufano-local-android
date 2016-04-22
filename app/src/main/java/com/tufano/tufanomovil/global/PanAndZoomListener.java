@@ -15,36 +15,28 @@ import android.widget.ImageView;
 /**
  * This class defines an OnTouchListener that you can attach to any view so you
  * can support panning and zooming.
- *
+ * <p>
  * <p> This code has been adapted from the work described here:
  * "Java Pan/Zoom Listener" (http://code.cheesydesign.com/?p=723)
- *
  */
 @SuppressWarnings("SameParameterValue")
-class PanAndZoomListener implements View.OnTouchListener {
+class PanAndZoomListener implements View.OnTouchListener
+{
 
-    private float downX;
-    private float downY;
-
-    public static class Anchor
-    {
-        public static final int CENTER = 0;
-        public static final int TOPLEFT = 1;
-    }
-
-    private static final String TAG = "PanAndZoomListener";
+    private static final String TAG   = "PanAndZoomListener";
     // We can be in one of these 3 states
-    private static final int NONE = 0;
-    private static final int DRAG = 1;
-    private static final int ZOOM = 2;
-    private int mode = NONE;
+    private static final int    NONE  = 0;
+    private static final int    DRAG  = 1;
+    private static final int    ZOOM  = 2;
     // Remember some things for zooming
-    private final PointF start = new PointF();
-    private final PointF mid = new PointF();
-    private float oldDist = 1f;
-    private float zoomActual =1f;
+    private final        PointF start = new PointF();
+    private final        PointF mid   = new PointF();
     private final PanZoomCalculator panZoomCalculator;
-
+    private       float             downX;
+    private       float             downY;
+    private int   mode       = NONE;
+    private float oldDist    = 1f;
+    private float zoomActual = 1f;
     public PanAndZoomListener(FrameLayout container, View view, int anchor)
     {
         panZoomCalculator = new PanZoomCalculator(container, view, anchor);
@@ -81,12 +73,12 @@ class PanAndZoomListener implements View.OnTouchListener {
                 float deltaY = downY - upY;
                 //int h =FragmentGaleria.imageView.getHeight();
                 // swipe horizontal?
-                if(Math.abs(deltaX) > Math.abs(deltaY))
+                if (Math.abs(deltaX) > Math.abs(deltaY))
                 {
-                    if(Math.abs(deltaX) > 100 && zoomActual==1f)
+                    if (Math.abs(deltaX) > 100 && zoomActual == 1f)
                     {
                         // left or right
-                        if(deltaX < 0)
+                        if (deltaX < 0)
                         {
                             //Log.d(TAG, "RIGHT SWIPE (ATRASAR) posicion:"+FragmentGaleria.posicion);
                             /*if (FragmentGaleria.posicion>0)
@@ -97,7 +89,7 @@ class PanAndZoomListener implements View.OnTouchListener {
                             }*/
                             return true;
                         }
-                        if(deltaX > 0)
+                        if (deltaX > 0)
                         {
                             //Log.d(TAG, "LEFT SWIPE (ADELANTAR) posicion:"+FragmentGaleria.posicion);
                             /*if (FragmentGaleria.posicion<4)
@@ -154,19 +146,25 @@ class PanAndZoomListener implements View.OnTouchListener {
         point.set(x / 2, y / 2);
     }
 
+    public static class Anchor
+    {
+        public static final int CENTER  = 0;
+        public static final int TOPLEFT = 1;
+    }
+
     public class PanZoomCalculator
     {
+        /// The windows dimensions that we are zooming/panning in
+        final View   window;
+        final View   child;
+        final Matrix matrix;
+        final int    anchor;
         /// The current pan position
         PointF currentPan;
         /// The current zoom position
-        float currentZoom;
-        /// The windows dimensions that we are zooming/panning in
-        final View window;
-        final View child;
-        final Matrix matrix;
+        float  currentZoom;
         // Pan jitter is a workaround to get the video view to update its layout properly when zoom is changed
         int panJitter = 0;
-        final int anchor;
 
         PanZoomCalculator(View container, View child, int anchor)
         {
@@ -207,26 +205,29 @@ class PanAndZoomListener implements View.OnTouchListener {
 
             // calculate in fractions of the image so:
 
-            float width = window.getWidth();
-            float height = window.getHeight();
-            float oldScaledWidth = width * oldZoom;
+            float width           = window.getWidth();
+            float height          = window.getHeight();
+            float oldScaledWidth  = width * oldZoom;
             float oldScaledHeight = height * oldZoom;
-            float newScaledWidth = width * currentZoom;
+            float newScaledWidth  = width * currentZoom;
             float newScaledHeight = height * currentZoom;
 
-            if (anchor == Anchor.CENTER) {
+            if (anchor == Anchor.CENTER)
+            {
 
-                float reqXPos = ((oldScaledWidth - width) * 0.5f + zoomCenter.x - currentPan.x) / oldScaledWidth;
-                float reqYPos = ((oldScaledHeight - height) * 0.5f + zoomCenter.y - currentPan.y) / oldScaledHeight;
+                float reqXPos    = ((oldScaledWidth - width) * 0.5f + zoomCenter.x - currentPan.x) / oldScaledWidth;
+                float reqYPos    = ((oldScaledHeight - height) * 0.5f + zoomCenter.y - currentPan.y) / oldScaledHeight;
                 float actualXPos = ((newScaledWidth - width) * 0.5f + zoomCenter.x - currentPan.x) / newScaledWidth;
                 float actualYPos = ((newScaledHeight - height) * 0.5f + zoomCenter.y - currentPan.y) / newScaledHeight;
 
                 currentPan.x += (actualXPos - reqXPos) * newScaledWidth;
                 currentPan.y += (actualYPos - reqYPos) * newScaledHeight;
-            } else {
+            }
+            else
+            {
                 // assuming top left
-                float reqXPos = (zoomCenter.x - currentPan.x) / oldScaledWidth;
-                float reqYPos = (zoomCenter.y - currentPan.y) / oldScaledHeight;
+                float reqXPos    = (zoomCenter.x - currentPan.x) / oldScaledWidth;
+                float reqYPos    = (zoomCenter.y - currentPan.y) / oldScaledHeight;
                 float actualXPos = (zoomCenter.x - currentPan.x) / newScaledWidth;
                 float actualYPos = (zoomCenter.y - currentPan.y) / newScaledHeight;
                 currentPan.x += (actualXPos - reqXPos) * newScaledWidth;
@@ -245,7 +246,8 @@ class PanAndZoomListener implements View.OnTouchListener {
         }
 
         @SuppressWarnings("SameReturnValue")
-        private float getMinimumZoom() {
+        private float getMinimumZoom()
+        {
             return 1f;
         }
 
@@ -265,7 +267,7 @@ class PanAndZoomListener implements View.OnTouchListener {
             // Things to try: use a scroll view and set the pan from the scrollview
             // when panning, and set the pan of the scroll view when zooming
 
-            float winWidth = window.getWidth();
+            float winWidth  = window.getWidth();
             float winHeight = window.getHeight();
 
             if (currentZoom <= 1f)
@@ -292,11 +294,11 @@ class PanAndZoomListener implements View.OnTouchListener {
                 currentPan.y = Math.max(-maxPanY, Math.min(0, currentPan.y));
             }
 
-            if (child instanceof ImageView && ((ImageView) child).getScaleType()== ImageView.ScaleType.MATRIX)
+            if (child instanceof ImageView && ((ImageView) child).getScaleType() == ImageView.ScaleType.MATRIX)
             {
                 //Log.d(TAG, "if 2");
-                ImageView view = (ImageView) child;
-                Drawable drawable = view.getDrawable();
+                ImageView view     = (ImageView) child;
+                Drawable  drawable = view.getDrawable();
                 if (drawable != null)
                 {
                     //Log.d(TAG, "if 3");
@@ -305,12 +307,12 @@ class PanAndZoomListener implements View.OnTouchListener {
                     {
                         // Limit Pan
                         //Log.d(TAG, "if 4");
-                        float bmWidth = bm.getWidth();
+                        float bmWidth  = bm.getWidth();
                         float bmHeight = bm.getHeight();
 
                         float fitToWindow = Math.min(winWidth / bmWidth, winHeight / bmHeight);
-                        float xOffset = (winWidth - bmWidth * fitToWindow) * 0.5f * currentZoom;
-                        float yOffset = (winHeight - bmHeight * fitToWindow) * 0.5f * currentZoom;
+                        float xOffset     = (winWidth - bmWidth * fitToWindow) * 0.5f * currentZoom;
+                        float yOffset     = (winHeight - bmHeight * fitToWindow) * 0.5f * currentZoom;
 
                         matrix.reset();
                         matrix.postScale(currentZoom * fitToWindow, currentZoom * fitToWindow);

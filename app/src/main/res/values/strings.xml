@@ -266,5 +266,8 @@
     <string name="rb_old">Mostrar Otros</string>
     <string name="rb_all">Mostrar Todos</string>
     <string name="consultar_producto_subtitulo">Consultar Productos</string>
+    <string name="buscar_por_nombre">Buscar por nombre</string>
+    <string name="seleccionar_color">Seleccionar color..</string>
+    <string name="color_seleccionado">Seleccione un color..</string>
 
 </resources>

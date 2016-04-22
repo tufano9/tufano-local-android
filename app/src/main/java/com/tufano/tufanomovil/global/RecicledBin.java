@@ -2,7 +2,7 @@ package com.tufano.tufanomovil.global;
 
 /**
  * Desarrollado por Gerson el 5/4/2016.
- *
+ * <p>
  * Clase donde guardo todos los metodos que puede que necesite en un futuro.
  */
 public class RecicledBin
