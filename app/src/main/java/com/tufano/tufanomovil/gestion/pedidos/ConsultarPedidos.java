@@ -21,7 +21,6 @@ import android.widget.BaseAdapter;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.Spinner;
-import android.widget.TableLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -489,6 +488,7 @@ public class ConsultarPedidos extends AppCompatActivity
 
         if (cursor.getCount() > 0)
         {
+            mostrarTodo();
             for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor.moveToNext())
             {
                 Log.i(TAG, "Agregando fila..");
@@ -536,15 +536,8 @@ public class ConsultarPedidos extends AppCompatActivity
                                 @Override
                                 public void run()
                                 {
-                                    //ocultarTodo(tabla);
-                                    TextView mensaje = new TextView(contexto);
-                                    mensaje.setText(R.string.msj_sin_pedidos);
-                                    mensaje.setGravity(Gravity.CENTER);
-                                    mensaje.setTextSize(20f);
-                                    mensaje.setId(id_mensaje);
-
-                                    LinearLayout contenedor = (LinearLayout) findViewById(R.id.contenedor_base);
-                                    contenedor.addView(mensaje);
+                                    ocultarTodo();
+                                    agregarMensaje(R.string.msj_sin_pedidos);
                                 }
                             });
                         }
@@ -566,17 +559,8 @@ public class ConsultarPedidos extends AppCompatActivity
                                 @Override
                                 public void run()
                                 {
-                                    Log.d(TAG, "Pero estoy filtrando...");
-                                    //ocultarTodo(tabla);
-
-                                    TextView mensaje = new TextView(contexto);
-                                    mensaje.setText(R.string.sin_resultados);
-                                    mensaje.setGravity(Gravity.CENTER);
-                                    mensaje.setTextSize(20f);
-                                    mensaje.setId(id_mensaje);
-
-                                    LinearLayout contenedor = (LinearLayout) findViewById(R.id.contenedor_base);
-                                    contenedor.addView(mensaje);
+                                    ocultarTodo();
+                                    agregarMensaje(R.string.sin_resultados);
                                 }
                             });
                         }
@@ -626,6 +610,18 @@ public class ConsultarPedidos extends AppCompatActivity
             }
         };
         hilo1.start();
+    }
+
+    private void agregarMensaje(int msj)
+    {
+        TextView mensaje = new TextView(contexto);
+        mensaje.setText(msj);
+        mensaje.setGravity(Gravity.CENTER);
+        mensaje.setTextSize(20f);
+        mensaje.setId(id_mensaje);
+
+        LinearLayout contenedor = (LinearLayout) findViewById(R.id.contenedor_base);
+        contenedor.addView(mensaje);
     }
 
     // Append more data into the adapter
@@ -731,14 +727,18 @@ public class ConsultarPedidos extends AppCompatActivity
 
     /**
      * Funcion encargada de ocultar los elementos de la tabla.
-     *
-     * @param tabla Tabla a la cual se le ocultaran los elementos.
      */
-    private void ocultarTodo(TableLayout tabla)
+    private void ocultarTodo()
     {
-        clientes.setVisibility(View.INVISIBLE);
-        estatus.setVisibility(View.INVISIBLE);
-        tabla.setVisibility(View.INVISIBLE);
+        findViewById(R.id.contenedor).setVisibility(View.GONE);
+    }
+
+    /**
+     * Funcion encargada de mostrar los elementos de la tabla.
+     */
+    private void mostrarTodo()
+    {
+        findViewById(R.id.contenedor).setVisibility(View.VISIBLE);
     }
 
     @Override
@@ -753,17 +753,6 @@ public class ConsultarPedidos extends AppCompatActivity
     private class cargarDatos extends AsyncTask<String, String, String>
     {
         @Override
-        protected void onPreExecute()
-        {
-            pDialog = new ProgressDialog(ConsultarPedidos.this);
-            pDialog.setTitle("Por favor espere...");
-            pDialog.setMessage("Cargando informacion...");
-            pDialog.setIndeterminate(true);
-            pDialog.setCancelable(false);
-            pDialog.show();
-        }
-
-        @Override
         protected String doInBackground(String... params)
         {
             if (primerCargaTabla)
@@ -774,6 +763,17 @@ public class ConsultarPedidos extends AppCompatActivity
             }
             inicializarTabla();
             return null;
+        }
+
+        @Override
+        protected void onPreExecute()
+        {
+            pDialog = new ProgressDialog(ConsultarPedidos.this);
+            pDialog.setTitle("Por favor espere...");
+            pDialog.setMessage("Cargando informacion...");
+            pDialog.setIndeterminate(true);
+            pDialog.setCancelable(false);
+            pDialog.show();
         }
 
         @Override
