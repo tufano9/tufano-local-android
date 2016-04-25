@@ -13,6 +13,7 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TableLayout;
@@ -31,6 +32,7 @@ public class ConsultarColores extends AppCompatActivity
     //private ProgressDialog pDialog;
     public static Activity fa;
     private final String TAG = "ConsultarColores";
+    private final int id_mensaje = Funciones.generateViewId();
     private Context   contexto;
     private DBAdapter manager;
     private String    usuario;
@@ -102,7 +104,7 @@ public class ConsultarColores extends AppCompatActivity
         Cursor cursor = manager.cargarColores();
         if (cursor.getCount() > 0)
         {
-            mostrarTodo(tabla);
+            mostrarTodo();
 
             for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor.moveToNext())
             {
@@ -207,15 +209,16 @@ public class ConsultarColores extends AppCompatActivity
                             @Override
                             public void run()
                             {
-                                ocultarTodo(tabla);
+                                ocultarTodo();
+                                agregarMensaje(R.string.msj_color_vacio);
 
-                                TextView mensaje = new TextView(contexto);
+                                /*TextView mensaje = new TextView(contexto);
                                 mensaje.setText(R.string.msj_color_vacio);
                                 mensaje.setGravity(Gravity.CENTER);
                                 mensaje.setTextSize(20f);
 
                                 LinearLayout contenedor = (LinearLayout) findViewById(R.id.contenedor);
-                                contenedor.addView(mensaje);
+                                contenedor.addView(mensaje);*/
                             }
                         });
                     }
@@ -227,24 +230,35 @@ public class ConsultarColores extends AppCompatActivity
         cursor.close();
     }
 
-    /**
-     * Muestra todos los componentes de la tabla.
-     *
-     * @param tabla Tabla a la cual se le haran visibles los componentes
-     */
-    private void mostrarTodo(TableLayout tabla)
+    private void agregarMensaje(int msj)
     {
-        tabla.setVisibility(View.VISIBLE);
+        TextView mensaje = new TextView(contexto);
+        mensaje.setText(msj);
+        mensaje.setGravity(Gravity.CENTER);
+        mensaje.setTextSize(20f);
+        mensaje.setId(id_mensaje);
+        mensaje.setLayoutParams(
+                new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+                        ViewGroup.LayoutParams.MATCH_PARENT));
+
+        LinearLayout contenedor = (LinearLayout) findViewById(R.id.contenedor_base);
+        contenedor.addView(mensaje);
     }
 
     /**
-     * Oculta todos los componentes de la tabla.
-     *
-     * @param tabla Tabla a la cual se le haran invisibles los componentes
+     * Funcion encargada de ocultar los elementos de la tabla.
      */
-    private void ocultarTodo(TableLayout tabla)
+    private void ocultarTodo()
     {
-        tabla.setVisibility(View.INVISIBLE);
+        findViewById(R.id.contenedor).setVisibility(View.GONE);
+    }
+
+    /**
+     * Funcion encargada de mostrar los elementos de la tabla.
+     */
+    private void mostrarTodo()
+    {
+        findViewById(R.id.contenedor).setVisibility(View.VISIBLE);
     }
 
     /*

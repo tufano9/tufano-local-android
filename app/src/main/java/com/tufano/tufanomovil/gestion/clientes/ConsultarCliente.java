@@ -16,6 +16,7 @@ import android.util.Log;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -555,6 +556,7 @@ public class ConsultarCliente extends AppCompatActivity
 
         if (cursor.getCount() > 0)
         {
+            mostrarTodo();
             for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor.moveToNext())
             {
                 Log.i(TAG, "Agregando fila..");
@@ -589,6 +591,9 @@ public class ConsultarCliente extends AppCompatActivity
                                 @Override
                                 public void run()
                                 {
+                                    ocultarTodo();
+                                    agregarMensaje(R.string.msj_cliente_vacio);
+                                    /*
                                     TextView mensaje = new TextView(contexto);
                                     mensaje.setText(R.string.msj_cliente_vacio);
                                     mensaje.setGravity(Gravity.CENTER);
@@ -596,7 +601,7 @@ public class ConsultarCliente extends AppCompatActivity
                                     mensaje.setId(id_mensaje);
 
                                     LinearLayout contenedor = (LinearLayout) findViewById(R.id.contenedor_base);
-                                    contenedor.addView(mensaje);
+                                    contenedor.addView(mensaje);*/
                                 }
                             });
                         }
@@ -618,14 +623,17 @@ public class ConsultarCliente extends AppCompatActivity
                                 @Override
                                 public void run()
                                 {
-                                    TextView mensaje = new TextView(contexto);
+                                    ocultarTodo();
+                                    agregarMensaje(R.string.sin_resultados);
+
+                                    /*TextView mensaje = new TextView(contexto);
                                     mensaje.setText(R.string.sin_resultados);
                                     mensaje.setGravity(Gravity.CENTER);
                                     mensaje.setTextSize(20f);
                                     mensaje.setId(id_mensaje);
 
                                     LinearLayout contenedor = (LinearLayout) findViewById(R.id.contenedor_base);
-                                    contenedor.addView(mensaje);
+                                    contenedor.addView(mensaje);*/
                                 }
                             });
                         }
@@ -675,6 +683,37 @@ public class ConsultarCliente extends AppCompatActivity
             }
         };
         hilo1.start();
+    }
+
+    private void agregarMensaje(int msj)
+    {
+        TextView mensaje = new TextView(contexto);
+        mensaje.setText(msj);
+        mensaje.setGravity(Gravity.CENTER);
+        mensaje.setTextSize(20f);
+        mensaje.setId(id_mensaje);
+        mensaje.setLayoutParams(
+                new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+                        ViewGroup.LayoutParams.MATCH_PARENT));
+
+        LinearLayout contenedor = (LinearLayout) findViewById(R.id.contenedor_base);
+        contenedor.addView(mensaje);
+    }
+
+    /**
+     * Funcion encargada de ocultar los elementos de la tabla.
+     */
+    private void ocultarTodo()
+    {
+        findViewById(R.id.contenedor).setVisibility(View.GONE);
+    }
+
+    /**
+     * Funcion encargada de mostrar los elementos de la tabla.
+     */
+    private void mostrarTodo()
+    {
+        findViewById(R.id.contenedor).setVisibility(View.VISIBLE);
     }
 
     // Append more data into the adapter
@@ -750,17 +789,6 @@ public class ConsultarCliente extends AppCompatActivity
     private class cargarDatos extends AsyncTask<String, String, String>
     {
         @Override
-        protected void onPreExecute()
-        {
-            pDialog = new ProgressDialog(ConsultarCliente.this);
-            pDialog.setTitle("Por favor espere...");
-            pDialog.setMessage("Cargando informacion...");
-            pDialog.setIndeterminate(true);
-            pDialog.setCancelable(false);
-            pDialog.show();
-        }
-
-        @Override
         protected String doInBackground(String... params)
         {
             if (primerCargaTabla)
@@ -772,6 +800,18 @@ public class ConsultarCliente extends AppCompatActivity
             inicializarTabla(false);
             return null;
         }
+
+        @Override
+        protected void onPreExecute()
+        {
+            pDialog = new ProgressDialog(ConsultarCliente.this);
+            pDialog.setTitle("Por favor espere...");
+            pDialog.setMessage("Cargando informacion...");
+            pDialog.setIndeterminate(true);
+            pDialog.setCancelable(false);
+            pDialog.show();
+        }
+
 
         @Override
         protected void onPostExecute(String result)

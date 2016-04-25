@@ -23,10 +23,12 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.NumberPicker;
+import android.widget.RelativeLayout;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
@@ -51,6 +53,7 @@ public class ArmarPedido extends AppCompatActivity
     private static final ImageView.ScaleType ESCALADO   = ImageView.ScaleType.CENTER_INSIDE;
     public static Activity fa;
     private final String TAG = "ArmarPedido";
+    private final int id_mensaje = Funciones.generateViewId();
     private String usuario, id_cliente;
     private Context        contexto;
     private ProgressDialog pDialog;
@@ -662,43 +665,6 @@ public class ArmarPedido extends AppCompatActivity
 
                                     cantidad_bultos.setDescendantFocusability(NumberPicker.FOCUS_BLOCK_DESCENDANTS);
 
-                                        /* Opciones */
-                                        /*Button eliminar = new Button(contexto);
-                                        eliminar.setBackgroundResource(android.R.drawable.ic_delete);
-                                        eliminar.setLayoutParams(new TableRow.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT, 1f));
-                                        eliminar.setOnClickListener(new View.OnClickListener() {
-                                            @Override
-                                            public void onClick(View v)
-                                            {
-                                                AlertDialog.Builder dialog = new AlertDialog.Builder(ArmarPedido.this);
-
-                                                dialog.setTitle(R.string.confirmacion_eliminar_producto_pedido);
-                                                dialog.setMessage("Producto seleccionado: " + nombre_modelo);
-                                                dialog.setCancelable(false);
-                                                dialog.setPositiveButton("Si", new DialogInterface.OnClickListener() {
-                                                    @Override
-                                                    public void onClick(DialogInterface dialog, int which) {
-                                                        eliminarProductoPedido(id_producto);
-                                                    }
-                                                });
-
-                                                dialog.setNegativeButton("No", new DialogInterface.OnClickListener() {
-                                                    @Override
-                                                    public void onClick(DialogInterface dialog, int which) {
-                                                        dialog.cancel();
-                                                    }
-                                                });
-
-                                                dialog.show();
-                                            }
-                                        });*/
-
-
-                                    //LinearLayout opciones = new LinearLayout(contexto);
-                                    //opciones.setGravity(Gravity.CENTER);
-                                    //opciones.setLayoutParams(params);
-                                    //opciones.addView(eliminar);
-
                                     TableRow.LayoutParams layout = new TableRow.LayoutParams(0, TableRow.LayoutParams.MATCH_PARENT);
                                     imagen.setLayoutParams(layout);
                                     modelo.setLayoutParams(layout);
@@ -719,7 +685,7 @@ public class ArmarPedido extends AppCompatActivity
                                     fila.addView(precio_producto);
                                     fila.addView(cantidad_bultos);
                                     fila.addView(sub_total);
-                                    //fila.addView(opciones);
+
                                     fila.setPadding(0, 2, 0, 0);
 
                                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN)
@@ -773,19 +739,18 @@ public class ArmarPedido extends AppCompatActivity
                                                 {
 
                                                     ocultarTodo(contenido, tabla);
+                                                    agregarMensaje(R.string.msj_pedido_vacio);
 
-                                                    LinearLayout.LayoutParams params  = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.MATCH_PARENT, 1f);
+                                                    /*LinearLayout.LayoutParams params  = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.MATCH_PARENT, 1f);
                                                     TextView                  mensaje = new TextView(contexto);
                                                     mensaje.setText(R.string.msj_pedido_vacio);
                                                     mensaje.setGravity(Gravity.CENTER);
                                                     mensaje.setTextSize(20f);
                                                     mensaje.setLayoutParams(params);
 
-                                                    //filas.add(fila);
-
                                                     LinearLayout contenedor = (LinearLayout) findViewById(R.id.contenedor);
                                                     contenedor.removeAllViews();
-                                                    contenedor.addView(mensaje);
+                                                    contenedor.addView(mensaje);*/
                                                 }
                                             });
 
@@ -830,6 +795,22 @@ public class ArmarPedido extends AppCompatActivity
         }
     }
 
+    private void agregarMensaje(int msj)
+    {
+        TextView mensaje = new TextView(contexto);
+        mensaje.setText(msj);
+        mensaje.setGravity(Gravity.CENTER);
+        mensaje.setTextSize(20f);
+        mensaje.setId(id_mensaje);
+        mensaje.setLayoutParams(
+                new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+                        ViewGroup.LayoutParams.MATCH_PARENT));
+        mensaje.setGravity(RelativeLayout.CENTER_VERTICAL | RelativeLayout.CENTER_HORIZONTAL);
+
+        RelativeLayout contenedor = (RelativeLayout) findViewById(R.id.contenedor_base);
+        contenedor.addView(mensaje);
+    }
+
     /**
      * Muestra todos los componentes de la tabla.
      *
@@ -838,13 +819,20 @@ public class ArmarPedido extends AppCompatActivity
      */
     private void mostrarTodo(TableLayout tabla, TableLayout tab)
     {
-        LinearLayout botones_opciones = (LinearLayout) findViewById(R.id.botones_opciones);
+        /*LinearLayout botones_opciones = (LinearLayout) findViewById(R.id.botones_opciones);
         LinearLayout datos_pedido     = (LinearLayout) findViewById(R.id.datos_pedido);
 
         datos_pedido.setVisibility(View.VISIBLE);
         botones_opciones.setVisibility(View.VISIBLE);
         tabla.setVisibility(View.VISIBLE);
-        tab.setVisibility(View.VISIBLE);
+        tab.setVisibility(View.VISIBLE);*/
+
+
+        LinearLayout contenedor = (LinearLayout) findViewById(R.id.contenedor);
+        LinearLayout bot_layout = (LinearLayout) findViewById(R.id.bot_layout);
+
+        contenedor.setVisibility(View.VISIBLE);
+        bot_layout.setVisibility(View.VISIBLE);
     }
 
     /**
@@ -855,13 +843,19 @@ public class ArmarPedido extends AppCompatActivity
      */
     private void ocultarTodo(TableLayout tabla, TableLayout tab)
     {
-        LinearLayout botones_opciones = (LinearLayout) findViewById(R.id.botones_opciones);
+        /*LinearLayout botones_opciones = (LinearLayout) findViewById(R.id.botones_opciones);
         LinearLayout datos_pedido     = (LinearLayout) findViewById(R.id.datos_pedido);
 
         datos_pedido.setVisibility(View.INVISIBLE);
         botones_opciones.setVisibility(View.INVISIBLE);
         tabla.setVisibility(View.INVISIBLE);
-        tab.setVisibility(View.INVISIBLE);
+        tab.setVisibility(View.INVISIBLE);*/
+
+        LinearLayout contenedor = (LinearLayout) findViewById(R.id.contenedor);
+        LinearLayout bot_layout = (LinearLayout) findViewById(R.id.bot_layout);
+
+        contenedor.setVisibility(View.GONE);
+        bot_layout.setVisibility(View.GONE);
     }
 
     /**
@@ -1031,6 +1025,13 @@ public class ArmarPedido extends AppCompatActivity
     private class cargarDatos extends AsyncTask<String, String, String>
     {
         @Override
+        protected String doInBackground(String... params)
+        {
+            inicializarTabla();
+            return null;
+        }
+
+        @Override
         protected void onPreExecute()
         {
             pDialog = new ProgressDialog(ArmarPedido.this);
@@ -1041,12 +1042,6 @@ public class ArmarPedido extends AppCompatActivity
             pDialog.show();
         }
 
-        @Override
-        protected String doInBackground(String... params)
-        {
-            inicializarTabla();
-            return null;
-        }
 
         @Override
         protected void onPostExecute(String result)

@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
+    android:id="@+id/contenedor_base"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/contenedor_base"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
@@ -16,156 +16,193 @@
     tools:showIn="@layout/activity_producto_consultar">
 
     <LinearLayout
-        android:id="@+id/LinearLayout_MainActivity"
-        android:layout_width="0px"
-        android:layout_height="0px"
-        android:focusable="true"
-        android:focusableInTouchMode="true">
-
-        <requestFocus/>
-    </LinearLayout>
-
-    <AutoCompleteTextView
-        android:id="@+id/autoC_modelo"
+        android:id="@+id/contenedor"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="10dp"
-        android:layout_marginRight="10dp"
-        android:layout_marginTop="10dp"
-        android:hint="@string/hint_autoCModelo"
-        android:singleLine="true"
-        />
+        android:gravity="center"
+        android:orientation="vertical"
+        >
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="10dp"
-        android:layout_marginRight="10dp"
-        android:layout_marginTop="10dp"
-        android:orientation="horizontal">
+        <LinearLayout
+            android:id="@+id/LinearLayout_MainActivity"
+            android:layout_width="0px"
+            android:layout_height="0px"
+            android:focusable="true"
+            android:focusableInTouchMode="true">
 
-        <Spinner
-            android:id="@+id/spTipo_editar_producto"
-            style="@android:style/Widget.Spinner"
-            android:layout_width="wrap_content"
-            android:layout_height="@dimen/btn_size"
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="10dp"
-            android:layout_weight="1"
+            <requestFocus/>
+        </LinearLayout>
+
+        <AutoCompleteTextView
+            android:id="@+id/autoC_modelo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:hint="@string/hint_autoCModelo"
+            android:singleLine="true"
             />
 
-        <Spinner
-            android:id="@+id/spColor_editar_producto"
-            style="@android:style/Widget.Spinner"
-            android:layout_width="wrap_content"
-            android:layout_height="@dimen/btn_size"
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="10dp"
-            android:layout_weight="1"
-            />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:orientation="vertical">
 
-        <Spinner
-            android:id="@+id/spTalla_editar_producto"
-            style="@android:style/Widget.Spinner"
-            android:layout_width="wrap_content"
-            android:layout_height="@dimen/btn_size"
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="10dp"
-            android:layout_weight="1"
-            />
+            <Spinner
+                android:id="@+id/spTipo_editar_producto"
+                style="@android:style/Widget.Spinner"
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/btn_normal_size"
+                android:layout_weight="1"
+                />
+
+            <Spinner
+                android:id="@+id/spColor_editar_producto"
+                style="@android:style/Widget.Spinner"
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/btn_normal_size"
+                android:layout_weight="1"
+                />
+
+            <Spinner
+                android:id="@+id/spTalla_editar_producto"
+                style="@android:style/Widget.Spinner"
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/btn_normal_size"
+                android:layout_weight="1"
+                />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="15dp"
+            android:orientation="horizontal">
+
+            <RadioGroup
+                android:id="@+id/radio_group_producto"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <RadioButton
+                    android:id="@+id/rb_new"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:checked="false"
+                    android:text="@string/rb_new"/>
+
+                <RadioButton
+                    android:id="@+id/rb_old"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="20dp"
+                    android:layout_marginRight="20dp"
+                    android:text="@string/rb_old"/>
+
+                <RadioButton
+                    android:id="@+id/rb_all"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:checked="false"
+                    android:text="@string/rb_all"/>
+            </RadioGroup>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="15dp"
+            android:background="@drawable/table_header"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="@string/imagen"
+                android:textColor="@drawable/table_header_text"
+                android:textSize="14sp"/>
+
+            <TextView
+                android:id="@+id/cabecera_1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:drawableRight="@drawable/arrow_up"
+                android:gravity="center"
+                android:text="@string/talla"
+                android:textColor="@drawable/table_header_text"
+                android:textSize="14sp"/>
+
+            <TextView
+                android:id="@+id/cabecera_2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="@string/tipo"
+                android:textColor="@drawable/table_header_text"
+                android:textSize="14sp"/>
+
+            <TextView
+                android:id="@+id/cabecera_3"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="@string/modelo"
+                android:textColor="@drawable/table_header_text"
+                android:textSize="14sp"/>
+
+            <TextView
+                android:id="@+id/cabecera_4"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="@string/color"
+                android:textColor="@drawable/table_header_text"
+                android:textSize="14sp"/>
+
+            <TextView
+                android:id="@+id/cabecera_5"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="@string/precio"
+                android:textColor="@drawable/table_header_text"
+                android:textSize="14sp"/>
+
+            <TextView
+                android:id="@+id/cabecera_6"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="@string/numeracion"
+                android:textColor="@drawable/table_header_text"
+                android:textSize="14sp"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="@string/opciones"
+                android:textColor="@drawable/table_header_text"
+                android:textSize="14sp"/>
+
+        </LinearLayout>
+
+        <ListView
+            android:id="@+id/list"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
     </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="15dp"
-        android:background="@drawable/table_header"
-        android:orientation="horizontal">
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:text="@string/imagen"
-            android:textColor="@drawable/table_header_text"
-            android:textSize="14sp"/>
-
-        <TextView
-            android:id="@+id/cabecera_1"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:drawableRight="@drawable/arrow_up"
-            android:gravity="center"
-            android:text="@string/talla"
-            android:textColor="@drawable/table_header_text"
-            android:textSize="14sp"/>
-
-        <TextView
-            android:id="@+id/cabecera_2"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:text="@string/tipo"
-            android:textColor="@drawable/table_header_text"
-            android:textSize="14sp"/>
-
-        <TextView
-            android:id="@+id/cabecera_3"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:text="@string/modelo"
-            android:textColor="@drawable/table_header_text"
-            android:textSize="14sp"/>
-
-        <TextView
-            android:id="@+id/cabecera_4"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:text="@string/color"
-            android:textColor="@drawable/table_header_text"
-            android:textSize="14sp"/>
-
-        <TextView
-            android:id="@+id/cabecera_5"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:text="@string/precio"
-            android:textColor="@drawable/table_header_text"
-            android:textSize="14sp"/>
-
-        <TextView
-            android:id="@+id/cabecera_6"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:text="@string/numeracion"
-            android:textColor="@drawable/table_header_text"
-            android:textSize="14sp"/>
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:text="@string/opciones"
-            android:textColor="@drawable/table_header_text"
-            android:textSize="14sp"/>
-
-    </LinearLayout>
-
-    <ListView
-        android:id="@+id/list"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
 
 </LinearLayout>

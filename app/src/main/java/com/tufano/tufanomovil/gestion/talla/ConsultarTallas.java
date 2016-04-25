@@ -13,6 +13,7 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TableLayout;
@@ -29,6 +30,7 @@ import com.tufano.tufanomovil.global.Funciones;
 public class ConsultarTallas extends AppCompatActivity
 {
     public static Activity  fa;
+    private final int id_mensaje = Funciones.generateViewId();
     private       Context   contexto;
     private       DBAdapter manager;
     private       String    usuario;
@@ -101,7 +103,7 @@ public class ConsultarTallas extends AppCompatActivity
         Cursor cursor = manager.cargarTallas();
         if (cursor.getCount() > 0)
         {
-            mostrarTodo(tabla);
+            mostrarTodo();
             for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor.moveToNext())
             {
                 Log.i(TAG, "Agregando fila..");
@@ -193,15 +195,16 @@ public class ConsultarTallas extends AppCompatActivity
                             @Override
                             public void run()
                             {
-                                ocultarTodo(tabla);
+                                ocultarTodo();
+                                agregarMensaje(R.string.msj_talla_vacio);
 
-                                TextView mensaje = new TextView(contexto);
+                                /*TextView mensaje = new TextView(contexto);
                                 mensaje.setText(R.string.msj_talla_vacio);
                                 mensaje.setGravity(Gravity.CENTER);
                                 mensaje.setTextSize(20f);
 
                                 LinearLayout contenedor = (LinearLayout) findViewById(R.id.contenedor);
-                                contenedor.addView(mensaje);
+                                contenedor.addView(mensaje);*/
                             }
                         });
                     }
@@ -285,24 +288,35 @@ public class ConsultarTallas extends AppCompatActivity
         return talla;
     }
 
-    /**
-     * Muestra la tabla.
-     *
-     * @param tabla Layout de la tabla.
-     */
-    private void mostrarTodo(TableLayout tabla)
+    private void agregarMensaje(int msj)
     {
-        tabla.setVisibility(View.VISIBLE);
+        TextView mensaje = new TextView(contexto);
+        mensaje.setText(msj);
+        mensaje.setGravity(Gravity.CENTER);
+        mensaje.setTextSize(20f);
+        mensaje.setId(id_mensaje);
+        mensaje.setLayoutParams(
+                new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+                        ViewGroup.LayoutParams.MATCH_PARENT));
+
+        LinearLayout contenedor = (LinearLayout) findViewById(R.id.contenedor_base);
+        contenedor.addView(mensaje);
     }
 
     /**
-     * Oculta la tabla.
-     *
-     * @param tabla Layout de la tabla.
+     * Funcion encargada de ocultar los elementos de la tabla.
      */
-    private void ocultarTodo(TableLayout tabla)
+    private void ocultarTodo()
     {
-        tabla.setVisibility(View.INVISIBLE);
+        findViewById(R.id.contenedor).setVisibility(View.GONE);
+    }
+
+    /**
+     * Funcion encargada de mostrar los elementos de la tabla.
+     */
+    private void mostrarTodo()
+    {
+        findViewById(R.id.contenedor).setVisibility(View.VISIBLE);
     }
 
     /*

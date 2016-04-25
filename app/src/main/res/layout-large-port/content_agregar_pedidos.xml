@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout
+    android:id="@+id/contenedor_base"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -21,7 +22,8 @@
         android:layout_above="@+id/bot_layout"
         android:layout_alignParentTop="true"
         android:gravity="center"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:visibility="gone">
 
         <!--
 
@@ -96,7 +98,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
             android:stretchColumns="*"
-            android:visibility="invisible">
+            >
 
             <TableRow
                 android:id="@+id/cabecera"
@@ -205,7 +207,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:visibility="gone">
 
         <LinearLayout
             android:id="@+id/datos_pedido"
@@ -215,7 +218,7 @@
             android:layout_weight="1"
             android:gravity="center"
             android:orientation="horizontal"
-            android:visibility="invisible">
+            >
 
             <TextView
                 android:layout_width="wrap_content"
@@ -290,7 +293,7 @@
             android:layout_marginTop="10dp"
             android:layout_weight="1"
             android:orientation="horizontal"
-            android:visibility="invisible">
+            >
 
             <Button
                 android:id="@+id/btn_cancelar_agregar_pedido"

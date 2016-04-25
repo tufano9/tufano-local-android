@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.tufano.tufanomovil">
+    package="com.tufano.tufanomovil"
+    xmlns:android="http://schemas.android.com/apk/res/android">
 
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
@@ -126,7 +126,7 @@
         </activity>
 
         <activity
-            android:name=".gestion.clientes.EditarClienteDetalles"
+            android:name=".gestion.clientes.EditarCliente"
             android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar">
         </activity>
@@ -138,11 +138,6 @@
         </activity>
 
         <!-- ACTIVITIES PEDIDOS -->
-        <activity
-            android:name=".gestion.pedidos.Menu"
-            android:label="@string/app_name"
-            android:theme="@style/AppTheme.NoActionBar">
-        </activity>
 
         <activity
             android:name=".gestion.pedidos.ArmarPedido"

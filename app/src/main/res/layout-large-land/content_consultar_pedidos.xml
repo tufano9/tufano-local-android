@@ -21,7 +21,7 @@
         android:layout_height="wrap_content"
         android:gravity="center"
         android:orientation="vertical"
-        >
+        android:visibility="gone">
 
         <LinearLayout
             android:id="@+id/LinearLayout_MainActivity"
@@ -149,4 +149,5 @@
             android:layout_marginRight="30dp"/>
 
     </LinearLayout>
+
 </LinearLayout>

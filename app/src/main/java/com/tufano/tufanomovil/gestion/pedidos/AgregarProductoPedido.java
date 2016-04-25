@@ -22,6 +22,7 @@ import android.util.Log;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -30,6 +31,7 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TableLayout;
 import android.widget.TableRow;
@@ -55,6 +57,7 @@ public class AgregarProductoPedido extends AppCompatActivity
     private static final int                 IMG_WIDTH  = 130;
     private static final int                 IMG_HEIGHT = 50;
     private static final ImageView.ScaleType ESCALADO   = ImageView.ScaleType.CENTER_INSIDE;
+    private final int id_mensaje = Funciones.generateViewId();
     private final        String              TAG        = "AgregarProductoPedido";
     private String usuario, id_cliente;
     private Context                      contexto;
@@ -882,8 +885,9 @@ public class AgregarProductoPedido extends AppCompatActivity
                                     public void run()
                                     {
                                         ocultarTodo(tabla);
+                                        agregarMensaje(R.string.msj_producto_nodisponible);
 
-                                        LinearLayout.LayoutParams params  = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.MATCH_PARENT, 1f);
+                                        /*LinearLayout.LayoutParams params  = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.MATCH_PARENT, 1f);
                                         TextView                  mensaje = new TextView(contexto);
                                         mensaje.setText(R.string.msj_producto_nodisponible);
                                         mensaje.setGravity(Gravity.CENTER);
@@ -892,7 +896,7 @@ public class AgregarProductoPedido extends AppCompatActivity
 
                                         LinearLayout contenedor = (LinearLayout) findViewById(R.id.contenedor);
                                         contenedor.removeAllViews();
-                                        contenedor.addView(mensaje);
+                                        contenedor.addView(mensaje);*/
                                     }
                                 });
                             }
@@ -1036,6 +1040,22 @@ public class AgregarProductoPedido extends AppCompatActivity
         cursor.close();
     }
 
+    private void agregarMensaje(int msj)
+    {
+        TextView mensaje = new TextView(contexto);
+        mensaje.setText(msj);
+        mensaje.setGravity(Gravity.CENTER);
+        mensaje.setTextSize(20f);
+        mensaje.setId(id_mensaje);
+        mensaje.setLayoutParams(
+                new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+                        ViewGroup.LayoutParams.MATCH_PARENT));
+        mensaje.setGravity(RelativeLayout.CENTER_VERTICAL | RelativeLayout.CENTER_HORIZONTAL);
+
+        LinearLayout contenedor = (LinearLayout) findViewById(R.id.contenedor_base);
+        contenedor.addView(mensaje);
+    }
+
     /**
      * Muestra todos los componentes de la tabla.
      *
@@ -1043,7 +1063,7 @@ public class AgregarProductoPedido extends AppCompatActivity
      */
     private void mostrarTodo(TableLayout tabla)
     {
-        tabla.setVisibility(View.VISIBLE);
+        /*tabla.setVisibility(View.VISIBLE);
         final TableLayout cabecera    = (TableLayout) findViewById(R.id.table_agregar_productos_pedido);
         Button            btn_agregar = (Button) findViewById(R.id.btn_agregar_productos_pedido);
         btn_agregar.setVisibility(View.VISIBLE);
@@ -1058,7 +1078,13 @@ public class AgregarProductoPedido extends AppCompatActivity
         tabla.setVisibility(View.VISIBLE);
         tipo.setVisibility(View.VISIBLE);
         color.setVisibility(View.VISIBLE);
-        talla.setVisibility(View.VISIBLE);
+        talla.setVisibility(View.VISIBLE);*/
+
+        LinearLayout contenedor = (LinearLayout) findViewById(R.id.contenedor);
+        LinearLayout bot_layout = (LinearLayout) findViewById(R.id.bot_layout);
+
+        contenedor.setVisibility(View.VISIBLE);
+        bot_layout.setVisibility(View.VISIBLE);
 
     }
 
@@ -1069,7 +1095,7 @@ public class AgregarProductoPedido extends AppCompatActivity
      */
     private void ocultarTodo(TableLayout tabla)
     {
-        final TableLayout cabecera = (TableLayout) findViewById(R.id.table_agregar_productos_pedido);
+        /*final TableLayout cabecera = (TableLayout) findViewById(R.id.table_agregar_productos_pedido);
         tabla.setVisibility(View.INVISIBLE);
         Button btn_agregar = (Button) findViewById(R.id.btn_agregar_productos_pedido);
         btn_agregar.setVisibility(View.INVISIBLE);
@@ -1084,11 +1110,25 @@ public class AgregarProductoPedido extends AppCompatActivity
         tabla.setVisibility(View.INVISIBLE);
         tipo.setVisibility(View.INVISIBLE);
         color.setVisibility(View.INVISIBLE);
-        talla.setVisibility(View.INVISIBLE);
+        talla.setVisibility(View.INVISIBLE);*/
+
+        LinearLayout contenedor = (LinearLayout) findViewById(R.id.contenedor);
+        LinearLayout bot_layout = (LinearLayout) findViewById(R.id.bot_layout);
+
+        contenedor.setVisibility(View.GONE);
+        bot_layout.setVisibility(View.GONE);
     }
 
     private class cargarDatos extends AsyncTask<String, String, String>
     {
+        @Override
+        protected String doInBackground(String... params)
+        {
+            loadSpinnerData();
+            inicializarTabla(null, null, null, null, false);
+            return null;
+        }
+
         @Override
         protected void onPreExecute()
         {
@@ -1100,13 +1140,7 @@ public class AgregarProductoPedido extends AppCompatActivity
             pDialog.show();
         }
 
-        @Override
-        protected String doInBackground(String... params)
-        {
-            loadSpinnerData();
-            inicializarTabla(null, null, null, null, false);
-            return null;
-        }
+
 
         @Override
         protected void onPostExecute(String result)
@@ -1152,6 +1186,11 @@ public class AgregarProductoPedido extends AppCompatActivity
      */
     class agregarProductoPedido extends AsyncTask<String, String, String>
     {
+        private void agregarProductos()
+        {
+            manager.agregarPedidoTemporal(productos);
+        }
+
         @Override
         protected void onPreExecute()
         {
@@ -1170,10 +1209,6 @@ public class AgregarProductoPedido extends AppCompatActivity
             return null;
         }
 
-        private void agregarProductos()
-        {
-            manager.agregarPedidoTemporal(productos);
-        }
 
         @Override
         protected void onPostExecute(String result)

@@ -18,6 +18,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.tufano.tufanomovil.database.DBAdapter;
+import com.tufano.tufanomovil.database.DBHelper;
 import com.tufano.tufanomovil.global.Funciones;
 
 import java.io.UnsupportedEncodingException;
@@ -52,6 +53,8 @@ public class MainActivity extends AppCompatActivity
         noInitialFocus();
         initButtons();
         setLogin();
+        DBHelper.backUpDB();
+        DBHelper.recoverDB();
     }
 
     /**
@@ -257,17 +260,6 @@ public class MainActivity extends AppCompatActivity
         String password, usuario;
 
         @Override
-        protected void onPreExecute()
-        {
-            pDialog = new ProgressDialog(MainActivity.this);
-            pDialog.setTitle("Por favor espere...");
-            pDialog.setMessage("Verificando datos de forma local...");
-            pDialog.setIndeterminate(true);
-            pDialog.setCancelable(false);
-            pDialog.show();
-        }
-
-        @Override
         protected String doInBackground(String... params)
         {
             usuario = params[0];
@@ -293,6 +285,17 @@ public class MainActivity extends AppCompatActivity
                 Log.d("Loginstatuslocal", "err2: " + e);
                 return "err2";
             }
+        }
+
+        @Override
+        protected void onPreExecute()
+        {
+            pDialog = new ProgressDialog(MainActivity.this);
+            pDialog.setTitle("Por favor espere...");
+            pDialog.setMessage("Verificando datos de forma local...");
+            pDialog.setIndeterminate(true);
+            pDialog.setCancelable(false);
+            pDialog.show();
         }
 
         @Override

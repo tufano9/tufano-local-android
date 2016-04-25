@@ -18,7 +18,7 @@ import android.widget.Toast;
 import com.tufano.tufanomovil.R;
 import com.tufano.tufanomovil.database.DBAdapter;
 import com.tufano.tufanomovil.gestion.clientes.AgregarCliente;
-import com.tufano.tufanomovil.gestion.clientes.EditarClienteDetalles;
+import com.tufano.tufanomovil.gestion.clientes.EditarCliente;
 import com.tufano.tufanomovil.global.Funciones;
 
 import java.util.List;
@@ -148,7 +148,7 @@ public class SeleccionarCliente extends AppCompatActivity
                     String       id_cliente = clientes.get(0).get(sp_cliente.getSelectedItemPosition() - 1);
                     List<String> datos      = manager.cargarDatosClientes(id_cliente);
 
-                    Intent c = new Intent(SeleccionarCliente.this, EditarClienteDetalles.class);
+                    Intent c = new Intent(SeleccionarCliente.this, EditarCliente.class);
                     c.putExtra("desdePedidos", true);
                     c.putExtra("usuario", usuario);
                     c.putExtra("id_cliente", id_cliente);

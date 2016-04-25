@@ -104,12 +104,30 @@
             android:gravity="center"
             android:orientation="horizontal">
 
+            <EditText
+                android:id="@+id/selected_color"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1.5"
+                android:enabled="false"
+                android:inputType="text"
+                android:text="@string/color_seleccionado"/>
+
+            <Button
+                android:id="@+id/btn_search_color"
+                style="@android:style/Widget.Button"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/btn_size"
+                android:layout_weight="2"
+                android:text="@string/seleccionar_color"/>
+
             <Spinner
                 android:id="@+id/color_producto"
                 style="@android:style/Widget.Spinner"
                 android:layout_width="match_parent"
-                android:layout_height="@dimen/btn_normal_size"
-                android:layout_weight="1" />
+                android:layout_height="@dimen/btn_size"
+                android:layout_weight="1.5"
+                android:visibility="gone"/>
 
             <Button
                 android:id="@+id/btn_agregar_color"

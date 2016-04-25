@@ -12,8 +12,8 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context="com.tufano.tufanomovil.gestion.productos.ConsultarProductos"
-    tools:showIn="@layout/activity_producto_consultar">
+    tools:context=".gestion.pedidos.ConsultarPedidos"
+    tools:showIn="@layout/activity_consultar_pedidos">
 
     <LinearLayout
         android:id="@+id/contenedor"
@@ -33,50 +33,27 @@
             <requestFocus/>
         </LinearLayout>
 
-        <AutoCompleteTextView
-            android:id="@+id/autoC_modelo"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="60dp"
-            android:layout_marginRight="60dp"
-            android:layout_marginTop="10dp"
-            android:hint="@string/hint_autoCModelo"
-            android:singleLine="true"
-            />
-
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="30dp"
-            android:layout_marginRight="30dp"
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="30dp"
             android:orientation="horizontal">
 
             <Spinner
-                android:id="@+id/spTipo_editar_producto"
+                android:id="@+id/spCliente"
                 style="@android:style/Widget.Spinner"
                 android:layout_width="wrap_content"
-                android:layout_height="@dimen/btn_size"
+                android:layout_height="wrap_content"
                 android:layout_marginLeft="10dp"
                 android:layout_marginRight="10dp"
                 android:layout_weight="1"
                 />
 
             <Spinner
-                android:id="@+id/spColor_editar_producto"
+                android:id="@+id/spEstatus"
                 style="@android:style/Widget.Spinner"
                 android:layout_width="wrap_content"
-                android:layout_height="@dimen/btn_size"
-                android:layout_marginLeft="10dp"
-                android:layout_marginRight="10dp"
-                android:layout_weight="1"
-                />
-
-            <Spinner
-                android:id="@+id/spTalla_editar_producto"
-                style="@android:style/Widget.Spinner"
-                android:layout_width="wrap_content"
-                android:layout_height="@dimen/btn_size"
+                android:layout_height="wrap_content"
                 android:layout_marginLeft="10dp"
                 android:layout_marginRight="10dp"
                 android:layout_weight="1"
@@ -86,58 +63,9 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="15dp"
-            android:orientation="horizontal"
-            >
-
-            <RadioGroup
-                android:id="@+id/radio_group_producto"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:gravity="center"
-                android:orientation="horizontal">
-
-                <RadioButton
-                    android:id="@+id/rb_new"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:checked="false"
-                    android:text="@string/rb_new"/>
-
-                <RadioButton
-                    android:id="@+id/rb_old"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="20dp"
-                    android:layout_marginRight="20dp"
-                    android:text="@string/rb_old"/>
-
-                <RadioButton
-                    android:id="@+id/rb_all"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:checked="false"
-                    android:text="@string/rb_all"/>
-            </RadioGroup>
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="20dp"
-            android:layout_marginRight="20dp"
             android:layout_marginTop="15dp"
             android:background="@drawable/table_header"
             android:orientation="horizontal">
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:gravity="center"
-                android:text="@string/imagen"
-                android:textColor="@drawable/table_header_text"
-                android:textSize="18sp"/>
 
             <TextView
                 android:id="@+id/cabecera_1"
@@ -146,7 +74,7 @@
                 android:layout_weight="1"
                 android:drawableRight="@drawable/arrow_up"
                 android:gravity="center"
-                android:text="@string/talla"
+                android:text="@string/pedido_num"
                 android:textColor="@drawable/table_header_text"
                 android:textSize="18sp"/>
 
@@ -156,7 +84,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:gravity="center"
-                android:text="@string/tipo"
+                android:text="@string/vendedor"
                 android:textColor="@drawable/table_header_text"
                 android:textSize="18sp"/>
 
@@ -166,7 +94,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:gravity="center"
-                android:text="@string/modelo"
+                android:text="@string/cliente"
                 android:textColor="@drawable/table_header_text"
                 android:textSize="18sp"/>
 
@@ -176,7 +104,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:gravity="center"
-                android:text="@string/color"
+                android:text="@string/fecha"
                 android:textColor="@drawable/table_header_text"
                 android:textSize="18sp"/>
 
@@ -186,7 +114,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:gravity="center"
-                android:text="@string/precio"
+                android:text="@string/monto"
                 android:textColor="@drawable/table_header_text"
                 android:textSize="18sp"/>
 
@@ -196,7 +124,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:gravity="center"
-                android:text="@string/numeracion"
+                android:text="@string/estatus"
                 android:textColor="@drawable/table_header_text"
                 android:textSize="18sp"/>
 
@@ -208,16 +136,13 @@
                 android:text="@string/opciones"
                 android:textColor="@drawable/table_header_text"
                 android:textSize="18sp"/>
-
         </LinearLayout>
 
         <ListView
             android:id="@+id/list"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="20dp"
-            android:layout_marginRight="20dp"/>
+            />
 
     </LinearLayout>
-
 </LinearLayout>

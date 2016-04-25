@@ -13,6 +13,7 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TableLayout;
@@ -29,6 +30,7 @@ import com.tufano.tufanomovil.global.Funciones;
 public class ConsultarTipos extends AppCompatActivity
 {
     public static Activity  fa;
+    private final int id_mensaje = Funciones.generateViewId();
     private       Context   contexto;
     private       DBAdapter manager;
     private       String    usuario;
@@ -102,7 +104,7 @@ public class ConsultarTipos extends AppCompatActivity
         Cursor cursor = manager.cargarTipos();
         if (cursor.getCount() > 0)
         {
-            mostrarTodo(tabla);
+            mostrarTodo();
 
             for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor.moveToNext())
             {
@@ -117,40 +119,6 @@ public class ConsultarTipos extends AppCompatActivity
 
                 /* Opciones */
                 Button editar = generarButtonOpciones(contexto, id_tipo, tipos_producto);
-
-                /*final Button eliminar = new Button(contexto);
-
-                eliminar.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v)
-                    {
-                        Log.i(TAG, "Eliminar presionado");
-                        AlertDialog.Builder dialog = new AlertDialog.Builder(ConsultarTipos.this);
-
-                        dialog.setTitle(R.string.confirmacion_eliminar_tipo);
-                        dialog.setMessage("Se eliminará el siguiente tipo: " + tipos_producto);
-                        dialog.setCancelable(false);
-                        dialog.setPositiveButton("Si", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                new async_eliminarTipoBD().execute(id_tipo);
-                            }
-                        });
-
-                        dialog.setNegativeButton("No", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                dialog.cancel();
-                            }
-                        });
-
-                        dialog.show();
-                    }
-                });
-                eliminar.setBackgroundResource(android.R.drawable.ic_menu_delete);
-                eliminar.setLayoutParams(new TableRow.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT, 1f));
-
-                */
 
                 LinearLayout opciones = new LinearLayout(contexto);
                 opciones.setGravity(Gravity.CENTER);
@@ -187,15 +155,16 @@ public class ConsultarTipos extends AppCompatActivity
                             @Override
                             public void run()
                             {
-                                ocultarTodo(tabla);
+                                ocultarTodo();
+                                agregarMensaje(R.string.msj_tipo_vacio);
 
-                                TextView mensaje = new TextView(contexto);
+                                /*TextView mensaje = new TextView(contexto);
                                 mensaje.setText(R.string.msj_tipo_vacio);
                                 mensaje.setGravity(Gravity.CENTER);
                                 mensaje.setTextSize(20f);
 
                                 LinearLayout contenedor = (LinearLayout) findViewById(R.id.contenedor);
-                                contenedor.addView(mensaje);
+                                contenedor.addView(mensaje);*/
                             }
                         });
                     }
@@ -257,24 +226,35 @@ public class ConsultarTipos extends AppCompatActivity
         return tipos;
     }
 
-    /**
-     * Muestra la tabla
-     *
-     * @param tabla Tabla a mostrar.
-     */
-    private void mostrarTodo(TableLayout tabla)
+    private void agregarMensaje(int msj)
     {
-        tabla.setVisibility(View.VISIBLE);
+        TextView mensaje = new TextView(contexto);
+        mensaje.setText(msj);
+        mensaje.setGravity(Gravity.CENTER);
+        mensaje.setTextSize(20f);
+        mensaje.setId(id_mensaje);
+        mensaje.setLayoutParams(
+                new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+                        ViewGroup.LayoutParams.MATCH_PARENT));
+
+        LinearLayout contenedor = (LinearLayout) findViewById(R.id.contenedor_base);
+        contenedor.addView(mensaje);
     }
 
     /**
-     * Oculta la tabla para mostrar algun mensaje.
-     *
-     * @param tabla Tabla a ocultar.
+     * Funcion encargada de ocultar los elementos de la tabla.
      */
-    private void ocultarTodo(TableLayout tabla)
+    private void ocultarTodo()
     {
-        tabla.setVisibility(View.INVISIBLE);
+        findViewById(R.id.contenedor).setVisibility(View.GONE);
+    }
+
+    /**
+     * Funcion encargada de mostrar los elementos de la tabla.
+     */
+    private void mostrarTodo()
+    {
+        findViewById(R.id.contenedor).setVisibility(View.VISIBLE);
     }
 
     /*

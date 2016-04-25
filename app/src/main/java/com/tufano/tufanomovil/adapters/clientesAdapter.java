@@ -13,7 +13,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.tufano.tufanomovil.R;
-import com.tufano.tufanomovil.gestion.clientes.EditarClienteDetalles;
+import com.tufano.tufanomovil.gestion.clientes.EditarCliente;
 import com.tufano.tufanomovil.objetos.Cliente;
 
 import java.util.ArrayList;
@@ -97,7 +97,7 @@ public class clientesAdapter extends BaseAdapter
             @Override
             public void onClick(View v)
             {
-                Intent c = new Intent(ac, EditarClienteDetalles.class);
+                Intent c = new Intent(ac, EditarCliente.class);
                 c.putExtra("usuario", usuario);
                 c.putExtra("id_cliente", id_cliente);
                 c.putExtra("rs", razon_social);

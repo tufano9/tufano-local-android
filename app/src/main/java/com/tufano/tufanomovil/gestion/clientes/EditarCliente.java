@@ -33,7 +33,7 @@ import java.util.List;
 /**
  * Created por Usuario Tufano on 19/01/2016.
  */
-public class EditarClienteDetalles extends AppCompatActivity
+public class EditarCliente extends AppCompatActivity
 {
     private final String TAG = "EditarClienteDetalles";
     private String usuario, id_cliente, rs, rif, estados, tlf, estatus, mail, dir;
@@ -104,7 +104,7 @@ public class EditarClienteDetalles extends AppCompatActivity
             {
                 if (camposValidados())
                 {
-                    AlertDialog.Builder dialog = new AlertDialog.Builder(EditarClienteDetalles.this);
+                    AlertDialog.Builder dialog = new AlertDialog.Builder(EditarCliente.this);
 
                     dialog.setMessage(R.string.confirmacion_editar_cliente);
                     dialog.setCancelable(false);
@@ -318,17 +318,6 @@ public class EditarClienteDetalles extends AppCompatActivity
     class async_editarClienteBD extends AsyncTask<String, String, String>
     {
         @Override
-        protected void onPreExecute()
-        {
-            pDialog = new ProgressDialog(EditarClienteDetalles.this);
-            pDialog.setTitle("Por favor espere...");
-            pDialog.setMessage("Editando el cliente...");
-            pDialog.setIndeterminate(true);
-            pDialog.setCancelable(false);
-            pDialog.show();
-        }
-
-        @Override
         protected String doInBackground(String... params)
         {
             try
@@ -358,6 +347,17 @@ public class EditarClienteDetalles extends AppCompatActivity
         }
 
         @Override
+        protected void onPreExecute()
+        {
+            pDialog = new ProgressDialog(EditarCliente.this);
+            pDialog.setTitle("Por favor espere...");
+            pDialog.setMessage("Editando el cliente...");
+            pDialog.setIndeterminate(true);
+            pDialog.setCancelable(false);
+            pDialog.show();
+        }
+
+        @Override
         protected void onPostExecute(String result)
         {
             pDialog.dismiss();
@@ -371,7 +371,7 @@ public class EditarClienteDetalles extends AppCompatActivity
                     if (desdePedidos)
                     {
                         // Redirige a la pantalla de Pedidos
-                        Intent c = new Intent(EditarClienteDetalles.this, SeleccionarCliente.class);
+                        Intent c = new Intent(EditarCliente.this, SeleccionarCliente.class);
                         c.putExtra("usuario", usuario);
                         c.putExtra("desdeClientes", true);
                         c.putExtra("idClienteCreado", id_cliente);
@@ -381,7 +381,7 @@ public class EditarClienteDetalles extends AppCompatActivity
                     else
                     {
                         // Redirige a la pantalla de Home
-                        Intent c = new Intent(EditarClienteDetalles.this, ConsultarCliente.class);
+                        Intent c = new Intent(EditarCliente.this, ConsultarCliente.class);
                         c.putExtra("usuario", usuario);
                         startActivity(c);
                         ConsultarCliente.fa.finish();

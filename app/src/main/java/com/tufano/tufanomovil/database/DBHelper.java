@@ -5,16 +5,20 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.os.Environment;
 import android.util.Log;
 
 import com.tufano.tufanomovil.global.Funciones;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.security.GeneralSecurityException;
+
 
 import static com.tufano.tufanomovil.database.altern.Producto.ALTER_TABLE_PRODUCTO_ADDDESTACADO;
 import static com.tufano.tufanomovil.database.creates.CreateSentences.CREAR_TABLA_CLIENTES;
@@ -44,24 +48,25 @@ import static com.tufano.tufanomovil.database.tables.Usuarios.TABLA_USUARIO;
  */
 public class DBHelper extends SQLiteOpenHelper
 {
-    private static final String DB_NAME    = "tufanomovil.db";
-    private final static int    DB_VERSION = 3;
-    private static final String TAG        = "DBHelper";
     //Ruta por defecto de las bases de datos en el sistema Android
     //private static String DB_PATH =  "/data/data/paquete.tufanoapp/databases/";
+
+    private static final String DB_NAME = "tufanomovil.db";
+    private final static int DB_VERSION = 3;
+    private static final String TAG = "DBHelper";
     private static String DB_RUTA;
     private static DBHelper mInstance = null;
-    private final Context        myContext;
-    private       SQLiteDatabase myDataBase;
+    private final Context myContext;
+    private SQLiteDatabase myDataBase;
 
     /**
      * Constructor
-     * <p>
+     * <p/>
      * Toma referencia hacia el contexto de la aplicación que lo invoca para poder acceder a los
      * 'assets' y 'resources' de la aplicación.
-     * <p>
+     * <p/>
      * Crea un objeto DBOpenHelper que nos permitirá controlar la apertura de la base de datos.
-     * <p>
+     * <p/>
      * Constructor should be private to prevent direct instantiation.
      * make call to static factory method "getInstance()" instead.
      *
@@ -71,8 +76,9 @@ public class DBHelper extends SQLiteOpenHelper
     {
         super(context, DB_NAME, null, DB_VERSION);
         this.myContext = context;
-        Log.i("DBHelper", "(" + context.getFilesDir().getPath() + ") DB_RUTA:  (" + context.getDatabasePath(DB_NAME));
         DB_RUTA = context.getDatabasePath(DB_NAME).toString();
+
+        //Log.i("DBHelper", "(" + context.getFilesDir().getPath() + ") DB_RUTA:  (" + context.getDatabasePath(DB_NAME));
     }
 
     public static DBHelper getInstance(Context ctx)
@@ -87,83 +93,71 @@ public class DBHelper extends SQLiteOpenHelper
         return mInstance;
     }
 
-    @Override
-    public void onCreate(SQLiteDatabase db)
+    public static void backUpDB()
     {
-        Log.i(TAG, "Creando Base de datos");
-        // Crear la base de datos
-        //db.execSQL("PRAGMA encoding = \"UTF-8\"");
-        db.execSQL(CREAR_TABLA_USUARIO);
-        db.execSQL(CREAR_TABLA_PRODUCTO);
-        db.execSQL(CREAR_TABLA_TALLAS);
-        db.execSQL(CREAR_TABLA_TIPOS);
-        db.execSQL(CREAR_TABLA_COLORES);
-        db.execSQL(CREAR_TABLA_CLIENTES);
-        db.execSQL(CREAR_TABLA_PEDIDOS);
-        db.execSQL(CREAR_TABLA_PEDIDOS_DETALLES);
-        db.execSQL(CREAR_TABLA_PEDIDOS_TEMPORALES);
-        db.execSQL(CREAR_TABLA_PEDIDOS_EDITAR);
-        db.execSQL(CREAR_TABLA_PEDIDOS_DETALLES_EDITAR);
-
-        /*
-            El siguiente bloque Try-Catch crea un usuario por defecto con los siguientes datos:
-
-            -Usuario: ftufano
-            -Password: 1324
-         */
-
         try
         {
-            // Crea un key aleatoriamente que sera usado para la encriptacion.
-            String key              = Funciones.generateKey();
-            String default_password = "1234";
+            Log.i(TAG, "backUpDB INIT");
+            File dbFile = new File(DB_RUTA);
+            FileInputStream fis = new FileInputStream(dbFile);
 
-            //Encripta el password por defecto utilizando el key previamente generado.
-            String generatedPass = new String(Funciones.encrypt(key, default_password), "UTF-8");
+            String outFileName = Environment.getExternalStorageDirectory() + "/db_copy.db";
 
-            ContentValues valores = new ContentValues();
-            valores.put(CN_NOMBRE_USUARIO, "ftufano");
-            valores.put(CN_CEDULA, "20123456");
-            valores.put(CN_NOMBRE, "Francesco");
-            valores.put(CN_APELLIDO, "Tufano");
-            valores.put(CN_TELEFONO, "0414123456");
-            valores.put(CN_EMAIL, "tufano9@yahoo.es");
-            valores.put(CN_PASSWORD, generatedPass);
-            valores.put(CN_ESTADO, "Carabobo");
-            valores.put(CN_KEY, key);
+            // Open the empty db as the output stream
+            OutputStream output = new FileOutputStream(outFileName);
 
-            if (db.insert(TABLA_USUARIO, null, valores) == -1)
-                Log.e(TAG, "El usuario por defecto no pudo ser creado..");
-            else
-                Log.i(TAG, "El usuario por defecto fue creado exitosamente..");
+            // Transfer bytes from the inputfile to the outputfile
+            byte[] buffer = new byte[1024];
+            int length;
+
+            while ((length = fis.read(buffer)) > 0)
+            {
+                output.write(buffer, 0, length);
+            }
+
+            // Close the streams
+            output.flush();
+            output.close();
+            fis.close();
+            Log.i(TAG, "backUpDB FINISH");
         }
-        catch (UnsupportedEncodingException | GeneralSecurityException e)
+        catch (IOException e)
         {
             e.printStackTrace();
         }
     }
 
-    @Override
-    public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion)
+    public static void recoverDB()
     {
-        // Actualizar la base de datos (Tomando en cuenta la version)
-        Log.i("DBHelper", "Se actualizara la BD desde la version " + oldVersion + ", a la version " + newVersion);
-
-        int upgradeTo = oldVersion + 1;
-        while (upgradeTo <= newVersion)
+        try
         {
-            Log.i("DBHelper", "Actualizando BD a la version " + upgradeTo);
-            switch (upgradeTo)
+            Log.i(TAG, "recoverDB INIT");
+            File dbFile = new File(DB_RUTA);
+
+            String copy_dir = Environment.getExternalStorageDirectory() + "/db_copy.db";
+            // Open the empty db as the input stream
+            FileInputStream input = new FileInputStream(copy_dir);
+
+            OutputStream output = new FileOutputStream(DB_RUTA);
+
+            // Transfer bytes from the inputfile to the outputfile
+            byte[] buffer = new byte[1024];
+            int length;
+
+            while ((length = input.read(buffer)) > 0)
             {
-                case 2:
-                    db.execSQL(CREAR_TABLA_PEDIDOS_EDITAR);
-                    db.execSQL(CREAR_TABLA_PEDIDOS_DETALLES_EDITAR);
-                    break;
-                case 3:
-                    db.execSQL(ALTER_TABLE_PRODUCTO_ADDDESTACADO);
-                    break;
+                output.write(buffer, 0, length);
             }
-            upgradeTo++;
+
+            // Close the streams
+            output.flush();
+            output.close();
+            output.close();
+            Log.i(TAG, "recoverDB FINISH");
+        }
+        catch (IOException e)
+        {
+            e.printStackTrace();
         }
     }
 
@@ -243,7 +237,7 @@ public class DBHelper extends SQLiteOpenHelper
 
         //Transferimos los bytes desde el fichero de entrada al de salida
         byte[] buffer = new byte[1024];
-        int    length;
+        int length;
 
         while ((length = myInput.read(buffer)) > 0)
         {
@@ -271,5 +265,85 @@ public class DBHelper extends SQLiteOpenHelper
         if (myDataBase != null)
             myDataBase.close();
         super.close();
+    }
+
+    @Override
+    public void onCreate(SQLiteDatabase db)
+    {
+        Log.i(TAG, "Creando Base de datos");
+        // Crear la base de datos
+        //db.execSQL("PRAGMA encoding = \"UTF-8\"");
+        db.execSQL(CREAR_TABLA_USUARIO);
+        db.execSQL(CREAR_TABLA_PRODUCTO);
+        db.execSQL(CREAR_TABLA_TALLAS);
+        db.execSQL(CREAR_TABLA_TIPOS);
+        db.execSQL(CREAR_TABLA_COLORES);
+        db.execSQL(CREAR_TABLA_CLIENTES);
+        db.execSQL(CREAR_TABLA_PEDIDOS);
+        db.execSQL(CREAR_TABLA_PEDIDOS_DETALLES);
+        db.execSQL(CREAR_TABLA_PEDIDOS_TEMPORALES);
+        db.execSQL(CREAR_TABLA_PEDIDOS_EDITAR);
+        db.execSQL(CREAR_TABLA_PEDIDOS_DETALLES_EDITAR);
+
+        /*
+            El siguiente bloque Try-Catch crea un usuario por defecto con los siguientes datos:
+
+            -Usuario: ftufano
+            -Password: 1324
+         */
+
+        try
+        {
+            // Crea un key aleatoriamente que sera usado para la encriptacion.
+            String key = Funciones.generateKey();
+            String default_password = "1234";
+
+            //Encripta el password por defecto utilizando el key previamente generado.
+            String generatedPass = new String(Funciones.encrypt(key, default_password), "UTF-8");
+
+            ContentValues valores = new ContentValues();
+            valores.put(CN_NOMBRE_USUARIO, "ftufano");
+            valores.put(CN_CEDULA, "20123456");
+            valores.put(CN_NOMBRE, "Francesco");
+            valores.put(CN_APELLIDO, "Tufano");
+            valores.put(CN_TELEFONO, "0414123456");
+            valores.put(CN_EMAIL, "tufano9@yahoo.es");
+            valores.put(CN_PASSWORD, generatedPass);
+            valores.put(CN_ESTADO, "Carabobo");
+            valores.put(CN_KEY, key);
+
+            if (db.insert(TABLA_USUARIO, null, valores) == -1)
+                Log.e(TAG, "El usuario por defecto no pudo ser creado..");
+            else
+                Log.i(TAG, "El usuario por defecto fue creado exitosamente..");
+        }
+        catch (UnsupportedEncodingException | GeneralSecurityException e)
+        {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion)
+    {
+        // Actualizar la base de datos (Tomando en cuenta la version)
+        Log.i("DBHelper", "Se actualizara la BD desde la version " + oldVersion + ", a la version " + newVersion);
+
+        int upgradeTo = oldVersion + 1;
+        while (upgradeTo <= newVersion)
+        {
+            Log.i("DBHelper", "Actualizando BD a la version " + upgradeTo);
+            switch (upgradeTo)
+            {
+                case 2:
+                    db.execSQL(CREAR_TABLA_PEDIDOS_EDITAR);
+                    db.execSQL(CREAR_TABLA_PEDIDOS_DETALLES_EDITAR);
+                    break;
+                case 3:
+                    db.execSQL(ALTER_TABLE_PRODUCTO_ADDDESTACADO);
+                    break;
+            }
+            upgradeTo++;
+        }
     }
 }

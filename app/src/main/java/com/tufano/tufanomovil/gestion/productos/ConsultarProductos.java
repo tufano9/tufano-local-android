@@ -16,6 +16,7 @@ import android.util.Log;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -695,6 +696,7 @@ public class ConsultarProductos extends AppCompatActivity
 
         if (cursor.getCount() > 0)
         {
+            mostrarTodo();
             for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor.moveToNext())
             {
                 Log.i(TAG, "Agregando fila..");
@@ -730,14 +732,17 @@ public class ConsultarProductos extends AppCompatActivity
                                 @Override
                                 public void run()
                                 {
-                                    TextView mensaje = new TextView(contexto);
+                                    ocultarTodo();
+                                    agregarMensaje(R.string.msj_producto_vacio);
+
+                                    /*TextView mensaje = new TextView(contexto);
                                     mensaje.setText(R.string.msj_producto_vacio);
                                     mensaje.setGravity(Gravity.CENTER);
                                     mensaje.setTextSize(20f);
                                     mensaje.setId(id_mensaje);
 
                                     LinearLayout contenedor = (LinearLayout) findViewById(R.id.contenedor_base);
-                                    contenedor.addView(mensaje);
+                                    contenedor.addView(mensaje);*/
                                 }
                             });
                         }
@@ -759,6 +764,10 @@ public class ConsultarProductos extends AppCompatActivity
                                 @Override
                                 public void run()
                                 {
+                                    ocultarTodo();
+                                    agregarMensaje(R.string.sin_resultados);
+
+                                    /*
                                     TextView mensaje = new TextView(contexto);
                                     mensaje.setText(R.string.sin_resultados);
                                     mensaje.setGravity(Gravity.CENTER);
@@ -766,7 +775,7 @@ public class ConsultarProductos extends AppCompatActivity
                                     mensaje.setId(id_mensaje);
 
                                     LinearLayout contenedor = (LinearLayout) findViewById(R.id.contenedor_base);
-                                    contenedor.addView(mensaje);
+                                    contenedor.addView(mensaje);*/
                                 }
                             });
                         }
@@ -846,6 +855,37 @@ public class ConsultarProductos extends AppCompatActivity
         hilo.start();
     }
 
+    private void agregarMensaje(int msj)
+    {
+        TextView mensaje = new TextView(contexto);
+        mensaje.setText(msj);
+        mensaje.setGravity(Gravity.CENTER);
+        mensaje.setTextSize(20f);
+        mensaje.setId(id_mensaje);
+        mensaje.setLayoutParams(
+                new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+                        ViewGroup.LayoutParams.MATCH_PARENT));
+
+        LinearLayout contenedor = (LinearLayout) findViewById(R.id.contenedor_base);
+        contenedor.addView(mensaje);
+    }
+
+    /**
+     * Funcion encargada de ocultar los elementos de la tabla.
+     */
+    private void ocultarTodo()
+    {
+        findViewById(R.id.contenedor).setVisibility(View.GONE);
+    }
+
+    /**
+     * Funcion encargada de mostrar los elementos de la tabla.
+     */
+    private void mostrarTodo()
+    {
+        findViewById(R.id.contenedor).setVisibility(View.VISIBLE);
+    }
+
     // Append more data into the adapter
     public void customLoadMoreDataFromApi(int totalItemsCount)
     {
@@ -898,6 +938,15 @@ public class ConsultarProductos extends AppCompatActivity
     private class cargarDatos extends AsyncTask<String, String, String>
     {
         ProgressDialog pDialog;
+
+        @Override
+        protected String doInBackground(String... params)
+        {
+            loadSpinnerData();
+            loadData(null, null, null, null, false);
+            return null;
+        }
+
         @Override
         protected void onPreExecute()
         {
@@ -910,13 +959,6 @@ public class ConsultarProductos extends AppCompatActivity
             pDialog.show();
         }
 
-        @Override
-        protected String doInBackground(String... params)
-        {
-            loadSpinnerData();
-            loadData(null, null, null, null, false);
-            return null;
-        }
 
         @Override
         protected void onPostExecute(String result)

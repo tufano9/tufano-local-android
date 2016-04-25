@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout
+    android:id="@+id/contenedor_base"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -17,10 +18,25 @@
     <LinearLayout
         android:id="@+id/contenedor"
         android:layout_width="match_parent"
-        android:layout_height="560dp"
-        android:layout_alignParentLeft="true"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/bot_layout"
         android:layout_alignParentTop="true"
-        android:orientation="vertical">
+        android:gravity="center"
+        android:orientation="vertical"
+        android:visibility="gone">
+
+        <!--
+
+        <LinearLayout
+            android:id="@+id/LinearLayout_MainActivity"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            android:layout_width="0px"
+            android:layout_height="0px" >
+            <requestFocus />
+        </LinearLayout>
+
+        -->
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -40,6 +56,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="10dp"
+                android:text="New Text"
                 android:textSize="16sp" />
 
             <TextView
@@ -55,6 +72,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="10dp"
+                android:text="New Text"
                 android:textSize="16sp" />
 
             <TextView
@@ -70,6 +88,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="10dp"
+                android:text="New Text"
                 android:textSize="16sp" />
         </LinearLayout>
 
@@ -77,9 +96,9 @@
             android:id="@+id/table_crear_pedidos"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="30dp"
+            android:layout_marginTop="10dp"
             android:stretchColumns="*"
-            android:visibility="invisible">
+            >
 
             <TableRow
                 android:id="@+id/cabecera"
@@ -164,7 +183,7 @@
 
         <ScrollView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             >
 
             <LinearLayout
@@ -184,11 +203,12 @@
     </LinearLayout>
 
     <LinearLayout
+        android:id="@+id/bot_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:layout_below="@+id/contenedor"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:visibility="gone">
 
         <LinearLayout
             android:id="@+id/datos_pedido"
@@ -198,7 +218,7 @@
             android:layout_weight="1"
             android:gravity="center"
             android:orientation="horizontal"
-            android:visibility="invisible">
+            >
 
             <TextView
                 android:layout_width="wrap_content"
@@ -268,9 +288,12 @@
             android:id="@+id/botones_opciones"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:layout_marginLeft="50dp"
+            android:layout_marginRight="50dp"
             android:layout_marginTop="10dp"
             android:layout_weight="1"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            >
 
             <Button
                 android:id="@+id/btn_cancelar_agregar_pedido"
@@ -280,8 +303,7 @@
                 android:layout_marginLeft="20dp"
                 android:layout_marginRight="20dp"
                 android:layout_weight="1"
-                android:text="@string/btn_cancelar_agregar_pedidos"
-                android:visibility="invisible" />
+                android:text="@string/btn_cancelar_pedido"/>
 
             <Button
                 android:id="@+id/btn_continuar_agregar_pedido"
@@ -291,8 +313,7 @@
                 android:layout_marginLeft="20dp"
                 android:layout_marginRight="20dp"
                 android:layout_weight="1"
-                android:text="@string/btn_realizar_pedido"
-                android:visibility="invisible" />
+                android:text="@string/btn_realizar_pedido"/>
         </LinearLayout>
 
     </LinearLayout>
