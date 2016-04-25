@@ -619,6 +619,7 @@ public class AgregarProductoPedido extends AppCompatActivity
 
         final TableLayout tabla = (TableLayout) findViewById(R.id.tabla_contenido);
         filas = new ArrayList<>();
+        eliminarMensajeInformativo();
 
         TableRow.LayoutParams params = new TableRow.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.MATCH_PARENT, 1f);
 
@@ -871,7 +872,8 @@ public class AgregarProductoPedido extends AppCompatActivity
             {
                 if (!filtrando)
                 {
-                    Log.w(TAG, "VACIO!!!");
+                    // Hay productos pero probablemente estan des-habilitados.
+                    Log.w(TAG, "VACIO!!! ESTAN DESHABILITADOS");
                     final Thread hilo = new Thread()
                     {
                         @Override
@@ -906,7 +908,9 @@ public class AgregarProductoPedido extends AppCompatActivity
                 }
                 else
                 {
-                    TableRow.LayoutParams parametros = new TableRow.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT, 1f);
+                    agregarMensaje(R.string.sin_resultados);
+
+                    /*TableRow.LayoutParams parametros = new TableRow.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT, 1f);
 
                     // Con esto hago que el mensaje ocupe toda la fila completa, sin alargar la cabecera
                     // que se alarga automaticamente debido al stretchColumns del tableLayout
@@ -948,7 +952,7 @@ public class AgregarProductoPedido extends AppCompatActivity
                             }
                         }
                     };
-                    hilo1.start();
+                    hilo1.start();*/
                 }
             }
         }
@@ -969,8 +973,9 @@ public class AgregarProductoPedido extends AppCompatActivity
                                 public void run()
                                 {
                                     ocultarTodo(tabla);
+                                    agregarMensaje(R.string.msj_producto_nodisponible);
 
-                                    LinearLayout.LayoutParams params  = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.MATCH_PARENT, 1f);
+                                    /*LinearLayout.LayoutParams params  = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.MATCH_PARENT, 1f);
                                     TextView                  mensaje = new TextView(contexto);
                                     mensaje.setText(R.string.msj_producto_nodisponible);
                                     //mensaje.setText(R.string.msj_producto_vacio);
@@ -980,7 +985,7 @@ public class AgregarProductoPedido extends AppCompatActivity
 
                                     LinearLayout contenedor = (LinearLayout) findViewById(R.id.contenedor);
                                     contenedor.removeAllViews();
-                                    contenedor.addView(mensaje);
+                                    contenedor.addView(mensaje);*/
                                     // Pedido vacio, por favor agregue algun producto utilizando el boton inferior
                                 }
                             });
@@ -991,7 +996,9 @@ public class AgregarProductoPedido extends AppCompatActivity
             }
             else
             {
-                TableRow.LayoutParams parametros = new TableRow.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT, 1f);
+                agregarMensaje(R.string.sin_resultados);
+
+                /*TableRow.LayoutParams parametros = new TableRow.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT, 1f);
 
                 // Con esto hago que el mensaje ocupe toda la fila completa, sin alargar la cabecera
                 // que se alarga automaticamente debido al stretchColumns del tableLayout
@@ -1033,27 +1040,72 @@ public class AgregarProductoPedido extends AppCompatActivity
                         }
                     }
                 };
-                hilo1.start();
+                hilo1.start();*/
             }
         }
 
         cursor.close();
     }
 
-    private void agregarMensaje(int msj)
+    private void agregarMensaje(final int msj)
     {
-        TextView mensaje = new TextView(contexto);
-        mensaje.setText(msj);
-        mensaje.setGravity(Gravity.CENTER);
-        mensaje.setTextSize(20f);
-        mensaje.setId(id_mensaje);
-        mensaje.setLayoutParams(
-                new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
-                        ViewGroup.LayoutParams.MATCH_PARENT));
-        mensaje.setGravity(RelativeLayout.CENTER_VERTICAL | RelativeLayout.CENTER_HORIZONTAL);
+        final Thread hilo1 = new Thread()
+        {
+            @Override
+            public void run()
+            {
+                synchronized (this)
+                {
+                    runOnUiThread(new Runnable()
+                    {
+                        @Override
+                        public void run()
+                        {
+                            Log.i(TAG, "Agregando mensaje");
+                            TextView mensaje = new TextView(contexto);
+                            mensaje.setText(msj);
+                            mensaje.setGravity(Gravity.CENTER);
+                            mensaje.setTextSize(20f);
+                            mensaje.setId(id_mensaje);
+                            mensaje.setLayoutParams(
+                                    new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+                                            ViewGroup.LayoutParams.MATCH_PARENT));
+                            //mensaje.setGravity(RelativeLayout.CENTER_VERTICAL | RelativeLayout.CENTER_HORIZONTAL);
 
-        LinearLayout contenedor = (LinearLayout) findViewById(R.id.contenedor_base);
-        contenedor.addView(mensaje);
+                            RelativeLayout contenedor = (RelativeLayout) findViewById(R.id.contenedor_base);
+                            contenedor.addView(mensaje);
+                        }
+                    });
+                }
+            }
+        };
+        hilo1.start();
+    }
+
+    private void eliminarMensajeInformativo()
+    {
+        final Thread hilo = new Thread()
+        {
+            @Override
+            public void run()
+            {
+                synchronized (this)
+                {
+                    runOnUiThread(new Runnable()
+                    {
+                        @Override
+                        public void run()
+                        {
+                            // Elimina el mensaje (De haberlo) que muestra que no se encontraron registros en la BD.
+                            TextView       mensaje    = (TextView) findViewById(id_mensaje);
+                            RelativeLayout contenedor = (RelativeLayout) findViewById(R.id.contenedor_base);
+                            contenedor.removeView(mensaje);
+                        }
+                    });
+                }
+            }
+        };
+        hilo.start();
     }
 
     /**
@@ -1080,11 +1132,11 @@ public class AgregarProductoPedido extends AppCompatActivity
         color.setVisibility(View.VISIBLE);
         talla.setVisibility(View.VISIBLE);*/
 
-        LinearLayout contenedor = (LinearLayout) findViewById(R.id.contenedor);
-        LinearLayout bot_layout = (LinearLayout) findViewById(R.id.bot_layout);
+        LinearLayout contenedor             = (LinearLayout) findViewById(R.id.contenedor);
+        Button       boton_agregar_producto = (Button) findViewById(R.id.btn_agregar_productos_pedido);
 
         contenedor.setVisibility(View.VISIBLE);
-        bot_layout.setVisibility(View.VISIBLE);
+        boton_agregar_producto.setVisibility(View.VISIBLE);
 
     }
 
@@ -1113,7 +1165,7 @@ public class AgregarProductoPedido extends AppCompatActivity
         talla.setVisibility(View.INVISIBLE);*/
 
         LinearLayout contenedor = (LinearLayout) findViewById(R.id.contenedor);
-        LinearLayout bot_layout = (LinearLayout) findViewById(R.id.bot_layout);
+        Button       bot_layout = (Button) findViewById(R.id.btn_agregar_productos_pedido);
 
         contenedor.setVisibility(View.GONE);
         bot_layout.setVisibility(View.GONE);

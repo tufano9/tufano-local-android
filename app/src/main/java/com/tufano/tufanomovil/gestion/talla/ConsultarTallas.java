@@ -30,7 +30,8 @@ import com.tufano.tufanomovil.global.Funciones;
 public class ConsultarTallas extends AppCompatActivity
 {
     public static Activity  fa;
-    private final int id_mensaje = Funciones.generateViewId();
+    private final int    id_mensaje = Funciones.generateViewId();
+    private final String TAG        = "ConsultarTallas";
     private       Context   contexto;
     private       DBAdapter manager;
     private       String    usuario;
@@ -288,19 +289,38 @@ public class ConsultarTallas extends AppCompatActivity
         return talla;
     }
 
-    private void agregarMensaje(int msj)
+    private void agregarMensaje(final int msj)
     {
-        TextView mensaje = new TextView(contexto);
-        mensaje.setText(msj);
-        mensaje.setGravity(Gravity.CENTER);
-        mensaje.setTextSize(20f);
-        mensaje.setId(id_mensaje);
-        mensaje.setLayoutParams(
-                new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
-                        ViewGroup.LayoutParams.MATCH_PARENT));
+        final Thread hilo1 = new Thread()
+        {
+            @Override
+            public void run()
+            {
+                synchronized (this)
+                {
+                    runOnUiThread(new Runnable()
+                    {
+                        @Override
+                        public void run()
+                        {
+                            Log.i(TAG, "Agregando mensaje");
+                            TextView mensaje = new TextView(contexto);
+                            mensaje.setText(msj);
+                            mensaje.setGravity(Gravity.CENTER);
+                            mensaje.setTextSize(20f);
+                            mensaje.setId(id_mensaje);
+                            mensaje.setLayoutParams(
+                                    new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+                                            ViewGroup.LayoutParams.MATCH_PARENT));
 
-        LinearLayout contenedor = (LinearLayout) findViewById(R.id.contenedor_base);
-        contenedor.addView(mensaje);
+                            LinearLayout contenedor = (LinearLayout) findViewById(R.id.contenedor_base);
+                            contenedor.addView(mensaje);
+                        }
+                    });
+                }
+            }
+        };
+        hilo1.start();
     }
 
     /**

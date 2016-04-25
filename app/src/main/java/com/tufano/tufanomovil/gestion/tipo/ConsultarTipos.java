@@ -34,6 +34,7 @@ public class ConsultarTipos extends AppCompatActivity
     private       Context   contexto;
     private       DBAdapter manager;
     private       String    usuario;
+    private String TAG = "ConsultarTipos";
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -226,19 +227,38 @@ public class ConsultarTipos extends AppCompatActivity
         return tipos;
     }
 
-    private void agregarMensaje(int msj)
+    private void agregarMensaje(final int msj)
     {
-        TextView mensaje = new TextView(contexto);
-        mensaje.setText(msj);
-        mensaje.setGravity(Gravity.CENTER);
-        mensaje.setTextSize(20f);
-        mensaje.setId(id_mensaje);
-        mensaje.setLayoutParams(
-                new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
-                        ViewGroup.LayoutParams.MATCH_PARENT));
+        final Thread hilo1 = new Thread()
+        {
+            @Override
+            public void run()
+            {
+                synchronized (this)
+                {
+                    runOnUiThread(new Runnable()
+                    {
+                        @Override
+                        public void run()
+                        {
+                            Log.i(TAG, "Agregando mensaje");
+                            TextView mensaje = new TextView(contexto);
+                            mensaje.setText(msj);
+                            mensaje.setGravity(Gravity.CENTER);
+                            mensaje.setTextSize(20f);
+                            mensaje.setId(id_mensaje);
+                            mensaje.setLayoutParams(
+                                    new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+                                            ViewGroup.LayoutParams.MATCH_PARENT));
 
-        LinearLayout contenedor = (LinearLayout) findViewById(R.id.contenedor_base);
-        contenedor.addView(mensaje);
+                            LinearLayout contenedor = (LinearLayout) findViewById(R.id.contenedor_base);
+                            contenedor.addView(mensaje);
+                        }
+                    });
+                }
+            }
+        };
+        hilo1.start();
     }
 
     /**

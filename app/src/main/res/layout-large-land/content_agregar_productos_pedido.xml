@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout
-    android:id="@+id/contenedor_base"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/contenedor_base"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
@@ -22,7 +22,8 @@
         android:layout_above="@+id/btn_agregar_productos_pedido"
         android:layout_alignParentTop="true"
         android:gravity="center"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:visibility="gone">
 
         <LinearLayout
             android:id="@+id/LinearLayout_MainActivity"
@@ -42,7 +43,7 @@
             android:layout_marginTop="10dp"
             android:hint="@string/hint_autoCModelo"
             android:singleLine="true"
-            android:visibility="invisible" />
+            />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -60,7 +61,7 @@
                 android:layout_marginLeft="10dp"
                 android:layout_marginRight="10dp"
                 android:layout_weight="1"
-                android:visibility="invisible" />
+                />
 
             <Spinner
                 android:id="@+id/spColor_editar_producto"
@@ -70,7 +71,7 @@
                 android:layout_marginLeft="10dp"
                 android:layout_marginRight="10dp"
                 android:layout_weight="1"
-                android:visibility="invisible" />
+                />
 
             <Spinner
                 android:id="@+id/spTalla_editar_producto"
@@ -80,7 +81,7 @@
                 android:layout_marginLeft="10dp"
                 android:layout_marginRight="10dp"
                 android:layout_weight="1"
-                android:visibility="invisible" />
+                />
         </LinearLayout>
 
         <TableLayout
@@ -89,7 +90,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="30dp"
             android:stretchColumns="*"
-            android:visibility="invisible">
+            >
 
             <TableRow
                 android:id="@+id/cabecera"
@@ -202,6 +203,6 @@
         android:layout_marginTop="30dp"
         android:text="@string/agregar_productos_pedido"
         android:textSize="18sp"
-        android:visibility="invisible"/>
+        android:visibility="gone"/>
 
 </RelativeLayout>

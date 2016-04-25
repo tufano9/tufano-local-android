@@ -22,6 +22,7 @@ import android.util.Log;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -30,6 +31,7 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TableLayout;
 import android.widget.TableRow;
@@ -55,6 +57,7 @@ public class AgregarProductoPedidoEditar extends AppCompatActivity
     private static final int                 IMG_WIDTH  = 130;
     private static final int                 IMG_HEIGHT = 50;
     private static final ImageView.ScaleType ESCALADO   = ImageView.ScaleType.CENTER_INSIDE;
+    private final        int                 id_mensaje = Funciones.generateViewId();
     private final        String              TAG        = "AgregarProductoPedido";
     private String usuario, id_pedido;
     private Context                      contexto;
@@ -618,6 +621,7 @@ public class AgregarProductoPedidoEditar extends AppCompatActivity
 
         final TableLayout tabla = (TableLayout) findViewById(R.id.tabla_contenido);
         filas = new ArrayList<>();
+        eliminarMensajeInformativo();
 
         TableRow.LayoutParams params = new TableRow.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.MATCH_PARENT, 1f);
 
@@ -853,7 +857,7 @@ public class AgregarProductoPedidoEditar extends AppCompatActivity
             {
                 if (!filtrando)
                 {
-                    Log.w(TAG, "VACIO!!!");
+                    Log.w(TAG, "VACIO!!! ESTAN DESHABILITADOS");
                     final Thread hilo = new Thread()
                     {
                         @Override
@@ -867,8 +871,9 @@ public class AgregarProductoPedidoEditar extends AppCompatActivity
                                     public void run()
                                     {
                                         ocultarTodo(tabla);
+                                        agregarMensaje(R.string.msj_producto_nodisponible);
 
-                                        LinearLayout.LayoutParams params  = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.MATCH_PARENT, 1f);
+                                        /*LinearLayout.LayoutParams params  = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.MATCH_PARENT, 1f);
                                         TextView                  mensaje = new TextView(contexto);
                                         mensaje.setText(R.string.msj_producto_nodisponible);
                                         mensaje.setGravity(Gravity.CENTER);
@@ -877,7 +882,7 @@ public class AgregarProductoPedidoEditar extends AppCompatActivity
 
                                         LinearLayout contenedor = (LinearLayout) findViewById(R.id.contenedor);
                                         contenedor.removeAllViews();
-                                        contenedor.addView(mensaje);
+                                        contenedor.addView(mensaje);*/
                                     }
                                 });
                             }
@@ -887,7 +892,9 @@ public class AgregarProductoPedidoEditar extends AppCompatActivity
                 }
                 else
                 {
-                    TableRow.LayoutParams parametros = new TableRow.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT, 1f);
+                    agregarMensaje(R.string.sin_resultados);
+
+                    /*TableRow.LayoutParams parametros = new TableRow.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT, 1f);
 
                     // Con esto hago que el mensaje ocupe toda la fila completa, sin alargar la cabecera
                     // que se alarga automaticamente debido al stretchColumns del tableLayout
@@ -929,7 +936,7 @@ public class AgregarProductoPedidoEditar extends AppCompatActivity
                             }
                         }
                     };
-                    hilo1.start();
+                    hilo1.start();*/
                 }
             }
         }
@@ -950,6 +957,7 @@ public class AgregarProductoPedidoEditar extends AppCompatActivity
                                 public void run()
                                 {
                                     ocultarTodo(tabla);
+                                    agregarMensaje(R.string.msj_producto_nodisponible);
 
                                     LinearLayout.LayoutParams params  = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.MATCH_PARENT, 1f);
                                     TextView                  mensaje = new TextView(contexto);
@@ -972,7 +980,9 @@ public class AgregarProductoPedidoEditar extends AppCompatActivity
             }
             else
             {
-                TableRow.LayoutParams parametros = new TableRow.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT, 1f);
+                agregarMensaje(R.string.sin_resultados);
+
+                /*TableRow.LayoutParams parametros = new TableRow.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT, 1f);
 
                 // Con esto hago que el mensaje ocupe toda la fila completa, sin alargar la cabecera
                 // que se alarga automaticamente debido al stretchColumns del tableLayout
@@ -1014,11 +1024,72 @@ public class AgregarProductoPedidoEditar extends AppCompatActivity
                         }
                     }
                 };
-                hilo1.start();
+                hilo1.start();*/
             }
         }
 
         cursor.close();
+    }
+
+    private void eliminarMensajeInformativo()
+    {
+        final Thread hilo = new Thread()
+        {
+            @Override
+            public void run()
+            {
+                synchronized (this)
+                {
+                    runOnUiThread(new Runnable()
+                    {
+                        @Override
+                        public void run()
+                        {
+                            // Elimina el mensaje (De haberlo) que muestra que no se encontraron registros en la BD.
+                            TextView       mensaje    = (TextView) findViewById(id_mensaje);
+                            RelativeLayout contenedor = (RelativeLayout) findViewById(R.id.contenedor_base);
+                            contenedor.removeView(mensaje);
+                        }
+                    });
+                }
+            }
+        };
+        hilo.start();
+    }
+
+    private void agregarMensaje(final int msj)
+    {
+        final Thread hilo1 = new Thread()
+        {
+            @Override
+            public void run()
+            {
+                synchronized (this)
+                {
+                    runOnUiThread(new Runnable()
+                    {
+                        @Override
+                        public void run()
+                        {
+                            Log.i(TAG, "Agregando mensaje");
+
+                            TextView mensaje = new TextView(contexto);
+                            mensaje.setText(msj);
+                            mensaje.setGravity(Gravity.CENTER);
+                            mensaje.setTextSize(20f);
+                            mensaje.setId(id_mensaje);
+                            mensaje.setLayoutParams(
+                                    new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+                                            ViewGroup.LayoutParams.MATCH_PARENT));
+
+                            RelativeLayout contenedor = (RelativeLayout) findViewById(R.id.contenedor_base);
+                            contenedor.addView(mensaje);
+                        }
+                    });
+                }
+            }
+        };
+        hilo1.start();
     }
 
     /**
@@ -1028,6 +1099,13 @@ public class AgregarProductoPedidoEditar extends AppCompatActivity
      */
     private void mostrarTodo(TableLayout tabla)
     {
+        LinearLayout contenedor             = (LinearLayout) findViewById(R.id.contenedor);
+        Button       boton_agregar_producto = (Button) findViewById(R.id.btn_agregar_productos_pedido);
+
+        contenedor.setVisibility(View.VISIBLE);
+        boton_agregar_producto.setVisibility(View.VISIBLE);
+
+        /*
         tabla.setVisibility(View.VISIBLE);
         final TableLayout cabecera    = (TableLayout) findViewById(R.id.table_agregar_productos_pedido);
         Button            btn_agregar = (Button) findViewById(R.id.btn_agregar_productos_pedido);
@@ -1043,8 +1121,7 @@ public class AgregarProductoPedidoEditar extends AppCompatActivity
         tabla.setVisibility(View.VISIBLE);
         tipo.setVisibility(View.VISIBLE);
         color.setVisibility(View.VISIBLE);
-        talla.setVisibility(View.VISIBLE);
-
+        talla.setVisibility(View.VISIBLE);*/
     }
 
     /**
@@ -1054,6 +1131,13 @@ public class AgregarProductoPedidoEditar extends AppCompatActivity
      */
     private void ocultarTodo(TableLayout tabla)
     {
+        LinearLayout contenedor = (LinearLayout) findViewById(R.id.contenedor);
+        Button       bot_layout = (Button) findViewById(R.id.btn_agregar_productos_pedido);
+
+        contenedor.setVisibility(View.GONE);
+        bot_layout.setVisibility(View.GONE);
+
+        /*
         final TableLayout cabecera = (TableLayout) findViewById(R.id.table_agregar_productos_pedido);
         tabla.setVisibility(View.INVISIBLE);
         Button btn_agregar = (Button) findViewById(R.id.btn_agregar_productos_pedido);
@@ -1069,7 +1153,7 @@ public class AgregarProductoPedidoEditar extends AppCompatActivity
         tabla.setVisibility(View.INVISIBLE);
         tipo.setVisibility(View.INVISIBLE);
         color.setVisibility(View.INVISIBLE);
-        talla.setVisibility(View.INVISIBLE);
+        talla.setVisibility(View.INVISIBLE);*/
     }
 
     private class cargarDatos extends AsyncTask<String, String, String>

@@ -579,6 +579,7 @@ public class ConsultarCliente extends AppCompatActivity
             Log.i(TAG, "No consegui nada en la BD..");
             if (!filtrado)
             {
+                // No tengo ningun registro en la BD.
                 final Thread hilo = new Thread()
                 {
                     @Override
@@ -611,6 +612,7 @@ public class ConsultarCliente extends AppCompatActivity
             }
             else
             {
+                // No hay clientes que concuerden con dichos parametros de filtrado.
                 final Thread hilo1 = new Thread()
                 {
                     @Override
@@ -623,7 +625,7 @@ public class ConsultarCliente extends AppCompatActivity
                                 @Override
                                 public void run()
                                 {
-                                    ocultarTodo();
+                                    //ocultarTodo();
                                     agregarMensaje(R.string.sin_resultados);
 
                                     /*TextView mensaje = new TextView(contexto);
@@ -685,19 +687,40 @@ public class ConsultarCliente extends AppCompatActivity
         hilo1.start();
     }
 
-    private void agregarMensaje(int msj)
+    private void agregarMensaje(final int msj)
     {
-        TextView mensaje = new TextView(contexto);
-        mensaje.setText(msj);
-        mensaje.setGravity(Gravity.CENTER);
-        mensaje.setTextSize(20f);
-        mensaje.setId(id_mensaje);
-        mensaje.setLayoutParams(
-                new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
-                        ViewGroup.LayoutParams.MATCH_PARENT));
+        final Thread hilo1 = new Thread()
+        {
+            @Override
+            public void run()
+            {
+                synchronized (this)
+                {
+                    runOnUiThread(new Runnable()
+                    {
+                        @Override
+                        public void run()
+                        {
+                            Log.i(TAG, "Agregando mensaje");
 
-        LinearLayout contenedor = (LinearLayout) findViewById(R.id.contenedor_base);
-        contenedor.addView(mensaje);
+
+                            TextView mensaje = new TextView(contexto);
+                            mensaje.setText(msj);
+                            mensaje.setGravity(Gravity.CENTER);
+                            mensaje.setTextSize(20f);
+                            mensaje.setId(id_mensaje);
+                            mensaje.setLayoutParams(
+                                    new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+                                            ViewGroup.LayoutParams.MATCH_PARENT));
+
+                            LinearLayout contenedor = (LinearLayout) findViewById(R.id.contenedor_base);
+                            contenedor.addView(mensaje);
+                        }
+                    });
+                }
+            }
+        };
+        hilo1.start();
     }
 
     /**

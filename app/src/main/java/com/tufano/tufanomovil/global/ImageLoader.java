@@ -23,7 +23,7 @@ import java.util.concurrent.Executors;
 
 public class ImageLoader
 {
-    final int stub_id = R.drawable.img_notfound; // icn_loading_img
+    final         int    stub_id = R.drawable.icn_loading_img; // icn_loading_img
     private final String TAG     = "ImageLoader";
     MemoryCache memoryCache = new MemoryCache();
     FileCache       fileCache;

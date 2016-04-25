@@ -752,6 +752,11 @@ public class EditarProducto extends AppCompatActivity
                 imagen_cargada = BitmapFactory.decodeByteArray(bitmapdata, 0, bitmapdata.length);
                 imagen_cargada = Funciones.resize(imagen_cargada, 2048, 2048);
 
+                String file_name = Funciones.getFileName(selectedImageUri, contexto);
+                file_name = file_name.substring(0, file_name.lastIndexOf("."));
+                EditText modelo = (EditText) findViewById(R.id.modelo_producto);
+                modelo.setText(file_name);
+
                 // Buscamos la ruta de la imagen en cuestion.
                 //String selectedImagePath = getPath(selectedImageUri);
 

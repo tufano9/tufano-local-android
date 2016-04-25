@@ -230,19 +230,41 @@ public class ConsultarColores extends AppCompatActivity
         cursor.close();
     }
 
-    private void agregarMensaje(int msj)
+    private void agregarMensaje(final int msj)
     {
-        TextView mensaje = new TextView(contexto);
-        mensaje.setText(msj);
-        mensaje.setGravity(Gravity.CENTER);
-        mensaje.setTextSize(20f);
-        mensaje.setId(id_mensaje);
-        mensaje.setLayoutParams(
-                new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
-                        ViewGroup.LayoutParams.MATCH_PARENT));
+        final Thread hilo1 = new Thread()
+        {
+            @Override
+            public void run()
+            {
+                synchronized (this)
+                {
+                    runOnUiThread(new Runnable()
+                    {
+                        @Override
+                        public void run()
+                        {
+                            Log.i(TAG, "Agregando mensaje");
 
-        LinearLayout contenedor = (LinearLayout) findViewById(R.id.contenedor_base);
-        contenedor.addView(mensaje);
+                            TextView mensaje = new TextView(contexto);
+                            mensaje.setText(msj);
+                            mensaje.setGravity(Gravity.CENTER);
+                            mensaje.setTextSize(20f);
+                            mensaje.setId(id_mensaje);
+                            mensaje.setLayoutParams(
+                                    new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+                                            ViewGroup.LayoutParams.MATCH_PARENT));
+
+                            LinearLayout contenedor = (LinearLayout) findViewById(R.id.contenedor_base);
+                            contenedor.addView(mensaje);
+                        }
+                    });
+                }
+            }
+        };
+        hilo1.start();
+
+
     }
 
     /**

@@ -7,7 +7,9 @@ import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Build;
+import android.provider.OpenableColumns;
 import android.support.v4.content.ContextCompat;
 import android.text.TextUtils;
 import android.util.Base64;
@@ -78,6 +80,39 @@ public class Funciones
         byte[] decrypted = cipher.doFinal(encryptedText);
 
         return new String(decrypted);
+    }
+
+    public static String getFileName(Uri uri, Context contexto)
+    {
+        String result = null;
+        if (uri.getScheme().equals("content"))
+        {
+            Cursor cursor = contexto.getContentResolver().query(uri, null, null, null, null);
+            try
+            {
+                if (cursor != null && cursor.moveToFirst())
+                {
+                    result = cursor.getString(cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME));
+                }
+            }
+            finally
+            {
+                if (cursor != null)
+                {
+                    cursor.close();
+                }
+            }
+        }
+        if (result == null)
+        {
+            result = uri.getPath();
+            int cut = result.lastIndexOf('/');
+            if (cut != -1)
+            {
+                result = result.substring(cut + 1);
+            }
+        }
+        return result;
     }
 
     public static Bitmap resize(Bitmap image, int maxWidth, int maxHeight)

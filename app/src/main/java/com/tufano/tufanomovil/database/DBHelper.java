@@ -19,7 +19,6 @@ import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.security.GeneralSecurityException;
 
-
 import static com.tufano.tufanomovil.database.altern.Producto.ALTER_TABLE_PRODUCTO_ADDDESTACADO;
 import static com.tufano.tufanomovil.database.creates.CreateSentences.CREAR_TABLA_CLIENTES;
 import static com.tufano.tufanomovil.database.creates.CreateSentences.CREAR_TABLA_COLORES;
@@ -97,7 +96,7 @@ public class DBHelper extends SQLiteOpenHelper
     {
         try
         {
-            Log.i(TAG, "backUpDB INIT");
+            Log.i(TAG, "backUpDB initiation..");
             File dbFile = new File(DB_RUTA);
             FileInputStream fis = new FileInputStream(dbFile);
 
@@ -119,7 +118,7 @@ public class DBHelper extends SQLiteOpenHelper
             output.flush();
             output.close();
             fis.close();
-            Log.i(TAG, "backUpDB FINISH");
+            Log.i(TAG, "backUpDB finished in following the directory: " + outFileName);
         }
         catch (IOException e)
         {

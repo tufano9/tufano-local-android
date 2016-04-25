@@ -1,6 +1,7 @@
 package com.tufano.tufanomovil.gestion.productos;
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -22,6 +23,8 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.BaseAdapter;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RadioButton;
@@ -35,6 +38,7 @@ import com.tufano.tufanomovil.adapters.productosAdapter;
 import com.tufano.tufanomovil.database.DBAdapter;
 import com.tufano.tufanomovil.global.EndlessScrollListener;
 import com.tufano.tufanomovil.global.Funciones;
+import com.tufano.tufanomovil.global.FuncionesTablas;
 import com.tufano.tufanomovil.objetos.Producto;
 
 import java.util.ArrayList;
@@ -47,30 +51,32 @@ public class ConsultarProductos extends AppCompatActivity
 {
     private static final int CANT_DATOS_MOSTRAR_INICIALMENTE = 5;
     private static final int CANT_DATOS_CARGAR               = 3;
-    public static  Activity       fa;
-    public static String destacado_filtrado = "1";
-    private final String TAG                = "ConsultarProductos";
-    private final int    id_mensaje         = Funciones.generateViewId();
+    public static Activity fa;
+    public static String   destacado_filtrado; // 1 new - 0 old - 2 all
+    private final String TAG        = "ConsultarProductos";
+    private final int    id_mensaje = Funciones.generateViewId();
     private Context          contexto;
     private DBAdapter        manager;
     private ListView         list;
     private productosAdapter adapter;
     private int              limit; // Numero total de elementos
-    private String usuario, columna_ordenada, orden, tipo_filtrado, color_filtrado,
+    private String           usuario, columna_ordenada, orden, tipo_filtrado, color_filtrado,
             talla_filtrado, modelo_filtrado;
     private boolean primerInicio1 = true, primerInicio2 = true, primerInicio3 = true;
     private AutoCompleteTextView modelo_autoComplete;
     private LinearLayout         layout;
     private List<List<String>>   contenedor_colores, contenedor_tipos, contenedor_tallas;
-    private Spinner tipo, talla, color;
+    private Spinner tipo, talla;// color;
     private TextView cabecera_1, cabecera_2, cabecera_3, cabecera_4, cabecera_5, cabecera_6;
     private boolean rotate;
+    private String name_selected_color = "Seleccione un color..";
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_producto_consultar);
+        destacado_filtrado = "2";
 
         rotate = savedInstanceState != null;
 
@@ -85,12 +91,90 @@ public class ConsultarProductos extends AppCompatActivity
         initAutoComplete();
         initTextViewHeader();
         initRadioButton();
+        initButtons();
         initFloatingActionButton();
 
         columna_ordenada = "talla";
         orden = "ASC";
 
         new cargarDatos().execute();
+    }
+
+    private void initButtons()
+    {
+
+        Button btn_color = (Button) findViewById(R.id.btn_search_color);
+        btn_color.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+                final Dialog dialog = new Dialog(ConsultarProductos.this);
+                dialog.setContentView(R.layout.custom_dialog_colores);
+                dialog.setTitle("Por favor, seleccione un color.");
+                dialog.setCanceledOnTouchOutside(true);
+
+                AutoCompleteTextView autoComplete = (AutoCompleteTextView) dialog.findViewById(R.id.autoComplete);
+                final ListView       list_data    = (ListView) dialog.findViewById(R.id.list_data);
+
+                contenedor_colores = manager.cargarListaColores();
+
+                ArrayAdapter<String> adapter = new ArrayAdapter<>(contexto,
+                        R.layout.simple_list1, contenedor_colores.get(1));
+                //android.R.layout.simple_list_item_1
+
+                /*ArrayAdapter<String> adapter = new ArrayAdapter<>(contexto,
+                        , contenedor_colores.get(1));*/
+
+
+                adapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
+
+                list_data.setAdapter(adapter);
+                list_data.setOnItemClickListener(new AdapterView.OnItemClickListener()
+                {
+                    @Override
+                    public void onItemClick(AdapterView<?> parent, View view, int position, long id)
+                    {
+                        Log.i(TAG, "Has seleccionado: " + list_data.getItemAtPosition(position) + ", position: " + position);
+                        //Toast.makeText(contexto, "Has seleccionado: " + list_data.getItemAtPosition(position), Toast.LENGTH_LONG).show();
+                        EditText selected_color = (EditText) findViewById(R.id.selected_color);
+                        selected_color.setText(list_data.getItemAtPosition(position).toString());
+                        name_selected_color = list_data.getItemAtPosition(position).toString();
+                        dialog.dismiss();
+                        gestionarFiltrado();
+                    }
+                });
+
+                autoComplete.setAdapter(adapter);
+                autoComplete.setThreshold(1);
+                autoComplete.setOnKeyListener(new View.OnKeyListener()
+                {
+                    @Override
+                    public boolean onKey(View v, int keyCode, KeyEvent event)
+                    {
+                        if (keyCode == 66)
+                        {
+                            layout.requestFocus();
+                            //gestionarFiltrado();
+                            return true;
+                        }
+                        return false;
+                    }
+                });
+
+                autoComplete.setOnItemClickListener(new AdapterView.OnItemClickListener()
+                {
+                    @Override
+                    public void onItemClick(AdapterView<?> parent, View view, int position, long id)
+                    {
+                        //gestionarFiltrado();
+                    }
+                });
+
+                dialog.show();
+                noInitialFocus();
+            }
+        });
     }
 
     private void initRadioButton()
@@ -105,13 +189,13 @@ public class ConsultarProductos extends AppCompatActivity
                 //boolean checked = ((RadioButton) view).isChecked();
                 switch (rg.getCheckedRadioButtonId())
                 {
-                    case R.id.rb_new:
-                        Log.i(TAG, "rb_new");
-                        destacado_filtrado = "1";
-                        break;
                     case R.id.rb_old:
                         Log.i(TAG, "rb_old");
                         destacado_filtrado = "0";
+                        break;
+                    case R.id.rb_new:
+                        Log.i(TAG, "rb_new");
+                        destacado_filtrado = "1";
                         break;
                     case R.id.rb_all:
                         Log.i(TAG, "rb_all");
@@ -294,7 +378,7 @@ public class ConsultarProductos extends AppCompatActivity
         String tipoFunction, tallaFunction, colorFunction, modeloFunction;
         String defaultValueTipo  = tipo.getItemAtPosition(0).toString();
         String defaultValueTalla = talla.getItemAtPosition(0).toString();
-        String defaultValueColor = color.getItemAtPosition(0).toString();
+        //String defaultValueColor = color.getItemAtPosition(0).toString();
 
         // Si esta seleccionado la opcion por defecto, no filtrare con ese parametro
         if (tipo.getSelectedItem().toString().equals(defaultValueTipo))
@@ -317,14 +401,15 @@ public class ConsultarProductos extends AppCompatActivity
             tallaFunction = contenedor_tallas.get(0).get(pos - 1);
         }
 
-        if (color.getSelectedItem().toString().equals(defaultValueColor))
+        if (name_selected_color.equals("Seleccione un color.."))
         {
             colorFunction = null;
         }
         else
         {
-            int pos = color.getSelectedItemPosition();
-            colorFunction = contenedor_colores.get(0).get(pos - 1);
+            //int pos = color.getSelectedItemPosition();
+            //colorFunction = contenedor_colores.get(0).get(pos - 1);
+            colorFunction = obtenerIDColor();
         }
 
         if (modelo_autoComplete.getText().toString().trim().equals(""))
@@ -337,6 +422,16 @@ public class ConsultarProductos extends AppCompatActivity
         }
 
         filtrarTabla(tipoFunction, tallaFunction, colorFunction, modeloFunction);
+    }
+
+    /**
+     * Obtiene el ID del color a partir de contenedor con todos los colores.
+     *
+     * @return ID del color.
+     */
+    private String obtenerIDColor()
+    {
+        return FuncionesTablas.obtenerIDColor(name_selected_color, manager);
     }
 
     /**
@@ -506,7 +601,7 @@ public class ConsultarProductos extends AppCompatActivity
         Log.w(TAG, "initSpinners.. primerInicio1 " + primerInicio1);
         tipo = (Spinner) findViewById(R.id.spTipo_editar_producto);
         talla = (Spinner) findViewById(R.id.spTalla_editar_producto);
-        color = (Spinner) findViewById(R.id.spColor_editar_producto);
+        //color = (Spinner) findViewById(R.id.spColor_editar_producto);
 
         tipo.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener()
         {
@@ -543,7 +638,7 @@ public class ConsultarProductos extends AppCompatActivity
             }
         });
 
-        color.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener()
+        /*color.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener()
         {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id)
@@ -559,7 +654,7 @@ public class ConsultarProductos extends AppCompatActivity
             {
 
             }
-        });
+        });*/
 
         //primerInicio = false;
     }
@@ -658,7 +753,7 @@ public class ConsultarProductos extends AppCompatActivity
         contenedor_colores = manager.cargarListaColores();
         ArrayAdapter<String> dataAdapter = new ArrayAdapter<>(this, R.layout.spinner_item, contenedor_colores.get(1));
         dataAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
-        color.setAdapter(dataAdapter);
+        //color.setAdapter(dataAdapter);
 
         contenedor_tipos = manager.cargarListaTipos();
         dataAdapter = new ArrayAdapter<>(this, R.layout.spinner_item, contenedor_tipos.get(1));
@@ -720,6 +815,7 @@ public class ConsultarProductos extends AppCompatActivity
         {
             if (!filtrando)
             {
+                // No tengo ningun registro en la BD.
                 final Thread hilo = new Thread()
                 {
                     @Override
@@ -752,6 +848,7 @@ public class ConsultarProductos extends AppCompatActivity
             }
             else
             {
+                // No hay productos que concuerden con dichos parametros de filtrado.
                 final Thread hilo = new Thread()
                 {
                     @Override
@@ -764,7 +861,7 @@ public class ConsultarProductos extends AppCompatActivity
                                 @Override
                                 public void run()
                                 {
-                                    ocultarTodo();
+                                    //ocultarTodo();
                                     agregarMensaje(R.string.sin_resultados);
 
                                     /*
@@ -855,19 +952,38 @@ public class ConsultarProductos extends AppCompatActivity
         hilo.start();
     }
 
-    private void agregarMensaje(int msj)
+    private void agregarMensaje(final int msj)
     {
-        TextView mensaje = new TextView(contexto);
-        mensaje.setText(msj);
-        mensaje.setGravity(Gravity.CENTER);
-        mensaje.setTextSize(20f);
-        mensaje.setId(id_mensaje);
-        mensaje.setLayoutParams(
-                new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
-                        ViewGroup.LayoutParams.MATCH_PARENT));
+        final Thread hilo1 = new Thread()
+        {
+            @Override
+            public void run()
+            {
+                synchronized (this)
+                {
+                    runOnUiThread(new Runnable()
+                    {
+                        @Override
+                        public void run()
+                        {
+                            Log.i(TAG, "Agregando mensaje");
+                            TextView mensaje = new TextView(contexto);
+                            mensaje.setText(msj);
+                            mensaje.setGravity(Gravity.CENTER);
+                            mensaje.setTextSize(20f);
+                            mensaje.setId(id_mensaje);
+                            mensaje.setLayoutParams(
+                                    new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+                                            ViewGroup.LayoutParams.MATCH_PARENT));
 
-        LinearLayout contenedor = (LinearLayout) findViewById(R.id.contenedor_base);
-        contenedor.addView(mensaje);
+                            LinearLayout contenedor = (LinearLayout) findViewById(R.id.contenedor_base);
+                            contenedor.addView(mensaje);
+                        }
+                    });
+                }
+            }
+        };
+        hilo1.start();
     }
 
     /**
@@ -932,6 +1048,12 @@ public class ConsultarProductos extends AppCompatActivity
         }
     }
 
+    @Override
+    public void onBackPressed()
+    {
+        finish();
+    }
+
     /**
      * Clase para la carga en 2do plano de los datos de la tabla (Solo 1era Ejecucion)
      */
@@ -974,6 +1096,7 @@ public class ConsultarProductos extends AppCompatActivity
     private class reCargarDatos extends AsyncTask<String, String, String>
     {
         ProgressDialog pDialog;
+
         @Override
         protected void onPreExecute()
         {

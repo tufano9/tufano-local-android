@@ -88,6 +88,7 @@ public class AgregarProducto extends AppCompatActivity
     private Button       btn_color;
     private LinearLayout layout;
     private String name_selected_color = "Seleccione un color..";
+    private String[] cantidadxpar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -191,8 +192,13 @@ public class AgregarProducto extends AppCompatActivity
         if (id != null)
         {
             Log.i(TAG, "Seleccionando color..");
-            int pos = buscarPosicion(id, contenedor_colores);
-            sp_color.setSelection(pos);
+            /*int pos = buscarPosicion(id, contenedor_colores);
+            sp_color.setSelection(pos);*/
+            //idColorSeleccionado
+            String   color_name     = FuncionesTablas.obtenerNombreColor(idColorSeleccionado, manager);
+            EditText selected_color = (EditText) findViewById(R.id.selected_color);
+            selected_color.setText(color_name);
+            name_selected_color = color_name;
         }
     }
 
@@ -251,7 +257,7 @@ public class AgregarProducto extends AppCompatActivity
                     public void onItemClick(AdapterView<?> parent, View view, int position, long id)
                     {
                         Log.i(TAG, "Has seleccionado: " + list_data.getItemAtPosition(position) + ", position: " + position);
-                        //Toast.makeText(contexto, "Has seleccionado: " + list_data.getItemAtPosition(position), Toast.LENGTH_LONG).show();
+                        //idColorSeleccionado
                         EditText selected_color = (EditText) findViewById(R.id.selected_color);
                         selected_color.setText(list_data.getItemAtPosition(position).toString());
                         name_selected_color = list_data.getItemAtPosition(position).toString();
@@ -495,6 +501,7 @@ public class AgregarProducto extends AppCompatActivity
                     cabecera.removeAllViews();
                     ids_tabla = new ArrayList<>();
                     current_talla = null;
+                    cantidadxpar = null;
                 }
             }
 
@@ -594,11 +601,15 @@ public class AgregarProducto extends AppCompatActivity
             {
                 if (nextId != 0)
                 {
+                    if (cantidadxpar != null)
+                        componente.setText(cantidadxpar[i]);
                     componente.setId(nextId);
                     ids_tabla.add(nextId);
                 }
                 else
                 {
+                    if (cantidadxpar != null)
+                        componente.setText(cantidadxpar[i]);
                     int id = View.generateViewId();
                     componente.setId(id);
                     ids_tabla.add(id);
@@ -613,11 +624,15 @@ public class AgregarProducto extends AppCompatActivity
             {
                 if (nextId != 0)
                 {
+                    if (cantidadxpar != null)
+                        componente.setText(cantidadxpar[i]);
                     componente.setId(nextId);
                     ids_tabla.add(nextId);
                 }
                 else
                 {
+                    if (cantidadxpar != null)
+                        componente.setText(cantidadxpar[i]);
                     int id = Funciones.generateViewId();
                     componente.setId(id);
                     ids_tabla.add(id);
@@ -733,8 +748,8 @@ public class AgregarProducto extends AppCompatActivity
         EditText et_modelo = (EditText) findViewById(R.id.modelo_producto);
         EditText et_precio = (EditText) findViewById(R.id.precio_producto);
 
-        String tipo       = this.tipo.getSelectedItem().toString().trim(); // Obtengo por ej. "Torera"
-        String talla      = this.talla.getSelectedItem().toString().substring(0, 1).trim(); // Obtengo por ej. "P (18-25)"
+        String tipo  = this.tipo.getSelectedItem().toString().trim(); // Obtengo por ej. "Torera"
+        String talla = this.talla.getSelectedItem().toString().substring(0, 1).trim(); // Obtengo por ej. "P (18-25)"
         //String color      = this.sp_color.getSelectedItem().toString().trim();
         String precio     = et_precio.getText().toString().trim().replace(".", "");
         String modelo     = et_modelo.getText().toString().trim();
@@ -807,7 +822,7 @@ public class AgregarProducto extends AppCompatActivity
             modelo.setError("El modelo debe contener al menos 3 caracteres!");
             return false;
         }
-        else if (name_selected_color == "Seleccione un color..")
+        else if (name_selected_color.equals("Seleccione un color.."))
         {
             /*
             TextView errorText = (TextView) color.getSelectedView();
@@ -896,6 +911,13 @@ public class AgregarProducto extends AppCompatActivity
                 byte[] bitmapdata = bytes.toByteArray();
                 imagen_cargada = BitmapFactory.decodeByteArray(bitmapdata, 0, bitmapdata.length);
                 imagen_cargada = Funciones.resize(imagen_cargada, 2048, 2048);
+
+                String file_name = Funciones.getFileName(selectedImageUri, contexto);
+                file_name = file_name.substring(0, file_name.lastIndexOf("."));
+                EditText modelo = (EditText) findViewById(R.id.modelo_producto);
+                modelo.setText(file_name);
+
+                Log.i(TAG, "Name: " + file_name);
 
                 /*ByteArrayOutputStream out = new ByteArrayOutputStream();
                 imagen_cargada.compress(Bitmap.CompressFormat.JPEG, 80, out);
@@ -1125,6 +1147,7 @@ public class AgregarProducto extends AppCompatActivity
         {
             final EditText campo = (EditText) findViewById(ids_tabla.get(i));
             cantidadxpar[i] = campo.getText().toString();
+            Log.i(TAG, "Valor guardado: " + cantidadxpar[i] + ", ID: " + ids_tabla.get(i));
         }
 
         savedInstanceState.putStringArray("cantidadxpar", cantidadxpar);
@@ -1141,24 +1164,29 @@ public class AgregarProducto extends AppCompatActivity
         // This bundle has also been passed to onCreate.
         imagen_cargada = savedInstanceState.getParcelable("image");
         Log.d(TAG, "imagen_cargada " + imagen_cargada);
-        //String[] cantidadxpar = savedInstanceState.getStringArray("cantidadxpar");
+
+        ImageView imageView = (ImageView) findViewById(R.id.seleccion_img_producto);
+        imageView.setImageBitmap(imagen_cargada);
+
+        cantidadxpar = savedInstanceState.getStringArray("cantidadxpar");
         //ArrayList<Integer> ids = savedInstanceState.getIntegerArrayList("ids");
+        //ids_tabla = savedInstanceState.getIntegerArrayList("ids");
 
         /*if(cantidadxpar != null && cantidadxpar.length>0)
         {
             for (int i = 0; i < cantidadxpar.length; i++)
             {
-                if(ids!=null)
+                if(ids!=null && cantidadxpar[i]!=null)
                 {
                     final EditText campo = (EditText) findViewById(ids.get(i));
-                    Log.i(TAG, "Valor obtenido: " + cantidadxpar[i] + ", ID: " + ids.get(i) );
-                    campo.setText( String.valueOf(cantidadxpar[i]) );
+                    if(campo!=null)
+                    {
+                        Log.i(TAG, "Valor obtenido: " + cantidadxpar[i] + ", ID: " + ids.get(i) );
+                        campo.setText( String.valueOf(cantidadxpar[i]) );
+                    }
                 }
             }
         }*/
-
-        ImageView imageView = (ImageView) findViewById(R.id.seleccion_img_producto);
-        imageView.setImageBitmap(imagen_cargada);
     }
 
     /**
