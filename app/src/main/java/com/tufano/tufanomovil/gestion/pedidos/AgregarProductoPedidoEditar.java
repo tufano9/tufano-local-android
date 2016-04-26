@@ -645,12 +645,12 @@ public class AgregarProductoPedidoEditar extends AppCompatActivity
                     Log.i(TAG, "Agregando fila..");
                     final TableRow fila = new TableRow(contexto);
 
-                    //final String id_producto = String.valueOf(cursor.getInt(0));
-                    final String talla_producto      = FuncionesTablas.obtenerNombreTalla(cursor.getString(1), manager);
-                    final String tipo_producto       = FuncionesTablas.obtenerNombreTipo(cursor.getString(2), manager);
-                    final String modelo_producto     = cursor.getString(3);
-                    final String id_color            = cursor.getString(4);
-                    final String color_producto      = FuncionesTablas.obtenerNombreColor(id_color, manager);
+                    final String id_producto     = String.valueOf(cursor.getInt(0));
+                    final String talla_producto  = FuncionesTablas.obtenerNombreTalla(cursor.getString(1), manager);
+                    final String tipo_producto   = FuncionesTablas.obtenerNombreTipo(cursor.getString(2), manager);
+                    final String modelo_producto = cursor.getString(3);
+                    final String id_color        = cursor.getString(4);
+                    final String color_producto  = FuncionesTablas.obtenerNombreColor(id_color, manager);
                     final String precio_producto     = cursor.getString(5);
                     final String numeracion_producto = cursor.getString(6);
                     //final String estatus_producto = cursor.getString(7);
@@ -776,6 +776,19 @@ public class AgregarProductoPedidoEditar extends AppCompatActivity
                             else
                             {
                                 productos_agregados--;
+                                String            subtotal = FuncionesTablas.calcularSubtotal(Integer.parseInt(pares_totales), Integer.parseInt(bultos_totales), Double.parseDouble(precio_producto));
+                                ArrayList<String> producto = new ArrayList<>();
+                                producto.add(id_producto);
+                                producto.add(talla_producto);
+                                producto.add(numeracion_producto.replace(")", ""));
+                                producto.add(pares_totales); // Pares
+                                producto.add(bultos_totales); // Bultos por defecto
+                                producto.add(precio_producto);
+                                producto.add(subtotal);
+                                producto.add(tipo_producto);
+                                producto.add(modelo_producto);
+                                producto.add(color_producto);
+                                productos.remove(producto);
                                 Log.d(TAG, "Producto eliminado.. total: " + productos_agregados);
                             }
                         }
@@ -789,26 +802,15 @@ public class AgregarProductoPedidoEditar extends AppCompatActivity
                     color.setLayoutParams(layout);
                     precio.setLayoutParams(layout);
                     numeracion.setLayoutParams(layout);
-                    //cb_producto.setLayoutParams(layout);
 
 
                     LinearLayout opciones = new LinearLayout(contexto);
                     opciones.setGravity(Gravity.CENTER);
                     opciones.setLayoutParams(layout);
                     opciones.addView(cb_producto);
-                    //opciones.setBackgroundColor(Color.BLUE);
-
-                        /*imagen.setBackgroundColor(Color.RED);
-                        talla.setBackgroundColor(Color.BLUE);
-                        tipo.setBackgroundColor(Color.RED);
-                        modelo.setBackgroundColor(Color.BLUE);
-                        color.setBackgroundColor(Color.RED);
-                        precio.setBackgroundColor(Color.BLUE);
-                        numeracion.setBackgroundColor(Color.RED);
-                        cb_producto.setBackgroundColor(Color.RED);*/
 
                     // Llenando la fila con data
-                    fila.setBackgroundColor(Color.WHITE);
+                    //fila.setBackgroundColor(Color.WHITE);
                     fila.addView(imagen);
                     fila.addView(talla);
                     fila.addView(tipo);

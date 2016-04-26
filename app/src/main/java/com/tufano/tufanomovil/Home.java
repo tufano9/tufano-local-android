@@ -16,8 +16,8 @@ import android.widget.Toast;
 
 import com.tufano.tufanomovil.gestion.clientes.ConsultarCliente;
 import com.tufano.tufanomovil.gestion.pedidos.ConsultarPedidos;
-import com.tufano.tufanomovil.gestion.perfil.EditarPerfil;
 import com.tufano.tufanomovil.gestion.productos.ConsultarProductos;
+import com.tufano.tufanomovil.global.FuncionesMenus;
 
 /**
  * Creado por Gerson el 11/01/2016.
@@ -210,12 +210,12 @@ public class Home extends AppCompatActivity
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings)
         {
-            //mostrarConfiguracion();
+            FuncionesMenus.mostrarConfiguracion(usuario, contexto, Home.this);
             return true;
         }
         else if (id == R.id.profile_settings)
         {
-            mostrarPerfil();
+            FuncionesMenus.mostrarPerfil(usuario, contexto, Home.this);
             return true;
         }
 
@@ -225,12 +225,12 @@ public class Home extends AppCompatActivity
     /**
      * Metodo con el cual se mostrara el perfil del usuario conectado actualmente.
      */
-    private void mostrarPerfil()
+    /*private void mostrarPerfil()
     {
         Intent c = new Intent(Home.this, EditarPerfil.class);
         c.putExtra("usuario", usuario);
         startActivity(c);
-    }
+    }*/
 
     /**
      * Metodo que gestionara la accion a realizar al momento de presionar el boton de volver.

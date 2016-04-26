@@ -143,6 +143,7 @@ public class Funciones
         }
     }
 
+
     /**
      * Busca la posicion de la cadena ingresada dentro del spinner dado.
      *

@@ -2,6 +2,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="com.tufano.tufanomovil.MainActivity">
+
+    <!-- Settings, should always be in the overflow -->
     <item
         android:id="@+id/profile_settings"
         android:orderInCategory="1"

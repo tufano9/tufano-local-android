@@ -5,8 +5,10 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.os.Build;
 import android.os.Environment;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.tufano.tufanomovil.global.Funciones;
 
@@ -50,9 +52,9 @@ public class DBHelper extends SQLiteOpenHelper
     //Ruta por defecto de las bases de datos en el sistema Android
     //private static String DB_PATH =  "/data/data/paquete.tufanoapp/databases/";
 
-    private static final String DB_NAME = "tufanomovil.db";
-    private final static int DB_VERSION = 3;
-    private static final String TAG = "DBHelper";
+    public static final  String DB_NAME    = "tufanomovil.db";
+    private final static int    DB_VERSION = 3;
+    private static final String TAG        = "DBHelper";
     private static String DB_RUTA;
     private static DBHelper mInstance = null;
     private final Context myContext;
@@ -92,33 +94,66 @@ public class DBHelper extends SQLiteOpenHelper
         return mInstance;
     }
 
+    @SuppressWarnings("unused")
+    public static void deleteDB(Context contexto)
+    {
+        Log.i(TAG, "deleteDB initiation..");
+        contexto.deleteDatabase(DBHelper.DB_NAME);
+        Log.i(TAG, "deleteDB finished..");
+    }
+
+    @SuppressWarnings("unused")
     public static void backUpDB()
     {
         try
         {
-            Log.i(TAG, "backUpDB initiation..");
-            File dbFile = new File(DB_RUTA);
-            FileInputStream fis = new FileInputStream(dbFile);
-
-            String outFileName = Environment.getExternalStorageDirectory() + "/db_copy.db";
-
-            // Open the empty db as the output stream
-            OutputStream output = new FileOutputStream(outFileName);
-
-            // Transfer bytes from the inputfile to the outputfile
-            byte[] buffer = new byte[1024];
-            int length;
-
-            while ((length = fis.read(buffer)) > 0)
+            if (Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState()))
             {
-                output.write(buffer, 0, length);
-            }
+                Log.i(TAG, "backUpDB initiation..");
 
-            // Close the streams
-            output.flush();
-            output.close();
-            fis.close();
-            Log.i(TAG, "backUpDB finished in following the directory: " + outFileName);
+                File output_folder;
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.FROYO)
+                {
+                    output_folder = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "/TufanoMovilFiles/backup");
+                }
+                else
+                {
+                    output_folder = new File(Environment.getExternalStorageDirectory() + "/dcim/" + "TufanoMovilFiles/backup");
+                }
+                if (!output_folder.exists())
+                {
+                    if (output_folder.mkdirs())
+                        Log.i(TAG, "Carpeta \"" + output_folder.getPath() + "\" creada exitosamente");
+                    else
+                    {
+                        Log.e(TAG, "La carpeta no pudo ser creada..");
+                    }
+                }
+
+                File            dbFile = new File(DB_RUTA);
+                FileInputStream fis    = new FileInputStream(dbFile);
+
+                String outFileName = output_folder.getPath() + "/db_copy.db";
+                //Log.i(TAG, "1) backUpDB will be done in the following the directory: " + outFileName);
+                //Log.i(TAG, "2) backUpDB will be done in the following the directory: " + Environment.getExternalStorageDirectory() + "/db_copy.db");
+
+                // Open the empty db as the output stream
+                OutputStream output = new FileOutputStream(outFileName);
+
+                // Transfer bytes from the inputfile to the outputfile
+                byte[] buffer = new byte[1024];
+                int    length;
+
+                while ((length = fis.read(buffer)) > 0)
+                {
+                    output.write(buffer, 0, length);
+                }
+                output.flush();
+                output.close();
+                fis.close();
+                Log.i(TAG, "backUpDB finished in following the directory: " + outFileName
+                        + ", origin: " + DB_RUTA);
+            }
         }
         catch (IOException e)
         {
@@ -126,14 +161,33 @@ public class DBHelper extends SQLiteOpenHelper
         }
     }
 
-    public static void recoverDB()
+    public static void recoverDB(Context contexto)
     {
         try
         {
             Log.i(TAG, "recoverDB INIT");
-            File dbFile = new File(DB_RUTA);
+            //File dbFile = new File(DB_RUTA);
 
-            String copy_dir = Environment.getExternalStorageDirectory() + "/db_copy.db";
+            File output_folder;
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.FROYO)
+            {
+                output_folder = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "/TufanoMovilFiles/backup");
+            }
+            else
+            {
+                output_folder = new File(Environment.getExternalStorageDirectory() + "/dcim/" + "TufanoMovilFiles/backup");
+            }
+            if (!output_folder.exists())
+            {
+                if (output_folder.mkdirs())
+                    Log.i(TAG, "Carpeta \"" + output_folder.getPath() + "\" creada exitosamente");
+                else
+                {
+                    Log.e(TAG, "La carpeta no pudo ser creada..");
+                }
+            }
+
+            String copy_dir = output_folder.getPath() + "/db_copy.db";
             // Open the empty db as the input stream
             FileInputStream input = new FileInputStream(copy_dir);
 
@@ -152,7 +206,8 @@ public class DBHelper extends SQLiteOpenHelper
             output.flush();
             output.close();
             output.close();
-            Log.i(TAG, "recoverDB FINISH");
+            Log.i(TAG, "recoverDB finished from: " + copy_dir + " to: " + DB_RUTA);
+            Toast.makeText(contexto, "Se ha restaurado la base de datos exitosamente!", Toast.LENGTH_LONG).show();
         }
         catch (IOException e)
         {

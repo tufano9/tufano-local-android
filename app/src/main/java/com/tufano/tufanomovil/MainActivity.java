@@ -1,11 +1,15 @@
 package com.tufano.tufanomovil;
 
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -21,6 +25,7 @@ import com.tufano.tufanomovil.database.DBAdapter;
 import com.tufano.tufanomovil.database.DBHelper;
 import com.tufano.tufanomovil.global.Funciones;
 
+import java.io.File;
 import java.io.UnsupportedEncodingException;
 import java.security.GeneralSecurityException;
 
@@ -41,7 +46,7 @@ public class MainActivity extends AppCompatActivity
         contexto = getApplicationContext();
 
         // Limpiar la BD
-        //contexto.deleteDatabase(DBHelper.DB_NAME);
+        //DBHelper.deleteDB(contexto);
 
         // Imprimir contenido de la BD
         //Funciones.imprimirBaseDatos(DBAdapter.db);
@@ -53,8 +58,16 @@ public class MainActivity extends AppCompatActivity
         noInitialFocus();
         initButtons();
         setLogin();
-        DBHelper.backUpDB();
-        DBHelper.recoverDB();
+        //verifyDB();
+    }
+
+    /**
+     * Verifica si existe una BD almacenada de respaldo en el dispositivo para utilizarla como la
+     * principal, de existir alguna, le pregunta al usuario si desea utilizarla.
+     */
+    private void verifyDB()
+    {
+        new verifyDB().execute();
     }
 
     /**
@@ -314,6 +327,106 @@ public class MainActivity extends AppCompatActivity
             {
                 Toast.makeText(contexto, "La combinacion de usuario y contraseña es erronea!", Toast.LENGTH_LONG).show();
             }
+        }
+    }
+
+    /**
+     * Hace una verificacion en segundo plano usando la base de datos para determinar si existe
+     * un respaldo de la base de datos, y poder asi recuperarla y utilizarla.
+     */
+    class verifyDB extends AsyncTask<String, String, String>
+    {
+        @Override
+        protected String doInBackground(String... params)
+        {
+            try
+            {
+                //enviamos y recibimos y analizamos los datos en segundo plano.
+                if (existCopyDB())
+                {
+                    return "yes";
+                }
+                else
+                {
+                    return "no";
+                }
+            }
+            catch (RuntimeException e)
+            {
+                Log.d("verifyDB", "err2: " + e);
+                return "err";
+            }
+        }
+
+        @Override
+        protected void onPreExecute()
+        {
+        }
+
+        @Override
+        protected void onPostExecute(String result)
+        {
+            if (result.equals("yes"))
+            {
+                AlertDialog.Builder dialog = new AlertDialog.Builder(MainActivity.this);
+
+                dialog.setTitle(R.string.confirmacion);
+                dialog.setMessage(R.string.confirmacion_recuperar_bd);
+                dialog.setCancelable(false);
+                dialog.setPositiveButton("Si", new DialogInterface.OnClickListener()
+                {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which)
+                    {
+                        DBHelper.recoverDB(contexto);
+                    }
+                });
+
+                dialog.setNegativeButton("No", new DialogInterface.OnClickListener()
+                {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which)
+                    {
+                        dialog.cancel();
+                    }
+                });
+
+                dialog.show();
+            }
+        }
+
+        private boolean existCopyDB()
+        {
+            File output_folder;
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.FROYO)
+            {
+                output_folder = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "/TufanoMovilFiles/backup/db_copy.db");
+            }
+            else
+            {
+                output_folder = new File(Environment.getExternalStorageDirectory() + "/dcim/" + "TufanoMovilFiles/backup/db_copy.db");
+            }
+
+            File file_copy = new File(output_folder.getPath());
+        /*long size_copy = file_copy.length();
+
+        File file_original = new File(contexto.getDatabasePath(DBHelper.DB_NAME).toString());
+        long size_original = file_original.length();
+
+        if(size_copy>size_original)
+        {
+            Log.i(TAG, "La BD de respaldo es mas grande.. (Posible respaldo) "+size_copy+">"+size_original);
+            Log.i(TAG, "file_copy_dir: "+file_copy.getPath()+", file_original_dir: "+file_original.getPath());
+            return true;
+        }
+        else
+        {
+            Log.i(TAG, "La BD de respaldo es mas pequeña.. (No respaldar) "+size_copy+"<"+size_original);
+            Log.i(TAG, "file_copy_dir: "+file_copy.getPath()+", file_original_dir: "+file_original.getPath());
+            return false;
+        }*/
+
+            return file_copy.exists();
         }
     }
 }

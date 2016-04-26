@@ -2,11 +2,64 @@ package com.tufano.tufanomovil.global;
 
 /**
  * Desarrollado por Gerson el 5/4/2016.
- * <p>
+ * <p/>
  * Clase donde guardo todos los metodos que puede que necesite en un futuro.
  */
 public class RecicledBin
 {
+    /**
+     * Cierra el teclado del dispositivo
+     */
+    /*private void cerrarTeclado(Context contexto)
+    {
+        InputMethodManager inputManager =
+                (InputMethodManager) contexto.
+                        getSystemService(Context.INPUT_METHOD_SERVICE);
+
+        if (getCurrentFocus() != null)
+            inputManager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(),
+                    InputMethodManager.HIDE_NOT_ALWAYS);
+        else
+            Log.w(TAG, "No se pudo ocultar el Teclado");
+    }
+     */
+
+    /**
+     * Inicializador del autocompleteTextView
+     */
+    /*private void initAutoComplete()
+    {
+        Log.i(TAG, "initAutoComplete");
+        /*ArrayAdapter<String> adapter = new ArrayAdapter<>(this,
+                android.R.layout.simple_dropdown_item_1line, obtenerModelos());
+
+        modelo_autoComplete = (AutoCompleteTextView) findViewById(R.id.autoC_modelo);
+        modelo_autoComplete.setAdapter(adapter);
+        modelo_autoComplete.setThreshold(1);
+        modelo_autoComplete.setOnKeyListener(new View.OnKeyListener()
+        {
+            @Override
+            public boolean onKey(View v, int keyCode, KeyEvent event)
+            {
+                if (keyCode == 66)
+                {
+                    layout.requestFocus();
+                    gestionarFiltrado();
+                    return true;
+                }
+                return false;
+            }
+        });
+
+        modelo_autoComplete.setOnItemClickListener(new AdapterView.OnItemClickListener()
+        {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id)
+            {
+                gestionarFiltrado();
+            }
+        });
+    }*/
 
     /*public long eliminarCliente(String id)
     {

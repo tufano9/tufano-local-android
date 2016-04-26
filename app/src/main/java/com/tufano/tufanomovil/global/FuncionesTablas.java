@@ -100,6 +100,19 @@ public class FuncionesTablas
         return nombre_talla;
     }
 
+    public static String obtenerNombreTalla_Numeracion(String id_talla, DBAdapter manager)
+    {
+        //Log.i(TAG, "Buscando talla con id: " + id_talla);
+        String nombre_talla = null;
+        Cursor cursor       = manager.buscarTalla_ID(id_talla);
+        for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor.moveToNext())
+        {
+            nombre_talla = String.valueOf(cursor.getString(0)) + String.valueOf(cursor.getString(1));
+        }
+        cursor.close();
+        return nombre_talla;
+    }
+
     public static String obtenerNombreTipo(String id_tipo, DBAdapter manager)
     {
         //Log.i(TAG, "Buscando tipo con id: " + id_tipo);

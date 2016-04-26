@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+      xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/action_search"
+        android:icon="@drawable/ic_magnify"
+        android:title="@string/search_menu"
+        app:actionViewClass="android.support.v7.widget.SearchView"
+        app:showAsAction="collapseActionView|ifRoom"/>
+
+    <!-- "Filters", should appear as action button if possible -->
+    <item
+        android:id="@+id/action_filter"
+        android:icon="@drawable/ic_filter_outline"
+        android:title="@string/filter_menu"
+        app:showAsAction="ifRoom"/>
+
+    <!-- Settings, should always be in the overflow -->
+    <item
+        android:id="@+id/profile_settings"
+        android:orderInCategory="1"
+        android:title="@string/profile_menu"
+        app:showAsAction="never"/>
+    <item
+        android:id="@+id/action_settings"
+        android:orderInCategory="2"
+        android:title="@string/settings_menu"
+        app:showAsAction="never"/>
+</menu>

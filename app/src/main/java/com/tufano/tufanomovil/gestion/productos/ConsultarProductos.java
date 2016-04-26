@@ -3,6 +3,7 @@ package com.tufano.tufanomovil.gestion.productos;
 import android.app.Activity;
 import android.app.Dialog;
 import android.app.ProgressDialog;
+import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
@@ -12,13 +13,14 @@ import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.KeyEvent;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
@@ -38,6 +40,7 @@ import com.tufano.tufanomovil.adapters.productosAdapter;
 import com.tufano.tufanomovil.database.DBAdapter;
 import com.tufano.tufanomovil.global.EndlessScrollListener;
 import com.tufano.tufanomovil.global.Funciones;
+import com.tufano.tufanomovil.global.FuncionesMenus;
 import com.tufano.tufanomovil.global.FuncionesTablas;
 import com.tufano.tufanomovil.objetos.Producto;
 
@@ -60,25 +63,19 @@ public class ConsultarProductos extends AppCompatActivity
     private ListView         list;
     private productosAdapter adapter;
     private int              limit; // Numero total de elementos
-    private String           usuario, columna_ordenada, orden, tipo_filtrado, color_filtrado,
-            talla_filtrado, modelo_filtrado;
-    private boolean primerInicio1 = true, primerInicio2 = true, primerInicio3 = true;
-    private AutoCompleteTextView modelo_autoComplete;
-    private LinearLayout         layout;
-    private List<List<String>>   contenedor_colores, contenedor_tipos, contenedor_tallas;
-    private Spinner tipo, talla;// color;
-    private TextView cabecera_1, cabecera_2, cabecera_3, cabecera_4, cabecera_5, cabecera_6;
-    private boolean rotate;
-    private String name_selected_color = "Seleccione un color..";
+    private String           usuario, columna_ordenada, orden, id_tipo_filtrado, id_talla_filtrado,
+            id_color_filtrado, nombre_modelo_filtrado;
+    private LinearLayout       layout;
+    private List<List<String>> contenedor_colores;
+    private TextView           cabecera_1, cabecera_2, cabecera_3, cabecera_4, cabecera_5, cabecera_6;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_producto_consultar);
+        Log.d(TAG, "onCreate");
         destacado_filtrado = "2";
-
-        rotate = savedInstanceState != null;
 
         contexto = getApplicationContext();
         manager = new DBAdapter(contexto);
@@ -87,94 +84,18 @@ public class ConsultarProductos extends AppCompatActivity
         getExtrasVar();
         createToolBar();
         noInitialFocus();
-        initSpinners();
-        initAutoComplete();
         initTextViewHeader();
         initRadioButton();
-        initButtons();
         initFloatingActionButton();
 
         columna_ordenada = "talla";
         orden = "ASC";
+        id_tipo_filtrado = null;
+        id_color_filtrado = null;
+        id_talla_filtrado = null;
+        nombre_modelo_filtrado = null;
 
         new cargarDatos().execute();
-    }
-
-    private void initButtons()
-    {
-
-        Button btn_color = (Button) findViewById(R.id.btn_search_color);
-        btn_color.setOnClickListener(new View.OnClickListener()
-        {
-            @Override
-            public void onClick(View v)
-            {
-                final Dialog dialog = new Dialog(ConsultarProductos.this);
-                dialog.setContentView(R.layout.custom_dialog_colores);
-                dialog.setTitle("Por favor, seleccione un color.");
-                dialog.setCanceledOnTouchOutside(true);
-
-                AutoCompleteTextView autoComplete = (AutoCompleteTextView) dialog.findViewById(R.id.autoComplete);
-                final ListView       list_data    = (ListView) dialog.findViewById(R.id.list_data);
-
-                contenedor_colores = manager.cargarListaColores();
-
-                ArrayAdapter<String> adapter = new ArrayAdapter<>(contexto,
-                        R.layout.simple_list1, contenedor_colores.get(1));
-                //android.R.layout.simple_list_item_1
-
-                /*ArrayAdapter<String> adapter = new ArrayAdapter<>(contexto,
-                        , contenedor_colores.get(1));*/
-
-
-                adapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
-
-                list_data.setAdapter(adapter);
-                list_data.setOnItemClickListener(new AdapterView.OnItemClickListener()
-                {
-                    @Override
-                    public void onItemClick(AdapterView<?> parent, View view, int position, long id)
-                    {
-                        Log.i(TAG, "Has seleccionado: " + list_data.getItemAtPosition(position) + ", position: " + position);
-                        //Toast.makeText(contexto, "Has seleccionado: " + list_data.getItemAtPosition(position), Toast.LENGTH_LONG).show();
-                        EditText selected_color = (EditText) findViewById(R.id.selected_color);
-                        selected_color.setText(list_data.getItemAtPosition(position).toString());
-                        name_selected_color = list_data.getItemAtPosition(position).toString();
-                        dialog.dismiss();
-                        gestionarFiltrado();
-                    }
-                });
-
-                autoComplete.setAdapter(adapter);
-                autoComplete.setThreshold(1);
-                autoComplete.setOnKeyListener(new View.OnKeyListener()
-                {
-                    @Override
-                    public boolean onKey(View v, int keyCode, KeyEvent event)
-                    {
-                        if (keyCode == 66)
-                        {
-                            layout.requestFocus();
-                            //gestionarFiltrado();
-                            return true;
-                        }
-                        return false;
-                    }
-                });
-
-                autoComplete.setOnItemClickListener(new AdapterView.OnItemClickListener()
-                {
-                    @Override
-                    public void onItemClick(AdapterView<?> parent, View view, int position, long id)
-                    {
-                        //gestionarFiltrado();
-                    }
-                });
-
-                dialog.show();
-                noInitialFocus();
-            }
-        });
     }
 
     private void initRadioButton()
@@ -203,19 +124,7 @@ public class ConsultarProductos extends AppCompatActivity
                         break;
                 }
 
-                new reCargarDatos().execute(tipo_filtrado, talla_filtrado, color_filtrado,
-                        modelo_filtrado);
-
-                /*if(!rotate)
-                {
-                    Log.i(TAG, "Rotate.. reloading");
-                    new reCargarDatos().execute(tipo_filtrado, talla_filtrado, color_filtrado,
-                            modelo_filtrado);
-                }
-                else
-                {
-                    rotate = false;
-                }*/
+                new reCargarDatos().execute();
             }
         });
     }
@@ -299,158 +208,13 @@ public class ConsultarProductos extends AppCompatActivity
     }
 
     /**
-     * Inicializador del autocompleteTextView
-     */
-    private void initAutoComplete()
-    {
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(this,
-                android.R.layout.simple_dropdown_item_1line, obtenerModelos());
-
-        modelo_autoComplete = (AutoCompleteTextView) findViewById(R.id.autoC_modelo);
-        modelo_autoComplete.setAdapter(adapter);
-        modelo_autoComplete.setThreshold(1);
-        modelo_autoComplete.setOnKeyListener(new View.OnKeyListener()
-        {
-            @Override
-            public boolean onKey(View v, int keyCode, KeyEvent event)
-            {
-                if (keyCode == 66)
-                {
-                    layout.requestFocus();
-                    gestionarFiltrado();
-                    return true;
-                }
-                return false;
-            }
-        });
-
-        modelo_autoComplete.setOnItemClickListener(new AdapterView.OnItemClickListener()
-        {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id)
-            {
-                gestionarFiltrado();
-            }
-        });
-    }
-
-    /**
-     * Obtiene una lista de todos los modelos existentes en la BD
-     *
-     * @return Lista con todos los modelos.
-     */
-    private ArrayList<String> obtenerModelos()
-    {
-        Cursor cursor = manager.cargarProductos();
-
-        ArrayList<String> rs = new ArrayList<>();
-
-        for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor.moveToNext())
-        {
-            rs.add(cursor.getString(3));
-        }
-        return rs;
-    }
-
-    /**
-     * Cierra el teclado del dispositivo
-     */
-    private void cerrarTeclado()
-    {
-        InputMethodManager inputManager =
-                (InputMethodManager) contexto.
-                        getSystemService(Context.INPUT_METHOD_SERVICE);
-
-        if (getCurrentFocus() != null)
-            inputManager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(),
-                    InputMethodManager.HIDE_NOT_ALWAYS);
-        else
-            Log.w(TAG, "No se pudo ocultar el Teclado");
-    }
-
-    /**
-     * Gestiona los parametros de filtrado de la tabla
-     */
-    private void gestionarFiltrado()
-    {
-        Log.i(TAG, "Gestionando el filtrado");
-        cerrarTeclado();
-        String tipoFunction, tallaFunction, colorFunction, modeloFunction;
-        String defaultValueTipo  = tipo.getItemAtPosition(0).toString();
-        String defaultValueTalla = talla.getItemAtPosition(0).toString();
-        //String defaultValueColor = color.getItemAtPosition(0).toString();
-
-        // Si esta seleccionado la opcion por defecto, no filtrare con ese parametro
-        if (tipo.getSelectedItem().toString().equals(defaultValueTipo))
-        {
-            tipoFunction = null;
-        }
-        else
-        {
-            int pos = tipo.getSelectedItemPosition();
-            tipoFunction = contenedor_tipos.get(0).get(pos - 1);
-        }
-
-        if (talla.getSelectedItem().toString().equals(defaultValueTalla))
-        {
-            tallaFunction = null;
-        }
-        else
-        {
-            int pos = talla.getSelectedItemPosition();
-            tallaFunction = contenedor_tallas.get(0).get(pos - 1);
-        }
-
-        if (name_selected_color.equals("Seleccione un color.."))
-        {
-            colorFunction = null;
-        }
-        else
-        {
-            //int pos = color.getSelectedItemPosition();
-            //colorFunction = contenedor_colores.get(0).get(pos - 1);
-            colorFunction = obtenerIDColor();
-        }
-
-        if (modelo_autoComplete.getText().toString().trim().equals(""))
-        {
-            modeloFunction = null;
-        }
-        else
-        {
-            modeloFunction = modelo_autoComplete.getText().toString().trim();
-        }
-
-        filtrarTabla(tipoFunction, tallaFunction, colorFunction, modeloFunction);
-    }
-
-    /**
      * Obtiene el ID del color a partir de contenedor con todos los colores.
      *
      * @return ID del color.
      */
-    private String obtenerIDColor()
+    private String obtenerIDColor(String id)
     {
-        return FuncionesTablas.obtenerIDColor(name_selected_color, manager);
-    }
-
-    /**
-     * Prepara el filtrado de la tabla
-     *
-     * @param tipo   Tipo del producto para el filtrado. Por ej 'Torera'
-     * @param talla  Talla del producto para el filtrado.
-     * @param color  Color del producto para el filtrado.
-     * @param modelo Modelo del producto para el filtrado.
-     */
-    private void filtrarTabla(String tipo, String talla, String color, String modelo)
-    {
-        Log.w(TAG, "Filtrando.. Tipo: " + tipo + ", Color: " + color + ", Talla: " + talla + ", Modelo: " + modelo);
-        limpiarTabla();
-        tipo_filtrado = tipo;
-        talla_filtrado = talla;
-        color_filtrado = color;
-        modelo_filtrado = modelo;
-        new reCargarDatos().execute(tipo, talla, color, modelo);
+        return FuncionesTablas.obtenerIDColor(id, manager);
     }
 
     /**
@@ -520,7 +284,7 @@ public class ConsultarProductos extends AppCompatActivity
         this.orden = orden;
         limpiarTabla();
         //tipo, talla, color, modelo
-        new reCargarDatos().execute(tipo_filtrado, talla_filtrado, color_filtrado, modelo_filtrado);
+        new reCargarDatos().execute();
     }
 
     /**
@@ -594,72 +358,6 @@ public class ConsultarProductos extends AppCompatActivity
     }
 
     /**
-     * Inicializar Spinners de Estados.
-     */
-    private void initSpinners()
-    {
-        Log.w(TAG, "initSpinners.. primerInicio1 " + primerInicio1);
-        tipo = (Spinner) findViewById(R.id.spTipo_editar_producto);
-        talla = (Spinner) findViewById(R.id.spTalla_editar_producto);
-        //color = (Spinner) findViewById(R.id.spColor_editar_producto);
-
-        tipo.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener()
-        {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id)
-            {
-                if (!primerInicio1)
-                    gestionarFiltrado();
-                else
-                    primerInicio1 = false;
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent)
-            {
-            }
-        });
-
-        talla.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener()
-        {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id)
-            {
-                if (!primerInicio2)
-                    gestionarFiltrado();
-                else
-                    primerInicio2 = false;
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent)
-            {
-
-            }
-        });
-
-        /*color.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener()
-        {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id)
-            {
-                if (!primerInicio3)
-                    gestionarFiltrado();
-                else
-                    primerInicio3 = false;
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent)
-            {
-
-            }
-        });*/
-
-        //primerInicio = false;
-    }
-
-    /**
      * Inicializando la cabecera de la tabla
      */
     private void initTextViewHeader()
@@ -725,53 +423,11 @@ public class ConsultarProductos extends AppCompatActivity
         });
     }
 
-    /**
-     * Function to load the spinner data from SQLite database
-     */
-    private void loadSpinnerData()
-    {
-        /*final Thread hilo = new Thread()
-        {
-            @Override
-            public void run()
-            {
-                synchronized (this)
-                {
-                    runOnUiThread(new Runnable()
-                    {
-                        @Override
-                        public void run()
-                        {
-                        }
-                    });
-                }
-            }
-        };
-        hilo.start();*/
-
-        Log.w(TAG, "loadSpinnerData");
-        contenedor_colores = manager.cargarListaColores();
-        ArrayAdapter<String> dataAdapter = new ArrayAdapter<>(this, R.layout.spinner_item, contenedor_colores.get(1));
-        dataAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
-        //color.setAdapter(dataAdapter);
-
-        contenedor_tipos = manager.cargarListaTipos();
-        dataAdapter = new ArrayAdapter<>(this, R.layout.spinner_item, contenedor_tipos.get(1));
-        dataAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
-        tipo.setAdapter(dataAdapter);
-
-        contenedor_tallas = manager.cargarListaTallas();
-        dataAdapter = new ArrayAdapter<>(this, R.layout.spinner_item, contenedor_tallas.get(1));
-        dataAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
-        talla.setAdapter(dataAdapter);
-    }
-
-    private void loadData(String tipo_filtrado, String talla_filtrado, String color_filtrado,
-                          String modelo_filtrado, boolean filtrando)
+    private void loadData(boolean filtrando)
     {
         Log.i(TAG, "Inicializando tabla.. Ordenando por: " + columna_ordenada + ", orden: " + orden
-                + " Filtrando por... Tipo: " + tipo_filtrado + ", Talla: " + talla_filtrado +
-                ", Color: " + color_filtrado + ", Modelo: " + modelo_filtrado +
+                + " Filtrando por... Tipo: " + id_tipo_filtrado + ", Talla: " + id_talla_filtrado +
+                ", Color: " + id_color_filtrado + ", Modelo: " + nombre_modelo_filtrado +
                 ", Destacado: " + destacado_filtrado);
 
         eliminarMensajeInformativo();
@@ -780,13 +436,13 @@ public class ConsultarProductos extends AppCompatActivity
         final Activity       a     = this;
 
         // Numero de registros que existen con dichos parametros de filtrado..
-        Cursor cursor2 = manager.cargarProductos_Filtrado_Ordenado(tipo_filtrado, talla_filtrado,
-                color_filtrado, modelo_filtrado, columna_ordenada, orden, destacado_filtrado);
+        Cursor cursor2 = manager.cargarProductos_Filtrado_Ordenado(id_tipo_filtrado, id_talla_filtrado,
+                id_color_filtrado, nombre_modelo_filtrado, columna_ordenada, orden, destacado_filtrado);
         limit = cursor2.getCount();
         cursor2.close();
 
-        Cursor cursor = manager.cargarProductos_Filtrado_Ordenado(tipo_filtrado, talla_filtrado,
-                color_filtrado, modelo_filtrado, columna_ordenada, orden,
+        Cursor cursor = manager.cargarProductos_Filtrado_Ordenado(id_tipo_filtrado, id_talla_filtrado,
+                id_color_filtrado, nombre_modelo_filtrado, columna_ordenada, orden,
                 CANT_DATOS_MOSTRAR_INICIALMENTE, 0, destacado_filtrado);
 
         if (cursor.getCount() > 0)
@@ -1016,8 +672,8 @@ public class ConsultarProductos extends AppCompatActivity
         }
         else
         {
-            Cursor cursor = manager.cargarProductos_Filtrado_Ordenado(tipo_filtrado, talla_filtrado,
-                    color_filtrado, modelo_filtrado, columna_ordenada, orden, CANT_DATOS_CARGAR,
+            Cursor cursor = manager.cargarProductos_Filtrado_Ordenado(id_tipo_filtrado, id_talla_filtrado,
+                    id_color_filtrado, nombre_modelo_filtrado, columna_ordenada, orden, CANT_DATOS_CARGAR,
                     totalItemsCount, destacado_filtrado);
 
             if (cursor.getCount() > 0)
@@ -1054,20 +710,244 @@ public class ConsultarProductos extends AppCompatActivity
         finish();
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(android.view.Menu menu)
+    {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_consultar_productos, menu);
+
+        // Associate searchable configuration with the SearchView
+        SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+        SearchView    searchView    = (SearchView) menu.findItem(R.id.action_search).getActionView();
+        searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
+
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item)
+    {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+        //noinspection SimplifiableIfStatement
+        if (id == R.id.action_settings)
+        {
+            FuncionesMenus.mostrarConfiguracion(usuario, contexto, ConsultarProductos.this);
+            return true;
+        }
+        else if (id == R.id.profile_settings)
+        {
+            FuncionesMenus.mostrarPerfil(usuario, contexto, ConsultarProductos.this);
+            return true;
+        }
+        else if (id == R.id.action_filter)
+        {
+            mostrarFiltros();
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent)
+    {
+        Log.i(TAG, "onNewIntent");
+        handleIntent(intent);
+    }
+
+    private void handleIntent(Intent intent)
+    {
+        if (Intent.ACTION_SEARCH.equals(intent.getAction()))
+        {
+            nombre_modelo_filtrado = intent.getStringExtra(SearchManager.QUERY);
+            Log.i(TAG, "query: " + nombre_modelo_filtrado);
+            new reCargarDatos().execute();
+            layout.requestFocus();
+        }
+    }
+
+    private void mostrarFiltros()
+    {
+        final Dialog main_filters_dialog = new Dialog(ConsultarProductos.this);
+        main_filters_dialog.setContentView(R.layout.custom_dialog_filters_productos);
+        main_filters_dialog.setTitle("Opciones de filtrado");
+        main_filters_dialog.setCanceledOnTouchOutside(true);
+
+        /* Inicializando componentes internos del custom_dialog (EditText) */
+
+        final EditText selected_color = (EditText) main_filters_dialog.findViewById(R.id.color_name_dialog);
+
+        /* Inicializando componentes internos del custom_dialog (Spinners) */
+
+        final Spinner tipo_dialog  = (Spinner) main_filters_dialog.findViewById(R.id.tipo_sp_dialog);
+        final Spinner talla_dialog = (Spinner) main_filters_dialog.findViewById(R.id.talla_sp_dialog);
+
+        final List<List<String>> contenedor_tipos = manager.cargarListaTipos();
+        ArrayAdapter<String> dataAdapter = new ArrayAdapter<>(this, R.layout.spinner_item,
+                contenedor_tipos.get(1));
+
+        dataAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
+        tipo_dialog.setAdapter(dataAdapter);
+
+        if (id_tipo_filtrado != null)
+        {
+            String nombre_tipo = FuncionesTablas.obtenerNombreTipo(id_tipo_filtrado, manager);
+            int    pos         = Funciones.buscarPosicionElemento(nombre_tipo, tipo_dialog);
+            tipo_dialog.setSelection(pos);
+        }
+
+        final List<List<String>> contenedor_tallas = manager.cargarListaTallas();
+        dataAdapter = new ArrayAdapter<>(this, R.layout.spinner_item, contenedor_tallas.get(1));
+        dataAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
+        talla_dialog.setAdapter(dataAdapter);
+
+        if (id_talla_filtrado != null)
+        {
+            String nombre_talla = FuncionesTablas.obtenerNombreTalla_Numeracion(id_talla_filtrado, manager);
+            int    pos          = Funciones.buscarPosicionElemento(nombre_talla, talla_dialog);
+            talla_dialog.setSelection(pos);
+        }
+
+        if (id_color_filtrado != null)
+        {
+            String nombre_color = FuncionesTablas.obtenerNombreColor(id_color_filtrado, manager);
+            selected_color.setText(nombre_color);
+        }
+
+        /* Inicializando componentes internos del custom_dialog (Buttons) */
+
+        Button btn_buscar_color = (Button) main_filters_dialog.findViewById(R.id.select_color_btn_dialog);
+        Button btn_cancelar     = (Button) main_filters_dialog.findViewById(R.id.btn_cancelar_dialog);
+        Button btn_filtrar      = (Button) main_filters_dialog.findViewById(R.id.btn_filtrado_dialog);
+
+        btn_cancelar.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+                main_filters_dialog.dismiss();
+            }
+        });
+
+        btn_filtrar.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+                main_filters_dialog.dismiss();
+
+                String tipo  = tipo_dialog.getSelectedItem().toString();
+                String talla = talla_dialog.getSelectedItem().toString();
+                String color = selected_color.getText().toString();
+
+                String defaultValueTipo  = tipo_dialog.getItemAtPosition(0).toString();
+                String defaultValueTalla = talla_dialog.getItemAtPosition(0).toString();
+                String defaultValueColor = "Seleccione un color..";
+
+                int pos = tipo_dialog.getSelectedItemPosition();
+
+                if (tipo.equals(defaultValueTipo)) tipo = null;
+                else tipo = contenedor_tipos.get(0).get(pos - 1);
+
+                pos = talla_dialog.getSelectedItemPosition();
+
+                if (talla.equals(defaultValueTalla)) talla = null;
+                else talla = contenedor_tallas.get(0).get(pos - 1);
+
+                if (color.equals(defaultValueColor)) color = null;
+                else color = obtenerIDColor(color);
+
+                id_tipo_filtrado = tipo;
+                id_talla_filtrado = talla;
+                id_color_filtrado = color;
+
+                Log.i(TAG, "Filtrare por.. Tipo: " + tipo + ", Talla: " + talla + ", Color: " + color);
+                new reCargarDatos().execute();
+            }
+        });
+
+        btn_buscar_color.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+                final Dialog dialog = new Dialog(ConsultarProductos.this);
+                dialog.setContentView(R.layout.custom_dialog_colores);
+                dialog.setTitle("Por favor, seleccione un color.");
+                dialog.setCanceledOnTouchOutside(true);
+
+                AutoCompleteTextView autoComplete = (AutoCompleteTextView) dialog.findViewById(R.id.autoComplete);
+                final ListView       list_data    = (ListView) dialog.findViewById(R.id.list_data);
+
+                contenedor_colores = manager.cargarListaColores();
+
+                ArrayAdapter<String> adapter = new ArrayAdapter<>(contexto,
+                        R.layout.simple_list1, contenedor_colores.get(1));
+
+                adapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
+
+                list_data.setAdapter(adapter);
+                list_data.setOnItemClickListener(new AdapterView.OnItemClickListener()
+                {
+                    @Override
+                    public void onItemClick(AdapterView<?> parent, View view, int position, long id)
+                    {
+                        Log.i(TAG, "Has seleccionado: " + list_data.getItemAtPosition(position) + ", position: " + position);
+                        //Toast.makeText(contexto, "Has seleccionado: " + list_data.getItemAtPosition(position), Toast.LENGTH_LONG).show();
+                        selected_color.setText(list_data.getItemAtPosition(position).toString());
+                        dialog.dismiss();
+                        //gestionarFiltrado();
+                    }
+                });
+
+                autoComplete.setAdapter(adapter);
+                autoComplete.setThreshold(1);
+                autoComplete.setOnKeyListener(new View.OnKeyListener()
+                {
+                    @Override
+                    public boolean onKey(View v, int keyCode, KeyEvent event)
+                    {
+                        if (keyCode == 66)
+                        {
+                            layout.requestFocus();
+                            //gestionarFiltrado();
+                            return true;
+                        }
+                        return false;
+                    }
+                });
+
+                autoComplete.setOnItemClickListener(new AdapterView.OnItemClickListener()
+                {
+                    @Override
+                    public void onItemClick(AdapterView<?> parent, View view, int position, long id)
+                    {
+                        //gestionarFiltrado();
+                    }
+                });
+
+                dialog.show();
+            }
+        });
+
+        /* Mostrando dialogo */
+
+        main_filters_dialog.show();
+        LinearLayout focus = (LinearLayout) main_filters_dialog.findViewById(R.id.layout_dialog_focus);
+        focus.requestFocus();
+        //noInitialFocus();
+    }
+
     /**
      * Clase para la carga en 2do plano de los datos de la tabla (Solo 1era Ejecucion)
      */
     private class cargarDatos extends AsyncTask<String, String, String>
     {
         ProgressDialog pDialog;
-
-        @Override
-        protected String doInBackground(String... params)
-        {
-            loadSpinnerData();
-            loadData(null, null, null, null, false);
-            return null;
-        }
 
         @Override
         protected void onPreExecute()
@@ -1081,6 +961,12 @@ public class ConsultarProductos extends AppCompatActivity
             pDialog.show();
         }
 
+        @Override
+        protected String doInBackground(String... params)
+        {
+            loadData(false);
+            return null;
+        }
 
         @Override
         protected void onPostExecute(String result)
@@ -1112,7 +998,7 @@ public class ConsultarProductos extends AppCompatActivity
         @Override
         protected String doInBackground(String... params)
         {
-            loadData(params[0], params[1], params[2], params[3], true);
+            loadData(true);
             return null;
         }
 
