@@ -77,14 +77,6 @@
             android:layout_marginTop="15dp"
             android:visibility="gone"/>
 
-        <EditText
-            android:id="@+id/modelo_producto"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="15dp"
-            android:hint="@string/hint_modelo"
-            android:singleLine="true"/>
-
         <!--
 
         <EditText
@@ -96,6 +88,24 @@
             android:layout_marginTop="15dp" />
 
         -->
+
+        <ImageView
+            android:id="@+id/seleccion_img_producto_editar"
+            android:layout_width="432dp"
+            android:layout_height="324dp"
+            android:layout_gravity="center"
+            android:layout_marginTop="20dp"
+            android:background="@drawable/img_notfound"
+            android:contentDescription="@string/imagesContentDescription"
+            android:cropToPadding="false"/>
+
+        <EditText
+            android:id="@+id/modelo_producto"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="15dp"
+            android:hint="@string/hint_modelo"
+            android:singleLine="true"/>
 
         <EditText
             android:id="@+id/precio_producto"
@@ -135,16 +145,6 @@
             android:layout_gravity="center"
             android:layout_marginTop="15dp"
             android:textSize="18sp"/>
-
-        <ImageView
-            android:id="@+id/seleccion_img_producto_editar"
-            android:layout_width="432dp"
-            android:layout_height="324dp"
-            android:layout_gravity="center"
-            android:layout_marginTop="20dp"
-            android:background="@drawable/img_notfound"
-            android:contentDescription="@string/imagesContentDescription"
-            android:cropToPadding="false" />
 
         <Button
             android:id="@+id/btn_editar_producto"
