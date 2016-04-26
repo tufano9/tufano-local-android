@@ -1202,24 +1202,6 @@ public class AgregarProducto extends AppCompatActivity
         imageView.setImageBitmap(imagen_cargada);
 
         cantidadxpar = savedInstanceState.getStringArray("cantidadxpar");
-        //ArrayList<Integer> ids = savedInstanceState.getIntegerArrayList("ids");
-        //ids_tabla = savedInstanceState.getIntegerArrayList("ids");
-
-        /*if(cantidadxpar != null && cantidadxpar.length>0)
-        {
-            for (int i = 0; i < cantidadxpar.length; i++)
-            {
-                if(ids!=null && cantidadxpar[i]!=null)
-                {
-                    final EditText campo = (EditText) findViewById(ids.get(i));
-                    if(campo!=null)
-                    {
-                        Log.i(TAG, "Valor obtenido: " + cantidadxpar[i] + ", ID: " + ids.get(i) );
-                        campo.setText( String.valueOf(cantidadxpar[i]) );
-                    }
-                }
-            }
-        }*/
     }
 
     /**

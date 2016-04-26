@@ -85,7 +85,8 @@ public class EditarProducto extends AppCompatActivity
     private String       selected_cb;
     private LinearLayout layout;
     private String name_selected_color = "Seleccione un color..";
-    private Button btn_color;
+    private Button   btn_color;
+    private String[] cantidadxpar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -191,6 +192,7 @@ public class EditarProducto extends AppCompatActivity
                     bulto_numeracion.removeAllViews();
                     cabecera.removeAllViews();
                     ids_tabla = new ArrayList<>();
+                    cantidadxpar = null;
                 }
             }
 
@@ -575,11 +577,15 @@ public class EditarProducto extends AppCompatActivity
             {
                 if (nextId != 0)
                 {
+                    if (cantidadxpar != null)
+                        componente.setText(cantidadxpar[i]);
                     componente.setId(nextId);
                     ids_tabla.add(nextId);
                 }
                 else
                 {
+                    if (cantidadxpar != null)
+                        componente.setText(cantidadxpar[i]);
                     int id = View.generateViewId();
                     componente.setId(id);
                     ids_tabla.add(id);
@@ -594,11 +600,15 @@ public class EditarProducto extends AppCompatActivity
             {
                 if (nextId != 0)
                 {
+                    if (cantidadxpar != null)
+                        componente.setText(cantidadxpar[i]);
                     componente.setId(nextId);
                     ids_tabla.add(nextId);
                 }
                 else
                 {
+                    if (cantidadxpar != null)
+                        componente.setText(cantidadxpar[i]);
                     int id = Funciones.generateViewId();
                     componente.setId(id);
                     ids_tabla.add(id);
@@ -861,6 +871,48 @@ public class EditarProducto extends AppCompatActivity
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle savedInstanceState)
+    {
+        // Save UI state changes to the savedInstanceState.
+        // This bundle will be passed to onCreate if the process is
+        // killed and restarted.
+        Log.d(TAG, "onSaveInstanceState");
+        Log.d(TAG, "imagen_cargada " + imagen_cargada);
+        savedInstanceState.putParcelable("image", imagen_cargada);
+        String[] cantidadxpar = new String[ids_tabla.size()];
+
+        for (int i = 0; i < cantidadxpar.length; i++)
+        {
+            final EditText campo = (EditText) findViewById(ids_tabla.get(i));
+            cantidadxpar[i] = campo.getText().toString();
+            Log.i(TAG, "Valor guardado: " + cantidadxpar[i] + ", ID: " + ids_tabla.get(i));
+        }
+
+        savedInstanceState.putStringArray("cantidadxpar", cantidadxpar);
+        savedInstanceState.putIntegerArrayList("ids", ids_tabla);
+        super.onSaveInstanceState(savedInstanceState);
+    }
+
+    @Override
+    public void onRestoreInstanceState(Bundle savedInstanceState)
+    {
+        super.onRestoreInstanceState(savedInstanceState);
+        Log.d(TAG, "onRestoreInstanceState");
+        // Restore UI state from the savedInstanceState.
+        // This bundle has also been passed to onCreate.
+        imagen_cargada = savedInstanceState.getParcelable("image");
+        Log.d(TAG, "imagen_cargada " + imagen_cargada);
+
+        if (imagen_cargada != null)
+        {
+            ImageView imageView = (ImageView) findViewById(R.id.seleccion_img_producto);
+            imageView.setImageBitmap(imagen_cargada);
+        }
+
+        cantidadxpar = savedInstanceState.getStringArray("cantidadxpar");
     }
 
     /**
