@@ -11,5 +11,5 @@ Caracteristicas:
 - [Para la edicion de documentos en GitHub] (https://guides.github.com/features/mastering-markdown/)
 - [ShowCaseViews (Instrucciones en app)](https://www.novoda.com/blog/showcaseview-customisation-and-having-consecutive-showcases/)
 - [Search Bar in the ActionBar] (http://developer.android.com/intl/es/training/search/setup.html)
-- [Solution to a problem] (http://stackoverflow.com/questions/18407171/searchview-getactionview-returning-null#comment54523364_32497320)
+- [Solution to a problem in the previous search bar tutorial] (http://stackoverflow.com/questions/18407171/searchview-getactionview-returning-null#comment54523364_32497320)
 - [Cool Icons for Android] (https://materialdesignicons.com/)
