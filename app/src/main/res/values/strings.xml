@@ -258,5 +258,6 @@
     <string name="confirmacion_agregar_producto_pedido">¿Está seguro que desea agregar los productos seleccionados al pedido?</string>
     <string name="dialog_compartir_whatsapp_extra">Seleccione la informacion que desea incluir en el mensaje a compartir.</string>
     <string name="compartir_via_whatsapp">Compartir via WhatsApp</string>
+    <string name="buscar_cliente">Buscar Cliente</string>
 
 </resources>
