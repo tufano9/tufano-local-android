@@ -13,3 +13,4 @@ Caracteristicas:
 - [Search Bar in the ActionBar] (http://developer.android.com/intl/es/training/search/setup.html)
 - [Solution to a problem in the previous search bar tutorial] (http://stackoverflow.com/questions/18407171/searchview-getactionview-returning-null#comment54523364_32497320)
 - [Cool Icons for Android] (https://materialdesignicons.com/)
+- [FTS3 Sqlite perform full-text searches on a set of documents efficiently] (https://www.sqlite.org/fts3.html)
