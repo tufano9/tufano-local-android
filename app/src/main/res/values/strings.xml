@@ -270,10 +270,14 @@
     <string name="seleccionar_color">Seleccionar color..</string>
     <string name="color_seleccionado">Seleccione un color..</string>
     <string name="confirmacion_recuperar_bd">Existe una base de datos almacenada en el dispositivo. ¿Desea utilizarla?</string>
+    <string name="confirmacion_respaldar_bd">¿Esta seguro que desea respaldar la base de datos actual? (Se reemplazaran las copias existentes)</string>
     <string name="filter_menu">Filtrar</string>
     <string name="search_menu">Buscar</string>
     <string name="search_hint_productos">Buscar por modelo..</string>
     <string name="filtrar">Filtrar</string>
     <string name="cancelar">Cancelar</string>
+    <string name="get_backup">Recuperar datos</string>
+    <string name="do_backup">Respaldar datos</string>
+    <string name="limpiar_filtros">Reestablecer filtros</string>
 
 </resources>

@@ -218,19 +218,19 @@ public class Home extends AppCompatActivity
             FuncionesMenus.mostrarPerfil(usuario, contexto, Home.this);
             return true;
         }
+        else if (id == R.id.get_backup)
+        {
+            FuncionesMenus.getBackup(contexto, Home.this);
+            return true;
+        }
+        else if (id == R.id.do_backup)
+        {
+            FuncionesMenus.doBackup(contexto, Home.this);
+            return true;
+        }
 
         return super.onOptionsItemSelected(item);
     }
-
-    /**
-     * Metodo con el cual se mostrara el perfil del usuario conectado actualmente.
-     */
-    /*private void mostrarPerfil()
-    {
-        Intent c = new Intent(Home.this, EditarPerfil.class);
-        c.putExtra("usuario", usuario);
-        startActivity(c);
-    }*/
 
     /**
      * Metodo que gestionara la accion a realizar al momento de presionar el boton de volver.

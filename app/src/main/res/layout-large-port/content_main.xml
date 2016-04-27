@@ -15,59 +15,73 @@
     tools:showIn="@layout/activity_main">
 
     <LinearLayout
-        android:id="@+id/LinearLayout_MainActivity"
-        android:layout_width="0px"
-        android:layout_height="0px"
-        android:focusable="true"
-        android:focusableInTouchMode="true">
-        <requestFocus />
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:id="@+id/LinearLayout_MainActivity"
+            android:layout_width="0px"
+            android:layout_height="0px"
+            android:focusable="true"
+            android:focusableInTouchMode="true">
+
+            <requestFocus/>
+        </LinearLayout>
+
+        <ImageView
+            android:layout_width="297dp"
+            android:layout_height="100dp"
+            android:layout_gravity="center"
+            android:contentDescription="@string/logoContentDescription"
+            android:src="@drawable/logo"/>
+
+        <EditText
+            android:id="@+id/usuario_login"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="50dp"
+            android:layout_marginRight="50dp"
+            android:layout_marginTop="50dp"
+            android:hint="@string/btn_login_1"
+            android:singleLine="true"/>
+
+        <EditText
+            android:id="@+id/pass_login"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="50dp"
+            android:layout_marginRight="50dp"
+            android:layout_marginTop="15dp"
+            android:ems="10"
+            android:hint="@string/btn_login_2"
+            android:inputType="textPassword"
+            android:singleLine="true"/>
     </LinearLayout>
 
-    <ImageView
-        android:layout_width="297dp"
-        android:layout_height="100dp"
-        android:layout_gravity="center"
-        android:contentDescription="@string/logoContentDescription"
-        android:src="@drawable/logo"/>
-
-    <EditText
-        android:id="@+id/usuario_login"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="50dp"
-        android:layout_marginRight="50dp"
-        android:layout_marginTop="50dp"
-        android:hint="@string/btn_login_1"
-        android:singleLine="true"/>
+        android:orientation="vertical">
 
-    <EditText
-        android:id="@+id/pass_login"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="50dp"
-        android:layout_marginRight="50dp"
-        android:layout_marginTop="15dp"
-        android:ems="10"
-        android:hint="@string/btn_login_2"
-        android:inputType="textPassword"
-        android:singleLine="true"/>
+        <Button
+            android:id="@+id/btn_login"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/btn_size"
+            android:layout_marginLeft="50dp"
+            android:layout_marginRight="50dp"
+            android:text="@string/btn_login_3"/>
 
-    <Button
-        android:id="@+id/btn_login"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/btn_size"
-        android:layout_marginLeft="50dp"
-        android:layout_marginRight="50dp"
-        android:layout_marginTop="50dp"
-        android:text="@string/btn_login_3"/>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="50dp"
+            android:layout_marginRight="50dp"
+            android:layout_marginTop="15dp"
+            android:gravity="center"
+            android:text="@string/ayuda_login"
+            android:textAppearance="?android:attr/textAppearanceSmall"/>
+    </LinearLayout>
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="50dp"
-        android:layout_marginRight="50dp"
-        android:layout_marginTop="15dp"
-        android:gravity="center"
-        android:text="@string/ayuda_login"
-        android:textAppearance="?android:attr/textAppearanceSmall"/>
 </LinearLayout>

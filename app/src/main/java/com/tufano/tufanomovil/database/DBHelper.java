@@ -57,8 +57,8 @@ public class DBHelper extends SQLiteOpenHelper
     private static final String TAG        = "DBHelper";
     private static String DB_RUTA;
     private static DBHelper mInstance = null;
-    private final Context myContext;
-    private SQLiteDatabase myDataBase;
+    private final Context        myContext;
+    private       SQLiteDatabase myDataBase;
 
     /**
      * Constructor
@@ -102,8 +102,7 @@ public class DBHelper extends SQLiteOpenHelper
         Log.i(TAG, "deleteDB finished..");
     }
 
-    @SuppressWarnings("unused")
-    public static void backUpDB()
+    public static void backUpDB(Context contexto)
     {
         try
         {
@@ -151,6 +150,7 @@ public class DBHelper extends SQLiteOpenHelper
                 output.flush();
                 output.close();
                 fis.close();
+                Toast.makeText(contexto, "Respaldo de la base de datos completado de manera exitosa!", Toast.LENGTH_LONG).show();
                 Log.i(TAG, "backUpDB finished in following the directory: " + outFileName
                         + ", origin: " + DB_RUTA);
             }
@@ -195,7 +195,7 @@ public class DBHelper extends SQLiteOpenHelper
 
             // Transfer bytes from the inputfile to the outputfile
             byte[] buffer = new byte[1024];
-            int length;
+            int    length;
 
             while ((length = input.read(buffer)) > 0)
             {
@@ -349,7 +349,7 @@ public class DBHelper extends SQLiteOpenHelper
         try
         {
             // Crea un key aleatoriamente que sera usado para la encriptacion.
-            String key = Funciones.generateKey();
+            String key              = Funciones.generateKey();
             String default_password = "1234";
 
             //Encripta el password por defecto utilizando el key previamente generado.

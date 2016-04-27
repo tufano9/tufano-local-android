@@ -67,6 +67,14 @@
             android:text="@string/cancelar"/>
 
         <Button
+            android:id="@+id/btn_nofilters_dialog"
+            style="?android:attr/buttonStyleSmall"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/btn_size"
+            android:layout_weight="1"
+            android:text="@string/limpiar_filtros"/>
+
+        <Button
             android:id="@+id/btn_filtrado_dialog"
             style="?android:attr/buttonStyleSmall"
             android:layout_width="wrap_content"

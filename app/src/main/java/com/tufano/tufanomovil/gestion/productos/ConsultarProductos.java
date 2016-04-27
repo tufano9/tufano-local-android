@@ -12,15 +12,19 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.content.res.ResourcesCompat;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.KeyEvent;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
@@ -68,6 +72,7 @@ public class ConsultarProductos extends AppCompatActivity
     private LinearLayout       layout;
     private List<List<String>> contenedor_colores;
     private TextView           cabecera_1, cabecera_2, cabecera_3, cabecera_4, cabecera_5, cabecera_6;
+    private Menu menu = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -716,10 +721,99 @@ public class ConsultarProductos extends AppCompatActivity
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_consultar_productos, menu);
 
+        this.menu = menu;
+
         // Associate searchable configuration with the SearchView
-        SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
-        SearchView    searchView    = (SearchView) menu.findItem(R.id.action_search).getActionView();
+        SearchManager    searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+        final SearchView searchView    = (SearchView) menu.findItem(R.id.action_search).getActionView();
         searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
+        //searchView.setSubmitButtonEnabled(true); // add a submit button
+
+        TextView searchText = (TextView) searchView.findViewById(android.support.v7.appcompat.R.id.search_src_text);
+
+        searchText.setOnEditorActionListener(new TextView.OnEditorActionListener()
+        {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event)
+            {
+                if (actionId == EditorInfo.IME_ACTION_SEARCH || actionId == EditorInfo.IME_ACTION_GO)
+                {
+                    Log.i(TAG, "SEARCH PRESSED..");
+                    if (searchView.getQuery().toString().equals(""))
+                    {
+                        noFilter();
+                        return true;
+                    }
+                }
+                return false;
+            }
+        });
+
+        final MenuItem menuItem = menu.findItem(R.id.action_search);
+        MenuItemCompat.setOnActionExpandListener(menuItem,
+                new MenuItemCompat.OnActionExpandListener()
+                {
+                    @Override
+                    public boolean onMenuItemActionCollapse(MenuItem item)
+                    {
+                        // Do something when collapsed
+                        /*if (temp_query.equals(""))
+                        {
+                            Log.i(TAG, "Clear filter..");
+                            noFilter();
+                        }*/
+                        //Log.i(TAG, "collapsed");
+                        return true; // Return true to collapse action view
+                    }
+
+                    @Override
+                    public boolean onMenuItemActionExpand(MenuItem item)
+                    {
+                        // Do something when expanded
+                        Log.i(TAG, "expanded");
+
+                        if (nombre_modelo_filtrado != null)
+                        {
+                            Log.i(TAG, "default value " + nombre_modelo_filtrado);
+                            // Vuelve a colocar el valor por defecto en mi barra de busqueda superior.
+                            //EditText searchText = (EditText) searchView.findViewById(android.support.v7.appcompat.R.id.search_src_text);
+
+                            searchView.post(new Runnable()
+                            {
+                                @Override
+                                public void run()
+                                {
+                                    //MenuItemCompat.expandActionView(menuItem); // expandir
+                                    searchView.setQuery(nombre_modelo_filtrado, false);
+                                }
+                            });
+
+                            searchView.clearFocus();
+                        }
+
+                        return true; // Return true to expand action view
+                    }
+                });
+
+        SearchView.OnQueryTextListener queryTextListener = new SearchView.OnQueryTextListener()
+        {
+            @Override
+            public boolean onQueryTextChange(String newText)
+            {
+                //Log.i(TAG, "onQueryTextChange: " + newText);
+                // this is your adapter that will be filtered
+                return false; // false = default behavior , true = user's defined behavior
+            }
+
+            @Override
+            public boolean onQueryTextSubmit(String query)
+            {
+                //Log.i(TAG, "onQueryTextSubmit: " + query);
+                //Here u can get the value "query" which is entered in the search box.
+                return false; // false = default behavior , true = user's defined behavior
+            }
+        };
+        searchView.setOnQueryTextListener(queryTextListener);
 
         return true;
     }
@@ -764,10 +858,46 @@ public class ConsultarProductos extends AppCompatActivity
         if (Intent.ACTION_SEARCH.equals(intent.getAction()))
         {
             nombre_modelo_filtrado = intent.getStringExtra(SearchManager.QUERY);
-            Log.i(TAG, "query: " + nombre_modelo_filtrado);
+            //Log.i(TAG, "query: " + nombre_modelo_filtrado);
+            hideSearchBar();
             new reCargarDatos().execute();
-            layout.requestFocus();
         }
+    }
+
+    private void noFilter()
+    {
+        Log.i(TAG, "Sin filtro de modelo");
+        nombre_modelo_filtrado = null;
+        hideSearchBar();
+        new reCargarDatos().execute();
+    }
+
+    private void hideSearchBar()
+    {
+        layout.requestFocus();
+        cerrarTeclado();
+
+        // Collapse the search bar
+        if (menu != null)
+        {
+            MenuItem menuItem = menu.findItem(R.id.action_search);
+            menuItem.collapseActionView();
+        }
+    }
+
+    /**
+     * Funcion para cerrar el teclado.
+     */
+    private void cerrarTeclado()
+    {
+        InputMethodManager inputManager =
+                (InputMethodManager) contexto.getSystemService(Context.INPUT_METHOD_SERVICE);
+
+        if (getCurrentFocus() != null)
+            inputManager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(),
+                    InputMethodManager.HIDE_NOT_ALWAYS);
+        else
+            Log.w(TAG, "No se pudo ocultar el Teclado");
     }
 
     private void mostrarFiltros()
@@ -823,6 +953,19 @@ public class ConsultarProductos extends AppCompatActivity
         Button btn_buscar_color = (Button) main_filters_dialog.findViewById(R.id.select_color_btn_dialog);
         Button btn_cancelar     = (Button) main_filters_dialog.findViewById(R.id.btn_cancelar_dialog);
         Button btn_filtrar      = (Button) main_filters_dialog.findViewById(R.id.btn_filtrado_dialog);
+        Button btn_nofiltros    = (Button) main_filters_dialog.findViewById(R.id.btn_nofilters_dialog);
+
+        btn_nofiltros.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+                tipo_dialog.setSelection(0);
+                talla_dialog.setSelection(0);
+                selected_color.setText("Seleccione un color..");
+                Toast.makeText(contexto, "Filtros reestablecidos por defecto!", Toast.LENGTH_LONG).show();
+            }
+        });
 
         btn_cancelar.setOnClickListener(new View.OnClickListener()
         {
